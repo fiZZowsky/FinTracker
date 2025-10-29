@@ -16,7 +16,9 @@ class GlobalLoaderOverlay extends StatelessWidget {
           child: IgnorePointer(
             ignoring: !loadingVM.isLoading,
             child: Container(
-              color: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.3),
+              color: Theme.of(context)
+                  .scaffoldBackgroundColor
+                  .withValues(alpha: 0.3),
               child: const Center(
                 child: CustomLoader(size: 100),
               ),

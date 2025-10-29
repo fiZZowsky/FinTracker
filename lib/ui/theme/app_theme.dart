@@ -22,8 +22,6 @@ class AppTheme {
         onTertiary: Colors.white,
         error: Colors.red,
         onError: Colors.white,
-        background: lightCream,
-        onBackground: darkestGreen,
         surface: lightCream,
         onSurface: darkestGreen,
       ),
@@ -35,11 +33,11 @@ class AppTheme {
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: lightCream,
         indicatorColor: lightGreen,
-        labelTextStyle: MaterialStateProperty.all(
+        labelTextStyle: WidgetStateProperty.all(
           const TextStyle(
               fontSize: 12, fontWeight: FontWeight.w500, color: darkestGreen),
         ),
-        iconTheme: MaterialStateProperty.all(
+        iconTheme: WidgetStateProperty.all(
           const IconThemeData(color: darkGreen),
         ),
       ),
@@ -47,10 +45,11 @@ class AppTheme {
         backgroundColor: lightCream,
         indicatorColor: lightGreen,
         selectedIconTheme: const IconThemeData(color: darkGreen),
-        unselectedIconTheme: IconThemeData(color: darkGreen.withOpacity(0.7)),
+        unselectedIconTheme:
+            IconThemeData(color: darkGreen.withValues(alpha: 0.7)),
         selectedLabelTextStyle: const TextStyle(color: darkestGreen),
         unselectedLabelTextStyle:
-            TextStyle(color: darkestGreen.withOpacity(0.7)),
+            TextStyle(color: darkestGreen.withValues(alpha: 0.7)),
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
@@ -76,8 +75,6 @@ class AppTheme {
         onTertiary: darkestGreen,
         error: Colors.redAccent,
         onError: Colors.white,
-        background: darkestGreen,
-        onBackground: lightCream,
         surface: darkGreen,
         onSurface: lightCream,
       ),
@@ -89,11 +86,11 @@ class AppTheme {
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: darkGreen,
         indicatorColor: mediumGreen,
-        labelTextStyle: MaterialStateProperty.all(
+        labelTextStyle: WidgetStateProperty.all(
           const TextStyle(
               fontSize: 12, fontWeight: FontWeight.w500, color: lightCream),
         ),
-        iconTheme: MaterialStateProperty.all(
+        iconTheme: WidgetStateProperty.all(
           const IconThemeData(color: lightGreen),
         ),
       ),
@@ -101,9 +98,11 @@ class AppTheme {
         backgroundColor: darkGreen,
         indicatorColor: mediumGreen,
         selectedIconTheme: const IconThemeData(color: lightGreen),
-        unselectedIconTheme: IconThemeData(color: lightGreen.withOpacity(0.7)),
+        unselectedIconTheme:
+            IconThemeData(color: lightGreen.withValues(alpha: 0.7)),
         selectedLabelTextStyle: const TextStyle(color: lightCream),
-        unselectedLabelTextStyle: TextStyle(color: lightCream.withOpacity(0.7)),
+        unselectedLabelTextStyle:
+            TextStyle(color: lightCream.withValues(alpha: 0.7)),
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(

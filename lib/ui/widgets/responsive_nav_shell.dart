@@ -99,7 +99,7 @@ class ResponsiveNavShell extends StatelessWidget {
       onPressed: () => _navigateTo(context, location),
       style: TextButton.styleFrom(
         backgroundColor: _location(context) == location
-            ? Theme.of(context).colorScheme.primary.withOpacity(0.3)
+            ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.3)
             : Colors.transparent,
       ),
       child: Text(label),
