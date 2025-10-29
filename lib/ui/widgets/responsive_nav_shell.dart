@@ -1,11 +1,30 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import '../view_models/theme_view_model.dart';
 
 class ResponsiveNavShell extends StatelessWidget {
   final Widget child;
 
   const ResponsiveNavShell({required this.child, super.key});
+
+  Widget _buildThemeToggleButton(BuildContext context) {
+    return Consumer<ThemeViewModel>(
+      builder: (context, themeVM, child) {
+        final isDark = themeVM.isDarkMode(context);
+
+        return IconButton(
+          icon: Icon(
+            isDark ? Icons.dark_mode_outlined : Icons.light_mode_outlined,
+          ),
+          onPressed: () {
+            themeVM.toggleTheme(!isDark);
+          },
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +55,9 @@ class ResponsiveNavShell extends StatelessWidget {
         actions: [
           _buildWebNavItem(context, label: 'Home', location: '/'),
           _buildWebNavItem(context, label: 'Finanses', location: '/finanses'),
+          const SizedBox(width: 20),
+          _buildThemeToggleButton(context),
+          const SizedBox(width: 20),
         ],
       ),
       body: child,
@@ -81,6 +103,15 @@ class ResponsiveNavShell extends StatelessWidget {
                 label: Text('Settings'),
               ),
             ],
+            trailing: Expanded(
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 20.0),
+                  child: _buildThemeToggleButton(context),
+                ),
+              ),
+            ),
           ),
           const VerticalDivider(thickness: 1, width: 1),
           Expanded(
@@ -127,7 +158,7 @@ class ResponsiveNavShell extends StatelessWidget {
   String _location(BuildContext context) =>
       GoRouterState.of(context).uri.toString();
 
-  // mobile
+  // mobile logic
   int _calculateMobileIndex(BuildContext context) {
     final location = _location(context);
     if (location == '/') return 0;
@@ -154,7 +185,7 @@ class ResponsiveNavShell extends StatelessWidget {
     }
   }
 
-  // desktop
+  // desktop logic
   int _calculateDesktopIndex(BuildContext context) {
     final location = _location(context);
     if (location == '/') return 0;

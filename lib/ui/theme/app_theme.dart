@@ -7,6 +7,7 @@ class AppTheme {
   static const Color darkGreen = Color(0xFF354F52);
   static const Color darkestGreen = Color(0xFF2F3E46);
 
+  // light mode section
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
@@ -54,6 +55,59 @@ class AppTheme {
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: Colors.white,
+          textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
+      ),
+    );
+  }
+
+  // dark mode sction
+  static ThemeData get darkTheme {
+    return ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.dark,
+      colorScheme: const ColorScheme(
+        brightness: Brightness.dark,
+        primary: lightGreen,
+        onPrimary: darkestGreen,
+        secondary: mediumGreen,
+        onSecondary: Colors.white,
+        tertiary: lightCream,
+        onTertiary: darkestGreen,
+        error: Colors.redAccent,
+        onError: Colors.white,
+        background: darkestGreen,
+        onBackground: lightCream,
+        surface: darkGreen,
+        onSurface: lightCream,
+      ),
+      scaffoldBackgroundColor: darkestGreen,
+      appBarTheme: const AppBarTheme(
+        backgroundColor: darkGreen,
+        foregroundColor: lightCream,
+      ),
+      navigationBarTheme: NavigationBarThemeData(
+        backgroundColor: darkGreen,
+        indicatorColor: mediumGreen,
+        labelTextStyle: MaterialStateProperty.all(
+          const TextStyle(
+              fontSize: 12, fontWeight: FontWeight.w500, color: lightCream),
+        ),
+        iconTheme: MaterialStateProperty.all(
+          const IconThemeData(color: lightGreen),
+        ),
+      ),
+      navigationRailTheme: NavigationRailThemeData(
+        backgroundColor: darkGreen,
+        indicatorColor: mediumGreen,
+        selectedIconTheme: const IconThemeData(color: lightGreen),
+        unselectedIconTheme: IconThemeData(color: lightGreen.withOpacity(0.7)),
+        selectedLabelTextStyle: const TextStyle(color: lightCream),
+        unselectedLabelTextStyle: TextStyle(color: lightCream.withOpacity(0.7)),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: lightCream,
           textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
       ),
