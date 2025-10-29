@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'helpers/app_router.dart';
+import 'helpers/notification_service.dart';
 import 'ui/theme/app_theme.dart';
 import 'ui/view_models/theme_view_model.dart';
 import 'ui/view_models/loading_view_model.dart';
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       title: 'FinTracker',
       debugShowCheckedModeBanner: false,
+      scaffoldMessengerKey: NotificationService.scaffoldMessengerKey,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeViewModel.themeMode,
