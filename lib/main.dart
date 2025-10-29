@@ -3,11 +3,16 @@ import 'package:provider/provider.dart';
 import 'helpers/app_router.dart';
 import 'ui/theme/app_theme.dart';
 import 'ui/view_models/theme_view_model.dart';
+import 'ui/view_models/loading_view_model.dart';
+import 'ui/widgets/global_loader_overlay.dart';
 
 void main() {
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => ThemeViewModel(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => ThemeViewModel()),
+        ChangeNotifierProvider(create: (context) => LoadingViewModel()),
+      ],
       child: const MyApp(),
     ),
   );
@@ -27,6 +32,14 @@ class MyApp extends StatelessWidget {
       darkTheme: AppTheme.darkTheme,
       themeMode: themeViewModel.themeMode,
       routerConfig: AppRouter.router,
+      builder: (context, router) {
+        return Stack(
+          children: [
+            router!,
+            const GlobalLoaderOverlay(),
+          ],
+        );
+      },
     );
   }
 }

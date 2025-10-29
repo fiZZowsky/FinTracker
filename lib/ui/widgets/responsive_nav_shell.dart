@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../view_models/theme_view_model.dart';
+import '../view_models/loading_view_model.dart';
 
 class ResponsiveNavShell extends StatelessWidget {
   final Widget child;
@@ -67,7 +68,7 @@ class ResponsiveNavShell extends StatelessWidget {
   Widget _buildWebNavItem(BuildContext context,
       {required String label, required String location}) {
     return TextButton(
-      onPressed: () => context.go(location),
+      onPressed: () => _navigateTo(context, location),
       style: TextButton.styleFrom(
         backgroundColor: _location(context) == location
             ? Theme.of(context).colorScheme.primary.withOpacity(0.3)
@@ -171,16 +172,16 @@ class ResponsiveNavShell extends StatelessWidget {
   void _onMobileNavTap(BuildContext context, int index) {
     switch (index) {
       case 0:
-        context.go('/');
+        _navigateTo(context, '/');
         break;
       case 1:
-        context.go('/scanner');
+        _navigateTo(context, '/scanner');
         break;
       case 2:
-        context.go('/finanses');
+        _navigateTo(context, '/finanses');
         break;
       case 3:
-        context.go('/settings');
+        _navigateTo(context, '/settings');
         break;
     }
   }
@@ -197,14 +198,34 @@ class ResponsiveNavShell extends StatelessWidget {
   void _onDesktopNavTap(BuildContext context, int index) {
     switch (index) {
       case 0:
-        context.go('/');
+        _navigateTo(context, '/');
         break;
       case 1:
-        context.go('/finanses');
+        _navigateTo(context, '/finanses');
         break;
       case 2:
-        context.go('/settings');
+        _navigateTo(context, '/settings');
         break;
     }
+  }
+
+  void _navigateTo(BuildContext context, String location) {
+    final currentRoute = GoRouterState.of(context).uri.toString();
+
+    if (currentRoute == location) return;
+
+    final loadingVM = context.read<LoadingViewModel>();
+
+    Future(() async {
+      loadingVM.show();
+
+      if (context.mounted) {
+        context.go(location);
+      }
+
+      await Future.delayed(const Duration(milliseconds: 300));
+
+      loadingVM.hide();
+    });
   }
 }
