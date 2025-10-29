@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 enum NotificationType { success, error, info }
 
 class NotificationService {
-  static final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+  final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
 
-  static void showNotification(
+  void showNotification(
     String message, {
     NotificationType type = NotificationType.info,
   }) {
@@ -29,6 +29,7 @@ class NotificationService {
         backgroundColor = context != null
             ? Theme.of(context).colorScheme.secondary
             : Colors.blue.shade600;
+        break;
     }
 
     final snackBar = SnackBar(

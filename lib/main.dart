@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'helpers/app_router.dart';
 import 'helpers/notification_service.dart';
+import 'helpers/service_locator.dart';
 import 'ui/theme/app_theme.dart';
 import 'ui/view_models/theme_view_model.dart';
 import 'ui/view_models/loading_view_model.dart';
@@ -10,6 +11,8 @@ import 'ui/widgets/global_loader_overlay.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() {
+  setupLocator();
+
   runApp(
     MultiProvider(
       providers: [
@@ -33,7 +36,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       title: 'FinTracker',
       debugShowCheckedModeBanner: false,
-      scaffoldMessengerKey: NotificationService.scaffoldMessengerKey,
+      scaffoldMessengerKey: getIt<NotificationService>().scaffoldMessengerKey,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeViewModel.themeMode,

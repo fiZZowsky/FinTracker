@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../view_models/theme_view_model.dart';
 import '../view_models/locale_view_model.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../helpers/notification_service.dart';
+import '../../helpers/service_locator.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -53,6 +55,9 @@ class SettingsPage extends StatelessWidget {
           groupValue: localeVM.locale,
           onChanged: (value) {
             localeVM.setLocale(value!);
+            getIt<NotificationService>().showNotification(
+                "${l10n.language} zmieniony na ${l10n.languagePolish}",
+                type: NotificationType.success);
           },
         ),
         RadioListTile<Locale>(
@@ -61,6 +66,9 @@ class SettingsPage extends StatelessWidget {
           groupValue: localeVM.locale,
           onChanged: (value) {
             localeVM.setLocale(value!);
+            getIt<NotificationService>().showNotification(
+                "${l10n.language} changed to ${l10n.languageEnglish}",
+                type: NotificationType.success);
           },
         ),
       ],
