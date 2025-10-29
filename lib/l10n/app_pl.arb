@@ -1,0 +1,13 @@
+{
+    "@@locale": "pl",
+    "homePage": "Główna",
+    "scannerPage": "Skaner",
+    "finansesPage": "Finanse",
+    "settingsPage": "Ustawienia",
+    "themeSwitch": "Tryb ciemny",
+    "themeSwitchSystem": "Użyj ustawień systemowych",
+    "language": "Język",
+    "languageSystem": "Domyślny systemowy",
+    "languagePolish": "Polski",
+    "languageEnglish": "Angielski"
+}

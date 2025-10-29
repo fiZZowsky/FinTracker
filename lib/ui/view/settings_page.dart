@@ -1,43 +1,69 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../view_models/theme_view_model.dart';
+import '../view_models/locale_view_model.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ThemeViewModel>(
-      builder: (context, themeVM, child) {
-        final isDark = themeVM.isDarkMode(context);
+    final l10n = AppLocalizations.of(context)!;
 
-        return ListView(
-          padding: const EdgeInsets.all(16.0),
-          children: [
-            SwitchListTile(
-              title: const Text('Tryb ciemny'),
-              secondary: Icon(
-                isDark ? Icons.dark_mode : Icons.light_mode,
-              ),
-              value: isDark,
-              onChanged: (value) {
-                themeVM.toggleTheme(value);
-              },
-            ),
-            const Divider(),
-            ListTile(
-              title: const Text('Użyj ustawień systemowych'),
-              leading: const Icon(Icons.settings_brightness),
-              trailing: themeVM.themeMode == ThemeMode.system
-                  ? const Icon(Icons.check, color: Colors.green)
-                  : null,
-              onTap: () {
-                themeVM.setThemeMode(ThemeMode.system);
-              },
-            ),
-          ],
-        );
-      },
+    final themeVM = context.watch<ThemeViewModel>();
+    final localeVM = context.watch<LocaleViewModel>();
+
+    final isDark = themeVM.isDarkMode(context);
+
+    return ListView(
+      padding: const EdgeInsets.all(16.0),
+      children: [
+        SwitchListTile(
+          title: Text(l10n.themeSwitch),
+          secondary: Icon(
+            isDark ? Icons.dark_mode : Icons.light_mode,
+          ),
+          value: isDark,
+          onChanged: (value) {
+            themeVM.toggleTheme(value);
+          },
+        ),
+        ListTile(
+          title: Text(l10n.themeSwitchSystem),
+          leading: const Icon(Icons.settings_brightness),
+          trailing: themeVM.themeMode == ThemeMode.system
+              ? const Icon(Icons.check, color: Colors.green)
+              : null,
+          onTap: () {
+            themeVM.setThemeMode(ThemeMode.system);
+          },
+        ),
+        const Divider(),
+        Padding(
+          padding: const EdgeInsets.only(top: 16.0, left: 16.0, bottom: 8.0),
+          child: Text(
+            l10n.language,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+        ),
+        RadioListTile<Locale>(
+          title: Text(l10n.languagePolish),
+          value: const Locale('pl'),
+          groupValue: localeVM.locale,
+          onChanged: (value) {
+            localeVM.setLocale(value!);
+          },
+        ),
+        RadioListTile<Locale>(
+          title: Text(l10n.languageEnglish),
+          value: const Locale('en'),
+          groupValue: localeVM.locale,
+          onChanged: (value) {
+            localeVM.setLocale(value!);
+          },
+        ),
+      ],
     );
   }
 }

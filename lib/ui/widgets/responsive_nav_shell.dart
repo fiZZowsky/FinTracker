@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../view_models/theme_view_model.dart';
 import '../view_models/loading_view_model.dart';
+import '../view_models/locale_view_model.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ResponsiveNavShell extends StatelessWidget {
   final Widget child;
@@ -50,18 +52,44 @@ class ResponsiveNavShell extends StatelessWidget {
 
   // web layout
   Widget _buildWebLayout(BuildContext context, Widget child) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
         title: const Text('FinTracker'),
         actions: [
-          _buildWebNavItem(context, label: 'Home', location: '/'),
-          _buildWebNavItem(context, label: 'Finanses', location: '/finanses'),
+          _buildWebNavItem(context, label: l10n.homePage, location: '/'),
+          _buildWebNavItem(context,
+              label: l10n.finansesPage, location: '/finanses'),
           const SizedBox(width: 20),
+          _buildLanguageMenuButton(context),
           _buildThemeToggleButton(context),
           const SizedBox(width: 20),
         ],
       ),
       body: child,
+    );
+  }
+
+  Widget _buildLanguageMenuButton(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final localeVM = context.read<LocaleViewModel>();
+
+    return PopupMenuButton<Locale>(
+      icon: const Icon(Icons.language),
+      tooltip: l10n.language,
+      onSelected: (Locale locale) {
+        localeVM.setLocale(locale);
+      },
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          value: const Locale('pl'),
+          child: Text(l10n.languagePolish),
+        ),
+        PopupMenuItem(
+          value: const Locale('en'),
+          child: Text(l10n.languageEnglish),
+        ),
+      ],
     );
   }
 
@@ -80,6 +108,8 @@ class ResponsiveNavShell extends StatelessWidget {
 
   // desktop layout
   Widget _buildDesktopLayout(BuildContext context, Widget child) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       body: Row(
         children: [
@@ -87,32 +117,23 @@ class ResponsiveNavShell extends StatelessWidget {
             selectedIndex: _calculateDesktopIndex(context),
             onDestinationSelected: (index) => _onDesktopNavTap(context, index),
             labelType: NavigationRailLabelType.all,
-            destinations: const [
+            destinations: [
               NavigationRailDestination(
-                icon: Icon(Icons.home_outlined),
-                selectedIcon: Icon(Icons.home),
-                label: Text('Home'),
+                icon: const Icon(Icons.home_outlined),
+                selectedIcon: const Icon(Icons.home),
+                label: Text(l10n.homePage),
               ),
               NavigationRailDestination(
-                icon: Icon(Icons.account_balance_wallet_outlined),
-                selectedIcon: Icon(Icons.account_balance_wallet),
-                label: Text('Finanses'),
+                icon: const Icon(Icons.account_balance_wallet_outlined),
+                selectedIcon: const Icon(Icons.account_balance_wallet),
+                label: Text(l10n.finansesPage),
               ),
               NavigationRailDestination(
-                icon: Icon(Icons.settings_outlined),
-                selectedIcon: Icon(Icons.settings),
-                label: Text('Settings'),
+                icon: const Icon(Icons.settings_outlined),
+                selectedIcon: const Icon(Icons.settings),
+                label: Text(l10n.settingsPage),
               ),
             ],
-            trailing: Expanded(
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 20.0),
-                  child: _buildThemeToggleButton(context),
-                ),
-              ),
-            ),
           ),
           const VerticalDivider(thickness: 1, width: 1),
           Expanded(
@@ -125,31 +146,32 @@ class ResponsiveNavShell extends StatelessWidget {
 
   // mobile layout
   Widget _buildMobileLayout(BuildContext context, Widget child) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       body: child,
       bottomNavigationBar: NavigationBar(
         selectedIndex: _calculateMobileIndex(context),
         onDestinationSelected: (index) => _onMobileNavTap(context, index),
-        destinations: const [
+        destinations: [
           NavigationDestination(
             icon: Icon(Icons.home_outlined),
             selectedIcon: Icon(Icons.home),
-            label: 'Home',
+            label: l10n.homePage,
           ),
           NavigationDestination(
             icon: Icon(Icons.qr_code_scanner),
             selectedIcon: Icon(Icons.qr_code_scanner),
-            label: 'Scanner',
+            label: l10n.scannerPage,
           ),
           NavigationDestination(
             icon: Icon(Icons.account_balance_wallet_outlined),
             selectedIcon: Icon(Icons.account_balance_wallet),
-            label: 'Finanses',
+            label: l10n.finansesPage,
           ),
           NavigationDestination(
             icon: Icon(Icons.settings_outlined),
             selectedIcon: Icon(Icons.settings),
-            label: 'Settings',
+            label: l10n.settingsPage,
           ),
         ],
       ),

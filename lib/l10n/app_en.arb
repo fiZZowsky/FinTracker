@@ -1,0 +1,13 @@
+{
+    "@@locale": "en",
+    "homePage": "Home",
+    "scannerPage": "Scanner",
+    "finansesPage": "Finanses",
+    "settingsPage": "Settings",
+    "themeSwitch": "Dark Mode",
+    "themeSwitchSystem": "Use system settings",
+    "language": "Language",
+    "languageSystem": "System Default",
+    "languagePolish": "Polish",
+    "languageEnglish": "English"
+}
