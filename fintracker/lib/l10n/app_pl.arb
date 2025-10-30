@@ -9,5 +9,11 @@
     "language": "Język",
     "languageSystem": "Domyślny systemowy",
     "languagePolish": "Polski",
-    "languageEnglish": "Angielski"
+    "languageEnglish": "Angielski",
+    "noReceiptsAdded": "Nie dodano jeszcze żadnych paragonów.",
+    "errorFetchingData": "Wystąpił błąd podczas pobierania danych.",
+    "networkError": "Błąd sieci: Nie można połączyć się z serwerem.",
+    "unknownError": "Wystąpił nieznany błąd.",
+    "languageChangedToPl": "Język zmieniony na Polski",
+    "languageChangedToEn": "Język zmieniony na Angielski"
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 enum NotificationType { success, error, info }
 
@@ -7,14 +8,19 @@ class NotificationService {
       GlobalKey<ScaffoldMessengerState>();
 
   void showNotification(
-    String message, {
+    String messageKey, {
     NotificationType type = NotificationType.info,
   }) {
-    if (scaffoldMessengerKey.currentState == null) {
+    if (scaffoldMessengerKey.currentState == null ||
+        scaffoldMessengerKey.currentContext == null) {
       debugPrint(
-          "Błąd: NotificationService.scaffoldMessengerKey nie jest podpięty do MaterialApp.");
+          "Błąd: NotificationService.scaffoldMessengerKey nie jest podpięty.");
       return;
     }
+
+    final context = scaffoldMessengerKey.currentContext!;
+    final l10n = AppLocalizations.of(context)!;
+    final String translatedMessage = _getTranslatedString(l10n, messageKey);
 
     Color backgroundColor;
     switch (type) {
@@ -33,7 +39,8 @@ class NotificationService {
     }
 
     final snackBar = SnackBar(
-      content: Text(message, style: const TextStyle(color: Colors.white)),
+      content:
+          Text(translatedMessage, style: const TextStyle(color: Colors.white)),
       backgroundColor: backgroundColor,
       behavior: SnackBarBehavior.floating,
       margin: const EdgeInsets.all(16),
@@ -44,5 +51,25 @@ class NotificationService {
     scaffoldMessengerKey.currentState!
       ..hideCurrentSnackBar()
       ..showSnackBar(snackBar);
+  }
+
+  static String _getTranslatedString(AppLocalizations l10n, String key) {
+    switch (key) {
+      case 'networkError':
+        return l10n.networkError;
+      case 'unknownError':
+        return l10n.unknownError;
+      case 'languageChangedToPl':
+        return l10n.languageChangedToPl;
+      case 'languageChangedToEn':
+        return l10n.languageChangedToEn;
+
+      case 'errorFetchingData':
+        return l10n.errorFetchingData;
+
+      default:
+        debugPrint('Brakujący klucz l10n w NotificationService: $key');
+        return key;
+    }
   }
 }

@@ -9,5 +9,11 @@
     "language": "Language",
     "languageSystem": "System Default",
     "languagePolish": "Polish",
-    "languageEnglish": "English"
+    "languageEnglish": "English",
+    "noReceiptsAdded": "No receipts have been added yet.",
+    "errorFetchingData": "An error occurred while fetching data.",
+    "networkError": "Network error: Could not connect to server.",
+    "unknownError": "An unknown error occurred.",
+    "languageChangedToPl": "Language changed to Polish",
+    "languageChangedToEn": "Language changed to English"
 }

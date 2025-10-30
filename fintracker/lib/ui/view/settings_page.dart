@@ -55,8 +55,7 @@ class SettingsPage extends StatelessWidget {
           groupValue: localeVM.locale,
           onChanged: (value) {
             localeVM.setLocale(value!);
-            getIt<NotificationService>().showNotification(
-                "${l10n.language} zmieniony na ${l10n.languagePolish}",
+            getIt<NotificationService>().showNotification('languageChangedToPl',
                 type: NotificationType.success);
           },
         ),
@@ -66,8 +65,7 @@ class SettingsPage extends StatelessWidget {
           groupValue: localeVM.locale,
           onChanged: (value) {
             localeVM.setLocale(value!);
-            getIt<NotificationService>().showNotification(
-                "${l10n.language} changed to ${l10n.languageEnglish}",
+            getIt<NotificationService>().showNotification('languageChangedToEn',
                 type: NotificationType.success);
           },
         ),
