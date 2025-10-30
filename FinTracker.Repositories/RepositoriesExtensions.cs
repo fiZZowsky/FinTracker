@@ -1,0 +1,13 @@
+﻿using Microsoft.Extensions.DependencyInjection;
+
+namespace FinTracker.Repositories
+{
+    public static class RepositoriesExtensions
+    {
+        public static void AddRepositories(this IServiceCollection services)
+        {
+            services.AddScoped(typeof(IBaseRepository<,>), typeof(BaseRepository<,>));
+            services.AddScoped<IReceiptRepository, ReceiptRepository>();
+        }
+    }
+}

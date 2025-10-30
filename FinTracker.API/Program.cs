@@ -1,11 +1,23 @@
+using FinTracker.DataAccess;
+using FinTracker.Repositories;
+using FinTracker.Services;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddRepositories();
+builder.Services.AddServices();
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<FinTrackerDbContext>(options =>
+    options.UseSqlServer(connectionString));
 
 var app = builder.Build();
 
