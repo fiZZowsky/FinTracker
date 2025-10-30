@@ -15,5 +15,10 @@
     "networkError": "Network error: Could not connect to server.",
     "unknownError": "An unknown error occurred.",
     "languageChangedToPl": "Language changed to Polish",
-    "languageChangedToEn": "Language changed to English"
+    "languageChangedToEn": "Language changed to English",
+    "scannerTitle": "Use the camera to scan a receipt",
+    "scannerCameraAccess": "Launch Camera",
+    "scannerGalleryAccess": "Choose from Gallery",
+    "scannerUploadSuccess": "Receipt uploaded successfully",
+    "scannerUploadError": "Error uploading receipt"
 }

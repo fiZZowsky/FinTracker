@@ -15,5 +15,10 @@
     "networkError": "Błąd sieci: Nie można połączyć się z serwerem.",
     "unknownError": "Wystąpił nieznany błąd.",
     "languageChangedToPl": "Język zmieniony na Polski",
-    "languageChangedToEn": "Język zmieniony na Angielski"
+    "languageChangedToEn": "Język zmieniony na Angielski",
+    "scannerTitle": "Użyj aparatu, aby zeskanować paragon",
+    "scannerCameraAccess": "Uruchom aparat",
+    "scannerGalleryAccess": "Wybierz z galerii",
+    "scannerUploadSuccess": "Paragon wysłany pomyślnie",
+    "scannerUploadError": "Błąd wysyłania paragonu"
 }

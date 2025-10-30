@@ -60,7 +60,7 @@ class ScannerViewModel extends ChangeNotifier {
 
       if (success) {
         getIt<NotificationService>().showNotification(
-          'Paragon wysłany pomyślnie', // TODO: Dodaj klucz l10n
+          'scannerUploadSuccess',
           type: NotificationType.success,
         );
       } else {
@@ -69,7 +69,7 @@ class ScannerViewModel extends ChangeNotifier {
     } catch (e) {
       debugPrint('Błąd wysyłania: $e');
       getIt<NotificationService>().showNotification(
-        'Błąd wysyłania paragonu', // TODO: Dodaj klucz l10n
+        'scannerUploadError',
         type: NotificationType.error,
       );
     } finally {
