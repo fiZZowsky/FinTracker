@@ -19,6 +19,11 @@ namespace FinTracker.API.Controllers
         public async Task<IActionResult> GetReceipts()
         {
             var receipts = await _receiptService.GetAllAsync();
+            //var receipts = new List<ReceiptDTO>
+            //{
+            //    new ReceiptDTO { Id = 1, StoreName = "Test", TotalAmount = 150, DateShopping = DateTime.Now },
+            //    new ReceiptDTO { Id = 2, StoreName = "Test2", TotalAmount = 12, DateShopping = DateTime.Now }
+            //};
             return Ok(receipts);
         }
 
@@ -44,6 +49,28 @@ namespace FinTracker.API.Controllers
             var createdReceipt = await _receiptService.CreateAsync(receiptDto);
             
             return CreatedAtAction(nameof(GetReceiptById), new { id = createdReceipt.Id }, createdReceipt);
+        }
+
+        [HttpPost("Upload")]
+        public async Task<IActionResult> UploadReceipt(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest("Nie przesłano pliku.");
+            }
+            
+            using (var stream = file.OpenReadStream())
+            {
+                try
+                {
+                    var createdReceipt = await _receiptService.CreateReceiptFromImageAsync(stream);
+                    return CreatedAtAction(nameof(GetReceiptById), new { id = createdReceipt.Id }, createdReceipt);
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(500, $"Wystąpił błąd serwera: {ex.Message}");
+                }
+            }
         }
 
         [HttpPut("{id}")]

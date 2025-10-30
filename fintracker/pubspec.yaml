@@ -43,6 +43,10 @@ dependencies:
   path_drawing: ^1.0.1
   get_it: ^8.2.0
   dio: ^5.9.0
+  camera: ^0.11.2
+  file_picker: ^10.3.3
+  image_picker: ^1.2.0
+  path_provider: ^2.1.5
 
 dev_dependencies:
   flutter_test:

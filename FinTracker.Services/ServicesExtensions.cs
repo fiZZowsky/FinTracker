@@ -8,6 +8,8 @@ namespace FinTracker.Services
         public static void AddServices(this IServiceCollection services)
         {
             services.AddScoped<IReceiptService, ReceiptService>();
+            services.AddSingleton<IOcrService, TesseractOcrService>();
+            //services.AddSingleton<IOcrService, AzureVisionOcrService>();
         }
     }
 }

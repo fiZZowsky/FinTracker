@@ -49,6 +49,25 @@ class ApiClient {
     }
   }
 
+  Future<dynamic> postFormData(String path, FormData data) async {
+    try {
+      final response = await _dio.post(
+        path,
+        data: data,
+        options: Options(
+          sendTimeout: const Duration(seconds: 30),
+        ),
+      );
+      return response.data;
+    } on DioException catch (e) {
+      debugPrint('ApiClient POST FormData error: $e');
+      rethrow;
+    } catch (e) {
+      debugPrint('ApiClient POST FormData Unknown error: $e');
+      rethrow;
+    }
+  }
+
   Future<dynamic> put(String path, {dynamic data}) async {
     try {
       final response = await _dio.put(path, data: data);

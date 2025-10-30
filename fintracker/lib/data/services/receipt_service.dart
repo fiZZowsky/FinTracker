@@ -1,6 +1,8 @@
 import '../models/receipt_model.dart';
 import 'api_client.dart';
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ReceiptService {
   final ApiClient _apiClient;
@@ -28,6 +30,22 @@ class ReceiptService {
     } catch (e) {
       debugPrint('Receipt parsing error: $e. Invalid JSON: $json');
       throw Exception('Failed to parse receipt data.');
+    }
+  }
+
+  Future<bool> uploadReceipt(XFile file) async {
+    try {
+      String fileName = file.path.split('/').last;
+      FormData formData = FormData.fromMap({
+        "file": await MultipartFile.fromFile(file.path, filename: fileName),
+      });
+
+      await _apiClient.postFormData('/api/Receipts/Upload', formData);
+
+      return true;
+    } catch (e) {
+      debugPrint('ReceiptService upload error: $e');
+      return false;
     }
   }
 }
