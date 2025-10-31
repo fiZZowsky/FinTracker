@@ -1,0 +1,73 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
+
+/// The translations for Polish (`pl`).
+class AppLocalizationsPl extends AppLocalizations {
+  AppLocalizationsPl([String locale = 'pl']) : super(locale);
+
+  @override
+  String get homePage => 'Główna';
+
+  @override
+  String get scannerPage => 'Skaner';
+
+  @override
+  String get finansesPage => 'Finanse';
+
+  @override
+  String get settingsPage => 'Ustawienia';
+
+  @override
+  String get themeSwitch => 'Tryb ciemny';
+
+  @override
+  String get themeSwitchSystem => 'Użyj ustawień systemowych';
+
+  @override
+  String get language => 'Język';
+
+  @override
+  String get languageSystem => 'Domyślny systemowy';
+
+  @override
+  String get languagePolish => 'Polski';
+
+  @override
+  String get languageEnglish => 'Angielski';
+
+  @override
+  String get noReceiptsAdded => 'Nie dodano jeszcze żadnych paragonów.';
+
+  @override
+  String get errorFetchingData => 'Wystąpił błąd podczas pobierania danych.';
+
+  @override
+  String get networkError => 'Błąd sieci: Nie można połączyć się z serwerem.';
+
+  @override
+  String get unknownError => 'Wystąpił nieznany błąd.';
+
+  @override
+  String get languageChangedToPl => 'Język zmieniony na Polski';
+
+  @override
+  String get languageChangedToEn => 'Język zmieniony na Angielski';
+
+  @override
+  String get scannerTitle => 'Użyj aparatu, aby zeskanować paragon';
+
+  @override
+  String get scannerCameraAccess => 'Uruchom aparat';
+
+  @override
+  String get scannerGalleryAccess => 'Wybierz z galerii';
+
+  @override
+  String get scannerUploadSuccess => 'Paragon wysłany pomyślnie';
+
+  @override
+  String get scannerUploadError => 'Błąd wysyłania paragonu';
+}

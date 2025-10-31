@@ -1,3 +1,4 @@
+import 'package:fintracker/l10n/app_localizations.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -5,7 +6,6 @@ import 'package:provider/provider.dart';
 import '../view_models/theme_view_model.dart';
 import '../view_models/loading_view_model.dart';
 import '../view_models/locale_view_model.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ResponsiveNavShell extends StatelessWidget {
   final Widget child;

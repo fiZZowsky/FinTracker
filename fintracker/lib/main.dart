@@ -1,3 +1,4 @@
+import 'package:fintracker/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'helpers/app_router.dart';
@@ -8,7 +9,6 @@ import 'ui/theme/app_theme.dart';
 import 'ui/view_models/theme_view_model.dart';
 import 'ui/view_models/locale_view_model.dart';
 import 'ui/widgets/global_loader_overlay.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() {
   setupLocator();

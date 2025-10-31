@@ -1,8 +1,8 @@
+import 'package:fintracker/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../view_models/finanses_view_model.dart';
 import '../widgets/custom_loader.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class FinansesPage extends StatelessWidget {
   const FinansesPage({super.key});
