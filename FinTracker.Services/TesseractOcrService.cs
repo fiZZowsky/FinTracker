@@ -30,14 +30,14 @@ namespace FinTracker.Services
                     using (var image = Image.Load(memoryStream))
                     {
                         image.Mutate(x => x.Grayscale());
-
-                        using (var bmpStream = new MemoryStream())
+                        
+                        using (var pngStream = new MemoryStream())
                         {
-                            image.SaveAsBmp(bmpStream);
+                            image.SaveAsPng(pngStream);
                             
-                            bmpStream.Position = 0;
+                            pngStream.Position = 0;
                             
-                            using (var img = TesseractOCR.Pix.Image.LoadFromMemory(bmpStream))
+                            using (var img = TesseractOCR.Pix.Image.LoadFromMemory(pngStream))
                             using (var engine = new Engine(_tessdataBasePath, _language, EngineMode.Default))
                             using (var page = engine.Process(img))
                             {
