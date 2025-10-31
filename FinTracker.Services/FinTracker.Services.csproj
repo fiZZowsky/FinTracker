@@ -7,24 +7,31 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="tessdata\pol.traineddata" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="tessdata\pol.traineddata">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Azure.AI.Vision.ImageAnalysis" Version="1.0.0" />
-    <PackageReference Include="Tesseract" Version="5.2.0" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
+    <PackageReference Include="TesseractOCR" Version="5.5.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\FinTracker.Models\FinTracker.Models.csproj" />
     <ProjectReference Include="..\FinTracker.Repositories\FinTracker.Repositories.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="C:\Users\Dell\.nuget\packages\tesseractocr\5.5.1\build\\..\x64\leptonica-1.85.0.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="C:\Users\Dell\.nuget\packages\tesseractocr\5.5.1\build\\..\x64\tesseract55.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="C:\Users\Dell\.nuget\packages\tesseractocr\5.5.1\build\\..\x86\leptonica-1.85.0.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="C:\Users\Dell\.nuget\packages\tesseractocr\5.5.1\build\\..\x86\tesseract55.dll" />
   </ItemGroup>
 
 </Project>

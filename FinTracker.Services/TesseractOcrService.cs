@@ -1,33 +1,56 @@
-﻿using Tesseract;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
+using TesseractOCR;
+using TesseractOCR.Enums;
 
 namespace FinTracker.Services
 {
     public class TesseractOcrService : IOcrService
     {
-        private readonly string _tessDataPath;
+        private readonly string _tessdataBasePath;
+        private readonly string _language;
 
         public TesseractOcrService(IWebHostEnvironment env)
         {
-            string exePath = AppDomain.CurrentDomain.BaseDirectory;
-            _tessDataPath = Path.Combine(exePath, "tessdata");
+            string rootPath = env.ContentRootPath;
+            _tessdataBasePath = Path.Combine(rootPath, "tessdata");
+            _language = "pol";
         }
 
         public async Task<string> RecognizeTextAsync(Stream imageStream)
         {
-            using (var engine = new TesseractEngine(_tessDataPath, "pol", EngineMode.Default))
+            try
             {
                 using (var memoryStream = new MemoryStream())
                 {
                     await imageStream.CopyToAsync(memoryStream);
-                    using (var img = Pix.LoadFromMemory(memoryStream.ToArray()))
+                    memoryStream.Position = 0;
+
+                    using (var image = Image.Load(memoryStream))
                     {
-                        using (var page = engine.Process(img))
+                        image.Mutate(x => x.Grayscale());
+
+                        using (var bmpStream = new MemoryStream())
                         {
-                            return page.GetText();
+                            image.SaveAsBmp(bmpStream);
+                            
+                            bmpStream.Position = 0;
+                            
+                            using (var img = TesseractOCR.Pix.Image.LoadFromMemory(bmpStream))
+                            using (var engine = new Engine(_tessdataBasePath, _language, EngineMode.Default))
+                            using (var page = engine.Process(img))
+                            {
+                                return page.Text;
+                            }
                         }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[OcrService Error] Błąd podczas przetwarzania OCR: {ex.Message}");
+                throw;
             }
         }
     }

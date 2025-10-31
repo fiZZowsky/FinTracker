@@ -17,13 +17,21 @@ namespace FinTracker.Services
 
         public async Task<ReceiptDTO> CreateReceiptFromImageAsync(Stream imageStream)
         {
-            string ocrText = await _ocrService.RecognizeTextAsync(imageStream);
-            
-            Receipt newReceipt = _ParseTextToReceipt(ocrText);
-            
-            var createdEntity = await _repository.CreateAsync(newReceipt);
-            
-            return _mapper.Map<ReceiptDTO>(createdEntity);
+            try
+            {
+                string ocrText = await _ocrService.RecognizeTextAsync(imageStream);
+
+                Receipt newReceipt = _ParseTextToReceipt(ocrText);
+
+                var createdEntity = await _repository.CreateAsync(newReceipt);
+
+                return _mapper.Map<ReceiptDTO>(createdEntity);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         private Receipt _ParseTextToReceipt(string ocrText)

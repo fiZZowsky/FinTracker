@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="tessdata\pol.traineddata">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.21" />
@@ -14,13 +20,31 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+    <PackageReference Include="TesseractOCR" Version="5.5.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\FinTracker.DataAccess\FinTracker.DataAccess.csproj" />
     <ProjectReference Include="..\FinTracker.Models\FinTracker.Models.csproj" />
     <ProjectReference Include="..\FinTracker.Services\FinTracker.Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="C:\Users\Dell\.nuget\packages\tesseractocr\5.5.1\build\\..\x64\leptonica-1.85.0.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="C:\Users\Dell\.nuget\packages\tesseractocr\5.5.1\build\\..\x64\tesseract55.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="C:\Users\Dell\.nuget\packages\tesseractocr\5.5.1\build\\..\x86\leptonica-1.85.0.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="C:\Users\Dell\.nuget\packages\tesseractocr\5.5.1\build\\..\x86\tesseract55.dll" />
   </ItemGroup>
 
 </Project>
