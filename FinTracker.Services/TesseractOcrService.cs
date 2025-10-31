@@ -6,16 +6,16 @@ using TesseractOCR.Enums;
 
 namespace FinTracker.Services
 {
-    public class TesseractOcrService : IOcrService
+    public class TesseractOcrService : IOcrService, IDisposable
     {
-        private readonly string _tessdataBasePath;
-        private readonly string _language;
+        private readonly Engine _engine;
 
         public TesseractOcrService(IWebHostEnvironment env)
         {
             string rootPath = env.ContentRootPath;
-            _tessdataBasePath = Path.Combine(rootPath, "tessdata");
-            _language = "pol";
+            string tessdataBasePath = Path.Combine(rootPath, "tessdata");
+
+            _engine = new Engine(tessdataBasePath, "pol", EngineMode.Default);
         }
 
         public async Task<string> RecognizeTextAsync(Stream imageStream)
@@ -38,8 +38,7 @@ namespace FinTracker.Services
                             pngStream.Position = 0;
                             
                             using (var img = TesseractOCR.Pix.Image.LoadFromMemory(pngStream))
-                            using (var engine = new Engine(_tessdataBasePath, _language, EngineMode.Default))
-                            using (var page = engine.Process(img))
+                            using (var page = _engine.Process(img))
                             {
                                 return page.Text;
                             }
@@ -52,6 +51,11 @@ namespace FinTracker.Services
                 Console.WriteLine($"[OcrService Error] Błąd podczas przetwarzania OCR: {ex.Message}");
                 throw;
             }
+        }
+
+        public void Dispose()
+        {
+            _engine?.Dispose();
         }
     }
 }
