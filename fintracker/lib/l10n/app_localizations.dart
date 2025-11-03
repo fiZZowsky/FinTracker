@@ -223,6 +223,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Error uploading receipt'**
   String get scannerUploadError;
+
+  /// No description provided for @finansesSummaryTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Summary'**
+  String get finansesSummaryTab;
+
+  /// No description provided for @finansesAllTab.
+  ///
+  /// In en, this message translates to:
+  /// **'All Receipts'**
+  String get finansesAllTab;
+
+  /// No description provided for @filterWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Week'**
+  String get filterWeek;
+
+  /// No description provided for @filterMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Month'**
+  String get filterMonth;
+
+  /// No description provided for @filter6Months.
+  ///
+  /// In en, this message translates to:
+  /// **'6 Months'**
+  String get filter6Months;
+
+  /// No description provided for @filterYear.
+  ///
+  /// In en, this message translates to:
+  /// **'Year'**
+  String get filterYear;
+
+  /// No description provided for @filterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All Time'**
+  String get filterAll;
+
+  /// No description provided for @finansesTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get finansesTotal;
 }
 
 class _AppLocalizationsDelegate

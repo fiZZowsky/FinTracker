@@ -70,4 +70,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get scannerUploadError => 'Error uploading receipt';
+
+  @override
+  String get finansesSummaryTab => 'Summary';
+
+  @override
+  String get finansesAllTab => 'All Receipts';
+
+  @override
+  String get filterWeek => 'Week';
+
+  @override
+  String get filterMonth => 'Month';
+
+  @override
+  String get filter6Months => '6 Months';
+
+  @override
+  String get filterYear => 'Year';
+
+  @override
+  String get filterAll => 'All Time';
+
+  @override
+  String get finansesTotal => 'Total';
 }

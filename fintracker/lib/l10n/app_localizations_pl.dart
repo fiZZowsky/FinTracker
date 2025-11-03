@@ -70,4 +70,28 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get scannerUploadError => 'Błąd wysyłania paragonu';
+
+  @override
+  String get finansesSummaryTab => 'Podsumowanie';
+
+  @override
+  String get finansesAllTab => 'Wszystkie';
+
+  @override
+  String get filterWeek => 'Tydzień';
+
+  @override
+  String get filterMonth => 'Miesiąc';
+
+  @override
+  String get filter6Months => '6 miesięcy';
+
+  @override
+  String get filterYear => 'Rok';
+
+  @override
+  String get filterAll => 'Wszystkie';
+
+  @override
+  String get finansesTotal => 'Suma';
 }

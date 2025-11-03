@@ -20,5 +20,13 @@
     "scannerCameraAccess": "Launch Camera",
     "scannerGalleryAccess": "Choose from Gallery",
     "scannerUploadSuccess": "Receipt uploaded successfully",
-    "scannerUploadError": "Error uploading receipt"
+    "scannerUploadError": "Error uploading receipt",
+    "finansesSummaryTab": "Summary",
+    "finansesAllTab": "All Receipts",
+    "filterWeek": "Week",
+    "filterMonth": "Month",
+    "filter6Months": "6 Months",
+    "filterYear": "Year",
+    "filterAll": "All Time",
+    "finansesTotal": "Total"
 }

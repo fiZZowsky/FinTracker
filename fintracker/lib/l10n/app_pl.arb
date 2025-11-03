@@ -20,5 +20,13 @@
     "scannerCameraAccess": "Uruchom aparat",
     "scannerGalleryAccess": "Wybierz z galerii",
     "scannerUploadSuccess": "Paragon wysłany pomyślnie",
-    "scannerUploadError": "Błąd wysyłania paragonu"
+    "scannerUploadError": "Błąd wysyłania paragonu",
+    "finansesSummaryTab": "Podsumowanie",
+    "finansesAllTab": "Wszystkie",
+    "filterWeek": "Tydzień",
+    "filterMonth": "Miesiąc",
+    "filter6Months": "6 miesięcy",
+    "filterYear": "Rok",
+    "filterAll": "Wszystkie",
+    "finansesTotal": "Suma"
 }

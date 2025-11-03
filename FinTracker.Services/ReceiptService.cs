@@ -7,12 +7,26 @@ namespace FinTracker.Services
 {
     public class ReceiptService : BaseService<Receipt, ReceiptDTO, int>, IReceiptService
     {
+        private readonly IReceiptRepository _receiptRepository;
         private readonly IOcrService _ocrService;
 
         public ReceiptService(IReceiptRepository repository, IOcrService ocrService, IMapper mapper)
             : base(repository, mapper)
         {
+            _receiptRepository = repository;
             _ocrService = ocrService;
+        }
+
+        public async Task<IEnumerable<ReceiptDTO>> GetPagedAsync(ReceiptQueryParameters query)
+        {
+            var entities = await _receiptRepository.GetPagedAsync(query);
+            
+            return _mapper.Map<IEnumerable<ReceiptDTO>>(entities);
+        }
+        
+        public async Task<IEnumerable<SummaryDataDTO>> GetSummaryAsync(ReceiptQueryParameters query)
+        {
+            return await _receiptRepository.GetSummaryAsync(query);
         }
 
         public async Task<ReceiptDTO> CreateReceiptFromImageAsync(Stream imageStream)
@@ -23,9 +37,9 @@ namespace FinTracker.Services
 
                 Receipt newReceipt = _ParseTextToReceipt(ocrText);
 
-                var createdEntity = await _repository.CreateAsync(newReceipt);
-
-                return _mapper.Map<ReceiptDTO>(createdEntity);
+                //var createdEntity = await _repository.CreateAsync(newReceipt);
+                return new ReceiptDTO();
+                //return _mapper.Map<ReceiptDTO>(createdEntity);
             }
             catch (Exception e)
             {
@@ -37,19 +51,25 @@ namespace FinTracker.Services
         private Receipt _ParseTextToReceipt(string ocrText)
         {
             // TODO: Zaimplementuj logikę parsowania (np. używając Regex)
-            // To jest bardzo uproszczony przykład.
-            // W Twojej pracy magisterskiej będziesz analizować 'ocrText'
-            // z obu silników, aby zobaczyć, który lepiej radzi sobie
-            // z odnalezieniem np. "SUMA PLN" lub nazwy sklepu.
 
             string storeName = "Nieznany Sklep";
             decimal totalAmount = 0.0m;
-            
-            var match = Regex.Match(ocrText, @"(SUMA|RAZEM)\s*(\d+[,.]\d{2})");
+
+            var match = Regex.Match(ocrText,
+                @"(SUMA:|RAZEM:|KWOTA:|DO ZAPŁATY:)\s*(PLN)?\s*(\d+[\s,.]+(\d{2}|S{2}|O{2}))",
+                RegexOptions.IgnoreCase);
             if (match.Success)
             {
-                string amountStr = match.Groups[2].Value.Replace(',', '.');
-                decimal.TryParse(amountStr, out totalAmount);
+                string amountStr = match.Groups[3].Value
+                    .Replace(',', '.') 
+                    .Replace('S', '5')
+                    .Replace('O', '0')
+                    .Replace(" ", "");
+                
+                decimal.TryParse(amountStr,
+                    System.Globalization.NumberStyles.Any,
+                    System.Globalization.CultureInfo.InvariantCulture,
+                    out totalAmount);
             }
 
             return new Receipt

@@ -16,14 +16,14 @@ namespace FinTracker.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetReceipts()
+        public async Task<IActionResult> GetReceipts([FromQuery] ReceiptQueryParameters query)
         {
-            var receipts = await _receiptService.GetAllAsync();
-            //var receipts = new List<ReceiptDTO>
-            //{
-            //    new ReceiptDTO { Id = 1, StoreName = "Test", TotalAmount = 150, DateShopping = DateTime.Now },
-            //    new ReceiptDTO { Id = 2, StoreName = "Test2", TotalAmount = 12, DateShopping = DateTime.Now }
-            //};
+            //var receipts = await _receiptService.GetAllAsync();
+            var receipts = new List<ReceiptDTO>
+            {
+                new ReceiptDTO { Id = 1, StoreName = "Test", TotalAmount = 150, DateShopping = DateTime.Now },
+                new ReceiptDTO { Id = 2, StoreName = "Test2", TotalAmount = 12, DateShopping = DateTime.Now }
+            };
             return Ok(receipts);
         }
 
@@ -38,6 +38,14 @@ namespace FinTracker.API.Controllers
             return Ok(receipt);
         }
 
+        [HttpGet("summary")]
+        public async Task<IActionResult> GetSummary(
+            [FromQuery] ReceiptQueryParameters query)
+        {
+            var summaryData = await _receiptService.GetSummaryAsync(query);
+            return Ok(summaryData);
+        }
+        
         [HttpPost]
         public async Task<IActionResult> CreateReceipt([FromBody] ReceiptDTO receiptDto)
         {
