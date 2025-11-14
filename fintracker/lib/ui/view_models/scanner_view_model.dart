@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_doc_scanner/flutter_doc_scanner.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:file_picker/file_picker.dart';
 import '../../data/services/receipt_service.dart';
 import '../../helpers/service_locator.dart';
 import '../../helpers/notification_service.dart';
@@ -10,20 +10,29 @@ import 'loading_view_model.dart';
 class ScannerViewModel extends ChangeNotifier {
   final ReceiptService _receiptService = getIt<ReceiptService>();
   final LoadingViewModel _loadingViewModel;
-  final ImagePicker _imagePicker = ImagePicker();
 
   ScannerViewModel({required LoadingViewModel loadingViewModel})
       : _loadingViewModel = loadingViewModel;
 
   Future<void> scanWithCamera() async {
     try {
-      final XFile? photo = await _imagePicker.pickImage(
-        source: ImageSource.camera,
-        imageQuality: 80,
-      );
+      final scanner = FlutterDocScanner();
 
-      if (photo != null) {
-        await _uploadFile(photo);
+      final result = await scanner.getScannedDocumentAsImages(page: 1);
+
+      if (result != null) {
+        final uriString = result['Uri'];
+
+        final match = RegExp(r'imageUri=([^}]+)').firstMatch(uriString);
+        if (match == null) throw 'Brak imageUri w odpowiedzi API';
+
+        final fullUri = match.group(1)!;
+
+        final filePath = fullUri.replaceFirst('file://', '');
+
+        final file = XFile(filePath);
+
+        await _uploadFile(file);
       }
     } catch (e) {
       debugPrint('Błąd aparatu: $e');
@@ -36,13 +45,11 @@ class ScannerViewModel extends ChangeNotifier {
 
   Future<void> pickFile() async {
     try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.image,
-      );
+      final ImagePicker picker = ImagePicker();
+      final XFile? picked = await picker.pickImage(source: ImageSource.gallery);
 
-      if (result != null && result.files.single.path != null) {
-        final XFile file = XFile(result.files.single.path!);
-        await _uploadFile(file);
+      if (picked != null) {
+        await _uploadFile(picked);
       }
     } catch (e) {
       debugPrint('Błąd wyboru pliku: $e');
