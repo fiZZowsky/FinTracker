@@ -18,58 +18,62 @@ class SettingsPage extends StatelessWidget {
 
     final isDark = themeVM.isDarkMode(context);
 
-    return ListView(
-      padding: const EdgeInsets.all(16.0),
-      children: [
-        SwitchListTile(
-          title: Text(l10n.themeSwitch),
-          secondary: Icon(
-            isDark ? Icons.dark_mode : Icons.light_mode,
+    return SafeArea(
+      child: ListView(
+        padding: const EdgeInsets.all(16.0),
+        children: [
+          SwitchListTile(
+            title: Text(l10n.themeSwitch),
+            secondary: Icon(
+              isDark ? Icons.dark_mode : Icons.light_mode,
+            ),
+            value: isDark,
+            onChanged: (value) {
+              themeVM.toggleTheme(value);
+            },
           ),
-          value: isDark,
-          onChanged: (value) {
-            themeVM.toggleTheme(value);
-          },
-        ),
-        ListTile(
-          title: Text(l10n.themeSwitchSystem),
-          leading: const Icon(Icons.settings_brightness),
-          trailing: themeVM.themeMode == ThemeMode.system
-              ? const Icon(Icons.check, color: Colors.green)
-              : null,
-          onTap: () {
-            themeVM.setThemeMode(ThemeMode.system);
-          },
-        ),
-        const Divider(),
-        Padding(
-          padding: const EdgeInsets.only(top: 16.0, left: 16.0, bottom: 8.0),
-          child: Text(
-            l10n.language,
-            style: Theme.of(context).textTheme.titleMedium,
+          ListTile(
+            title: Text(l10n.themeSwitchSystem),
+            leading: const Icon(Icons.settings_brightness),
+            trailing: themeVM.themeMode == ThemeMode.system
+                ? const Icon(Icons.check, color: Colors.green)
+                : null,
+            onTap: () {
+              themeVM.setThemeMode(ThemeMode.system);
+            },
           ),
-        ),
-        RadioListTile<Locale>(
-          title: Text(l10n.languagePolish),
-          value: const Locale('pl'),
-          groupValue: localeVM.locale,
-          onChanged: (value) {
-            localeVM.setLocale(value!);
-            getIt<NotificationService>().showNotification('languageChangedToPl',
-                type: NotificationType.success);
-          },
-        ),
-        RadioListTile<Locale>(
-          title: Text(l10n.languageEnglish),
-          value: const Locale('en'),
-          groupValue: localeVM.locale,
-          onChanged: (value) {
-            localeVM.setLocale(value!);
-            getIt<NotificationService>().showNotification('languageChangedToEn',
-                type: NotificationType.success);
-          },
-        ),
-      ],
+          const Divider(),
+          Padding(
+            padding: const EdgeInsets.only(top: 16.0, left: 16.0, bottom: 8.0),
+            child: Text(
+              l10n.language,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+          ),
+          RadioListTile<Locale>(
+            title: Text(l10n.languagePolish),
+            value: const Locale('pl'),
+            groupValue: localeVM.locale,
+            onChanged: (value) {
+              localeVM.setLocale(value!);
+              getIt<NotificationService>().showNotification(
+                  'languageChangedToPl',
+                  type: NotificationType.success);
+            },
+          ),
+          RadioListTile<Locale>(
+            title: Text(l10n.languageEnglish),
+            value: const Locale('en'),
+            groupValue: localeVM.locale,
+            onChanged: (value) {
+              localeVM.setLocale(value!);
+              getIt<NotificationService>().showNotification(
+                  'languageChangedToEn',
+                  type: NotificationType.success);
+            },
+          ),
+        ],
+      ),
     );
   }
 }

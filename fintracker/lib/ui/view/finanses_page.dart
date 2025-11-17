@@ -49,27 +49,29 @@ class _FinansesPageState extends State<FinansesPage>
 
     return Consumer<FinansesViewModel>(
       builder: (context, viewModel, child) {
-        return Column(
-          children: [
-            _DateFilterSelector(
-              selectedFilter: viewModel.selectedFilter,
-              onFilterChanged: (filter) {
-                if (filter != null) {
-                  viewModel.setFilter(filter);
-                }
-              },
-            ),
-            TabBar(
-              controller: _tabController,
-              tabs: [
-                Tab(text: l10n.finansesSummaryTab),
-                Tab(text: l10n.finansesAllTab),
-              ],
-            ),
-            Expanded(
-              child: _buildContent(context, viewModel, l10n),
-            ),
-          ],
+        return SafeArea(
+          child: Column(
+            children: [
+              _DateFilterSelector(
+                selectedFilter: viewModel.selectedFilter,
+                onFilterChanged: (filter) {
+                  if (filter != null) {
+                    viewModel.setFilter(filter);
+                  }
+                },
+              ),
+              TabBar(
+                controller: _tabController,
+                tabs: [
+                  Tab(text: l10n.finansesSummaryTab),
+                  Tab(text: l10n.finansesAllTab),
+                ],
+              ),
+              Expanded(
+                child: _buildContent(context, viewModel, l10n),
+              ),
+            ],
+          ),
         );
       },
     );
@@ -128,6 +130,14 @@ class _DateFilterSelector extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final isSmallScreen = MediaQuery.of(context).size.width < 500;
 
+    final String allLabelText;
+    if (isSmallScreen) {
+      final locale = Localizations.localeOf(context).languageCode;
+      allLabelText = (locale == 'pl') ? 'Wsz.' : 'All';
+    } else {
+      allLabelText = l10n.filterAll;
+    }
+
     final segments = <ButtonSegment<DateFilter>>[
       ButtonSegment(
         value: DateFilter.week,
@@ -148,7 +158,7 @@ class _DateFilterSelector extends StatelessWidget {
       ),
       ButtonSegment(
         value: DateFilter.all,
-        label: Text(l10n.filterAll, overflow: TextOverflow.ellipsis),
+        label: Text(allLabelText, overflow: TextOverflow.ellipsis),
       ),
     ];
 
@@ -156,15 +166,24 @@ class _DateFilterSelector extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
-        child: SegmentedButton<DateFilter>(
-          segments: segments,
-          selected: {selectedFilter},
-          onSelectionChanged: (Set<DateFilter> newSelection) {
-            onFilterChanged(newSelection.first);
+        child: NotificationListener<OverscrollIndicatorNotification>(
+          onNotification: (overscroll) {
+            overscroll.disallowIndicator();
+            return true;
           },
-          style: SegmentedButton.styleFrom(
-              padding:
-                  EdgeInsets.symmetric(horizontal: isSmallScreen ? 8.0 : 12.0)),
+          child: SegmentedButton<DateFilter>(
+            segments: segments,
+            selected: {selectedFilter},
+            onSelectionChanged: (Set<DateFilter> newSelection) {
+              onFilterChanged(newSelection.first);
+            },
+            style: SegmentedButton.styleFrom(
+              padding: EdgeInsets.symmetric(
+                horizontal: isSmallScreen ? 6.0 : 10.0,
+              ),
+              textStyle: isSmallScreen ? const TextStyle(fontSize: 12) : null,
+            ),
+          ),
         ),
       ),
     );
