@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
-
 import '../view_models/finanses_view_model.dart';
 import '../widgets/custom_loader.dart';
 import '../../data/models/summary_data.dart';
+import 'package:go_router/go_router.dart';
 
 class FinansesPage extends StatefulWidget {
   const FinansesPage({super.key});
@@ -344,7 +344,7 @@ class _AllReceiptsView extends StatelessWidget {
             ),
           ),
           onTap: () {
-            // TODO: Nawigacja do szczegółów paragonu
+            context.push('/receipt-details/${receipt.id}');
           },
         );
       },

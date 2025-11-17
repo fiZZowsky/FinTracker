@@ -118,4 +118,16 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get fieldRequired => 'To pole jest wymagane';
+
+  @override
+  String get receiptDetails => 'Szczegóły paragonu';
+
+  @override
+  String get edit => 'Edytuj';
+
+  @override
+  String get receiptUpdateSuccess => 'Paragon zaktualizowany pomyślnie';
+
+  @override
+  String get receiptUpdateError => 'Błąd aktualizacji paragonu';
 }

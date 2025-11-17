@@ -77,6 +77,11 @@ class NotificationService {
       case 'scannerUploadError':
         return l10n.scannerUploadError;
 
+      case 'receiptUpdateSuccess':
+        return l10n.receiptUpdateSuccess;
+      case 'receiptUpdateError':
+        return l10n.receiptUpdateError;
+
       default:
         debugPrint('Brakujący klucz l10n w NotificationService: $key');
         return key;

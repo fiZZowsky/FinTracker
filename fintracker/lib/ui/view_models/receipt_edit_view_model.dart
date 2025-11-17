@@ -14,8 +14,12 @@ class ReceiptEditViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // Używamy nowej metody serwisu
-      final success = await _receiptService.createReceipt(receipt);
+      bool success;
+      if (receipt.id > 0) {
+        success = await _receiptService.updateReceipt(receipt.id, receipt);
+      } else {
+        success = await _receiptService.createReceipt(receipt);
+      }
       return success;
     } catch (e) {
       debugPrint('Error saving receipt: $e');

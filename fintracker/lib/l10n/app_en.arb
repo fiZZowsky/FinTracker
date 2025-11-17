@@ -36,5 +36,9 @@
     "receiptStoreName": "Store Name",
     "receiptTotalAmount": "Total Amount",
     "receiptDate": "Date of Shopping",
-    "fieldRequired": "This field is required"
+    "fieldRequired": "This field is required",
+    "receiptDetails": "Receipt Details",
+    "edit": "Edit",
+    "receiptUpdateSuccess": "Receipt updated successfully",
+    "receiptUpdateError": "Error updating receipt"
 }

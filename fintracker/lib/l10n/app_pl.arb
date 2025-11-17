@@ -36,5 +36,9 @@
     "receiptStoreName": "Nazwa sklepu",
     "receiptTotalAmount": "Kwota",
     "receiptDate": "Data zakupów",
-    "fieldRequired": "To pole jest wymagane"
+    "fieldRequired": "To pole jest wymagane",
+    "receiptDetails": "Szczegóły paragonu",
+    "edit": "Edytuj",
+    "receiptUpdateSuccess": "Paragon zaktualizowany pomyślnie",
+    "receiptUpdateError": "Błąd aktualizacji paragonu"
 }

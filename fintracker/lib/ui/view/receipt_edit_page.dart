@@ -3,13 +3,13 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:fintracker/l10n/app_localizations.dart';
-
 import '../../data/models/receipt_model.dart';
 import '../view_models/receipt_edit_view_model.dart';
 import '../view_models/finanses_view_model.dart';
 import '../../helpers/notification_service.dart';
 import '../../helpers/service_locator.dart';
 import '../widgets/custom_loader.dart';
+import '../view_models/receipt_details_view_model.dart';
 
 class ReceiptEditPage extends StatefulWidget {
   final ReceiptModel receipt;
@@ -69,8 +69,9 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
         double.tryParse(_totalAmountController.text.replaceAll(',', '.')) ??
             0.0;
 
+    // Tworzymy model, zachowując oryginalne ID (jeśli istnieje)
     final updatedReceipt = ReceiptModel(
-      id: 0,
+      id: widget.receipt.id, // Ważne: zachowujemy ID (będzie 0 dla nowych)
       storeName: _storeNameController.text,
       totalAmount: totalAmount,
       dateShopping: _dateShopping,
@@ -80,17 +81,28 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
 
     if (mounted) {
       if (success) {
-        notificationService.showNotification(
-          'receiptSaveSuccess',
-          type: NotificationType.success,
-        );
+        final messageKey = widget.receipt.id > 0
+            ? 'receiptUpdateSuccess'
+            : 'receiptSaveSuccess';
+        notificationService.showNotification(messageKey,
+            type: NotificationType.success);
+
         await context.read<FinansesViewModel>().fetchData();
-        context.go('/finanses');
+
+        if (widget.receipt.id > 0) {
+          await context
+              .read<ReceiptDetailsViewModel>()
+              .fetchReceiptDetails(widget.receipt.id);
+          context.pop();
+        } else {
+          context.go('/finanses');
+        }
       } else {
-        notificationService.showNotification(
-          'receiptSaveError',
-          type: NotificationType.error,
-        );
+        // BŁĄD
+        final messageKey =
+            widget.receipt.id > 0 ? 'receiptUpdateError' : 'receiptSaveError';
+        notificationService.showNotification(messageKey,
+            type: NotificationType.error);
       }
     }
   }

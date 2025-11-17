@@ -118,4 +118,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get fieldRequired => 'This field is required';
+
+  @override
+  String get receiptDetails => 'Receipt Details';
+
+  @override
+  String get edit => 'Edit';
+
+  @override
+  String get receiptUpdateSuccess => 'Receipt updated successfully';
+
+  @override
+  String get receiptUpdateError => 'Error updating receipt';
 }

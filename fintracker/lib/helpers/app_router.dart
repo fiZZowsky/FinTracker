@@ -7,6 +7,7 @@ import '../ui/view/settings_page.dart';
 import '../ui/widgets/responsive_nav_shell.dart';
 import '../ui/view/receipt_edit_page.dart';
 import '../data/models/receipt_model.dart';
+import '../ui/view/receipt_details_page.dart';
 
 class AppRouter {
   static final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -53,6 +54,20 @@ class AppRouter {
           }
 
           return ReceiptEditPage(receipt: receipt);
+        },
+      ),
+      GoRoute(
+        path: '/receipt-details/:id',
+        builder: (context, state) {
+          final idString = state.pathParameters['id'];
+          final id = int.tryParse(idString ?? '');
+
+          if (id == null) {
+            return const Scaffold(
+                body: Center(child: Text('Błąd: Nieprawidłowe ID paragonu')));
+          }
+
+          return ReceiptDetailsPage(receiptId: id);
         },
       ),
     ],

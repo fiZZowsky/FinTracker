@@ -94,4 +94,31 @@ class ReceiptService {
       return false;
     }
   }
+
+  Future<ReceiptModel?> getReceiptById(int id) async {
+    try {
+      final dynamic data = await _apiClient.get('/api/Receipts/$id');
+      if (data is Map<String, dynamic>) {
+        return ReceiptModel.fromJson(data);
+      } else {
+        throw Exception('Invalid data format received from server.');
+      }
+    } catch (e) {
+      debugPrint('ReceiptService getById error: $e');
+      return null;
+    }
+  }
+
+  Future<bool> updateReceipt(int id, ReceiptModel receipt) async {
+    try {
+      await _apiClient.put(
+        '/api/Receipts/$id',
+        data: receipt.toJson(),
+      );
+      return true;
+    } catch (e) {
+      debugPrint('ReceiptService update error: $e');
+      return false;
+    }
+  }
 }

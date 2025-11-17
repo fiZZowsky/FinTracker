@@ -319,6 +319,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This field is required'**
   String get fieldRequired;
+
+  /// No description provided for @receiptDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt Details'**
+  String get receiptDetails;
+
+  /// No description provided for @edit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get edit;
+
+  /// No description provided for @receiptUpdateSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt updated successfully'**
+  String get receiptUpdateSuccess;
+
+  /// No description provided for @receiptUpdateError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error updating receipt'**
+  String get receiptUpdateError;
 }
 
 class _AppLocalizationsDelegate

@@ -29,6 +29,7 @@ class ReceiptModel {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'storeName': storeName,
       'totalAmount': totalAmount,
       'dateShopping': dateShopping.toIso8601String(),
