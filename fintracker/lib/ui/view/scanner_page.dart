@@ -2,9 +2,22 @@ import 'package:fintracker/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../view_models/scanner_view_model.dart';
+import 'package:go_router/go_router.dart';
+import '../../data/models/receipt_model.dart';
 
 class ScannerPage extends StatelessWidget {
   const ScannerPage({super.key});
+
+  Future<void> _handleScan(
+    BuildContext context,
+    Future<ReceiptModel?> Function() scanFunction,
+  ) async {
+    final receipt = await scanFunction();
+
+    if (context.mounted && receipt != null) {
+      context.push('/receipt-edit', extra: receipt);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +39,7 @@ class ScannerPage extends StatelessWidget {
             ),
             const SizedBox(height: 40),
             ElevatedButton.icon(
-              onPressed: scannerVM.scanWithCamera,
+              onPressed: () => _handleScan(context, scannerVM.scanWithCamera),
               icon: const Icon(Icons.camera),
               label: Text(l10n.scannerCameraAccess),
               style: ElevatedButton.styleFrom(
@@ -37,7 +50,7 @@ class ScannerPage extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             TextButton.icon(
-              onPressed: scannerVM.pickFile,
+              onPressed: () => _handleScan(context, scannerVM.pickFile),
               icon: const Icon(Icons.image_outlined),
               label: Text(l10n.scannerGalleryAccess),
               style: TextButton.styleFrom(

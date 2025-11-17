@@ -5,6 +5,7 @@ import '../ui/view_models/loading_view_model.dart';
 import '../ui/view_models/locale_view_model.dart';
 import '../ui/view_models/finanses_view_model.dart';
 import '../ui/view_models/scanner_view_model.dart';
+import '../ui/view_models/receipt_edit_view_model.dart';
 
 List<SingleChildWidget> getGlobalProviders() {
   return [
@@ -17,5 +18,6 @@ List<SingleChildWidget> getGlobalProviders() {
         loadingViewModel: context.read<LoadingViewModel>(),
       ),
     ),
+    ChangeNotifierProvider(create: (context) => ReceiptEditViewModel()),
   ];
 }

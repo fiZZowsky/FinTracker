@@ -94,4 +94,28 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get finansesTotal => 'Suma';
+
+  @override
+  String get receiptEditTitle => 'Edytuj Paragon';
+
+  @override
+  String get receiptSaveButton => 'Zapisz';
+
+  @override
+  String get receiptSaveSuccess => 'Paragon zapisany pomyślnie';
+
+  @override
+  String get receiptSaveError => 'Błąd zapisu paragonu';
+
+  @override
+  String get receiptStoreName => 'Nazwa sklepu';
+
+  @override
+  String get receiptTotalAmount => 'Kwota';
+
+  @override
+  String get receiptDate => 'Data zakupów';
+
+  @override
+  String get fieldRequired => 'To pole jest wymagane';
 }

@@ -37,11 +37,8 @@ namespace FinTracker.Services
             {
                 string ocrText = await _ocrService.RecognizeTextAsync(imageStream);
 
-                Receipt newReceipt = _ParseTextToReceipt(ocrText);
-
-                //var createdEntity = await _repository.CreateAsync(newReceipt);
-                return new ReceiptDTO();
-                //return _mapper.Map<ReceiptDTO>(createdEntity);
+                ReceiptDTO newReceipt = _ParseTextToReceipt(ocrText);
+                return newReceipt;
             }
             catch (Exception e)
             {
@@ -50,7 +47,7 @@ namespace FinTracker.Services
             }
         }
 
-        private Receipt _ParseTextToReceipt(string ocrText)
+        private ReceiptDTO _ParseTextToReceipt(string ocrText)
         {
             decimal totalAmount = 0.0m;
             DateTime dateShopping = DateTime.UtcNow;
@@ -91,7 +88,7 @@ namespace FinTracker.Services
                 }
             }
 
-            return new Receipt
+            return new ReceiptDTO
             {
                 StoreName = storeName,
                 TotalAmount = totalAmount,
@@ -156,14 +153,6 @@ namespace FinTracker.Services
                 }
             }
             return d[n, m];
-        }
-
-        private bool _IsAllUpper(string input)
-        {
-            if (string.IsNullOrWhiteSpace(input) || !input.Any(char.IsLetter))
-                return false;
-            
-            return !input.Any(char.IsLower);
         }
 
         private string _RemoveDiacritics(string text)

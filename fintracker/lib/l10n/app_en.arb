@@ -28,5 +28,13 @@
     "filter6Months": "6 Months",
     "filterYear": "Year",
     "filterAll": "All Time",
-    "finansesTotal": "Total"
+    "finansesTotal": "Total",
+    "receiptEditTitle": "Edit Receipt",
+    "receiptSaveButton": "Save",
+    "receiptSaveSuccess": "Receipt saved successfully",
+    "receiptSaveError": "Error saving receipt",
+    "receiptStoreName": "Store Name",
+    "receiptTotalAmount": "Total Amount",
+    "receiptDate": "Date of Shopping",
+    "fieldRequired": "This field is required"
 }

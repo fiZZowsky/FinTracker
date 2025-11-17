@@ -72,7 +72,7 @@ namespace FinTracker.API.Controllers
                 try
                 {
                     var createdReceipt = await _receiptService.CreateReceiptFromImageAsync(stream);
-                    return CreatedAtAction(nameof(GetReceiptById), new { id = createdReceipt.Id }, createdReceipt);
+                    return Ok(createdReceipt);
                 }
                 catch (Exception ex)
                 {

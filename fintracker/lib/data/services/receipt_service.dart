@@ -32,7 +32,7 @@ class ReceiptService {
         await _apiClient.get('/api/Receipts', queryParameters: queryParameters);
 
     if (data is List) {
-      return data.map((json) => _mapJsonToReceipt(json)).toList();
+      return data.map((json) => ReceiptModel.fromJson(json)).toList();
     } else {
       throw Exception('Invalid data format received from server.');
     }
@@ -62,32 +62,35 @@ class ReceiptService {
     }
   }
 
-  ReceiptModel _mapJsonToReceipt(Map<String, dynamic> json) {
-    try {
-      return ReceiptModel(
-        id: json['id'] as int,
-        storeName: json['storeName'] as String,
-        totalAmount: (json['totalAmount'] as num).toDouble(),
-        dateShopping: DateTime.parse(json['dateShopping'] as String),
-      );
-    } catch (e) {
-      debugPrint('Receipt parsing error: $e. Invalid JSON: $json');
-      throw Exception('Failed to parse receipt data.');
-    }
-  }
-
-  Future<bool> uploadReceipt(XFile file) async {
+  Future<ReceiptModel?> uploadReceipt(XFile file) async {
     try {
       String fileName = file.path.split('/').last;
       FormData formData = FormData.fromMap({
         "file": await MultipartFile.fromFile(file.path, filename: fileName),
       });
 
-      await _apiClient.postFormData('/api/Receipts/Upload', formData);
-
-      return true;
+      final dynamic data =
+          await _apiClient.postFormData('/api/Receipts/Upload', formData);
+      if (data is Map<String, dynamic>) {
+        return ReceiptModel.fromJson(data);
+      } else {
+        throw Exception('Invalid data format received from parser.');
+      }
     } catch (e) {
       debugPrint('ReceiptService upload error: $e');
+      return null;
+    }
+  }
+
+  Future<bool> createReceipt(ReceiptModel receipt) async {
+    try {
+      await _apiClient.post(
+        '/api/Receipts',
+        data: receipt.toJson(),
+      );
+      return true;
+    } catch (e) {
+      debugPrint('ReceiptService create error: $e');
       return false;
     }
   }

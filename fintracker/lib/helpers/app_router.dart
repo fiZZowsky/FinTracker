@@ -5,6 +5,8 @@ import '../ui/view/home_page.dart';
 import '../ui/view/scanner_page.dart';
 import '../ui/view/settings_page.dart';
 import '../ui/widgets/responsive_nav_shell.dart';
+import '../ui/view/receipt_edit_page.dart';
+import '../data/models/receipt_model.dart';
 
 class AppRouter {
   static final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -36,6 +38,22 @@ class AppRouter {
             builder: (context, state) => const SettingsPage(),
           ),
         ],
+      ),
+      GoRoute(
+        path: '/receipt-edit',
+        builder: (context, state) {
+          final receipt = state.extra as ReceiptModel?;
+
+          if (receipt == null) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              context.go('/');
+            });
+            return const Scaffold(
+                body: Center(child: Text('Błąd: Brak danych paragonu')));
+          }
+
+          return ReceiptEditPage(receipt: receipt);
+        },
       ),
     ],
   );

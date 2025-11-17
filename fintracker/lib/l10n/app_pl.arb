@@ -28,5 +28,13 @@
     "filter6Months": "6 miesięcy",
     "filterYear": "Rok",
     "filterAll": "Wszystkie",
-    "finansesTotal": "Suma"
+    "finansesTotal": "Suma",
+    "receiptEditTitle": "Edytuj Paragon",
+    "receiptSaveButton": "Zapisz",
+    "receiptSaveSuccess": "Paragon zapisany pomyślnie",
+    "receiptSaveError": "Błąd zapisu paragonu",
+    "receiptStoreName": "Nazwa sklepu",
+    "receiptTotalAmount": "Kwota",
+    "receiptDate": "Data zakupów",
+    "fieldRequired": "To pole jest wymagane"
 }

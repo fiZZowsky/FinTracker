@@ -271,6 +271,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Total'**
   String get finansesTotal;
+
+  /// No description provided for @receiptEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Receipt'**
+  String get receiptEditTitle;
+
+  /// No description provided for @receiptSaveButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get receiptSaveButton;
+
+  /// No description provided for @receiptSaveSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt saved successfully'**
+  String get receiptSaveSuccess;
+
+  /// No description provided for @receiptSaveError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error saving receipt'**
+  String get receiptSaveError;
+
+  /// No description provided for @receiptStoreName.
+  ///
+  /// In en, this message translates to:
+  /// **'Store Name'**
+  String get receiptStoreName;
+
+  /// No description provided for @receiptTotalAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Amount'**
+  String get receiptTotalAmount;
+
+  /// No description provided for @receiptDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date of Shopping'**
+  String get receiptDate;
+
+  /// No description provided for @fieldRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'This field is required'**
+  String get fieldRequired;
 }
 
 class _AppLocalizationsDelegate

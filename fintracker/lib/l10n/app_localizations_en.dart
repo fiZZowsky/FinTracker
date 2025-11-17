@@ -94,4 +94,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get finansesTotal => 'Total';
+
+  @override
+  String get receiptEditTitle => 'Edit Receipt';
+
+  @override
+  String get receiptSaveButton => 'Save';
+
+  @override
+  String get receiptSaveSuccess => 'Receipt saved successfully';
+
+  @override
+  String get receiptSaveError => 'Error saving receipt';
+
+  @override
+  String get receiptStoreName => 'Store Name';
+
+  @override
+  String get receiptTotalAmount => 'Total Amount';
+
+  @override
+  String get receiptDate => 'Date of Shopping';
+
+  @override
+  String get fieldRequired => 'This field is required';
 }
