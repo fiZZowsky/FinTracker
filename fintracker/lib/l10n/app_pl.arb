@@ -44,5 +44,8 @@
     "unsavedChangesTitle": "Niezapisane zmiany",
     "unsavedChangesMessage": "Masz niezapisane zmiany. Czy na pewno chcesz wyjść i odrzucić zmiany?",
     "cancel": "Anuluj",
-    "confirm": "Opuść"
+    "confirm": "Opuść",
+    "receiptAddTitle": "Dodaj Paragon",
+    "invalidValue": "Nieprawidłowa wartość",
+    "tryAgain": "Spróbuj ponownie"
 }

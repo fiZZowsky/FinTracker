@@ -143,4 +143,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get confirm => 'Leave';
+
+  @override
+  String get receiptAddTitle => 'Add Receipt';
+
+  @override
+  String get invalidValue => 'Invalid value';
+
+  @override
+  String get tryAgain => 'Try again';
 }

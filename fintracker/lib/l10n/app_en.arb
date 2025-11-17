@@ -44,5 +44,8 @@
     "unsavedChangesTitle": "Unsaved changes",
     "unsavedChangesMessage": "You have unsaved changes. Are you sure you want to leave and discard them?",
     "cancel": "Cancel",
-    "confirm": "Leave"
+    "confirm": "Leave",
+    "receiptAddTitle": "Add Receipt",
+    "invalidValue": "Invalid value",
+    "tryAgain": "Try again"
 }

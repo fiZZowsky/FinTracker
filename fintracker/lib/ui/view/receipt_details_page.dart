@@ -71,7 +71,7 @@ class _ReceiptDetailsPageState extends State<ReceiptDetailsPage> {
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: _fetchData,
-            child: const Text('Spróbuj ponownie'), // TODO: Do .arb
+            child: Text(l10n.tryAgain),
           )
         ],
       ));

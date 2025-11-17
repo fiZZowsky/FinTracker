@@ -66,11 +66,6 @@ namespace FinTracker.Services
                                 AdaptiveThresholdTypes.GaussianC,
                                 ThresholdTypes.Binary, 31, 15);
 
-                            string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-                            string fileName = "przerobione_zdjecie_opencv.png";
-                            string fullPath = Path.Combine(desktopPath, fileName);
-                            processedImage.SaveImage(fullPath);
-
                             using (var pngStream = processedImage.ToMemoryStream(".png"))
                             {
                                 pngStream.Position = 0;

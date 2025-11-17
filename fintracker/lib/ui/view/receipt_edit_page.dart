@@ -86,9 +86,8 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
         double.tryParse(_totalAmountController.text.replaceAll(',', '.')) ??
             0.0;
 
-    // Tworzymy model, zachowując oryginalne ID (jeśli istnieje)
     final updatedReceipt = ReceiptModel(
-      id: widget.receipt.id, // Ważne: zachowujemy ID (będzie 0 dla nowych)
+      id: widget.receipt.id,
       storeName: _storeNameController.text,
       totalAmount: totalAmount,
       dateShopping: _dateShopping,
@@ -151,7 +150,7 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
         appBar: AppBar(
           title: Text(widget.receipt.id > 0
               ? l10n.receiptEditTitle
-              : "Dodaj Paragon"), // TODO: Dodaj "Dodaj Paragon" do .arb
+              : l10n.receiptAddTitle),
         ),
         body: Stack(
           children: [
@@ -190,7 +189,7 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
                         }
                         if (double.tryParse(value.replaceAll(',', '.')) ==
                             null) {
-                          return 'Nieprawidłowa wartość'; // TODO: Przenieść do .arb
+                          return l10n.invalidValue;
                         }
                         return null;
                       },

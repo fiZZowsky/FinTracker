@@ -231,8 +231,9 @@ class _SummaryView extends StatelessWidget {
                       reservedSize: 30,
                       getTitlesWidget: (double value, TitleMeta meta) {
                         final index = value.toInt();
-                        if (index < 0 || index >= summaryData.length)
+                        if (index < 0 || index >= summaryData.length) {
                           return const SizedBox();
+                        }
                         return Padding(
                           padding: const EdgeInsets.only(top: 6.0),
                           child: Text(
@@ -248,8 +249,9 @@ class _SummaryView extends StatelessWidget {
                       showTitles: true,
                       reservedSize: 50,
                       getTitlesWidget: (value, meta) {
-                        if (value == 0 || value == meta.max)
+                        if (value == 0 || value == meta.max) {
                           return const SizedBox();
+                        }
                         return Text(
                             NumberFormat.compactSimpleCurrency(locale: 'pl_PL')
                                 .format(value),

@@ -143,4 +143,13 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get confirm => 'Opuść';
+
+  @override
+  String get receiptAddTitle => 'Dodaj Paragon';
+
+  @override
+  String get invalidValue => 'Nieprawidłowa wartość';
+
+  @override
+  String get tryAgain => 'Spróbuj ponownie';
 }
