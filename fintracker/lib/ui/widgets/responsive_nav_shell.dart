@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../view_models/theme_view_model.dart';
 import '../view_models/loading_view_model.dart';
 import '../view_models/locale_view_model.dart';
+import '../view_models/navigation_guard_view_model.dart';
 
 class ResponsiveNavShell extends StatelessWidget {
   final Widget child;
@@ -231,22 +232,23 @@ class ResponsiveNavShell extends StatelessWidget {
     }
   }
 
-  void _navigateTo(BuildContext context, String location) {
+  void _navigateTo(BuildContext context, String location) async {
     final currentRoute = GoRouterState.of(context).uri.toString();
-
     if (currentRoute == location) return;
+    final guard = context.read<NavigationGuardViewModel>();
+    final bool canGo = await guard.canNavigate(context);
+
+    if (!canGo) {
+      return;
+    }
 
     final loadingVM = context.read<LoadingViewModel>();
-
     Future(() async {
       loadingVM.show();
-
       if (context.mounted) {
         context.go(location);
       }
-
       await Future.delayed(const Duration(milliseconds: 300));
-
       loadingVM.hide();
     });
   }

@@ -4,10 +4,10 @@ import '../ui/view/finanses_page.dart';
 import '../ui/view/home_page.dart';
 import '../ui/view/scanner_page.dart';
 import '../ui/view/settings_page.dart';
-import '../ui/widgets/responsive_nav_shell.dart';
 import '../ui/view/receipt_edit_page.dart';
 import '../data/models/receipt_model.dart';
 import '../ui/view/receipt_details_page.dart';
+import '../ui/widgets/responsive_nav_shell.dart';
 
 class AppRouter {
   static final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -38,37 +38,33 @@ class AppRouter {
             path: '/settings',
             builder: (context, state) => const SettingsPage(),
           ),
+          GoRoute(
+            path: '/receipt-edit',
+            builder: (context, state) {
+              final receipt = state.extra as ReceiptModel?;
+              if (receipt == null) {
+                return ReceiptEditPage(
+                  receipt: state.extra as ReceiptModel,
+                );
+              }
+              return ReceiptEditPage(receipt: receipt);
+            },
+          ),
+          GoRoute(
+            path: '/receipt-details/:id',
+            builder: (context, state) {
+              final idString = state.pathParameters['id'];
+              final id = int.tryParse(idString ?? '');
+
+              if (id == null) {
+                return const Scaffold(
+                    body:
+                        Center(child: Text('Błąd: Nieprawidłowe ID paragonu')));
+              }
+              return ReceiptDetailsPage(receiptId: id);
+            },
+          ),
         ],
-      ),
-      GoRoute(
-        path: '/receipt-edit',
-        builder: (context, state) {
-          final receipt = state.extra as ReceiptModel?;
-
-          if (receipt == null) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              context.go('/');
-            });
-            return const Scaffold(
-                body: Center(child: Text('Błąd: Brak danych paragonu')));
-          }
-
-          return ReceiptEditPage(receipt: receipt);
-        },
-      ),
-      GoRoute(
-        path: '/receipt-details/:id',
-        builder: (context, state) {
-          final idString = state.pathParameters['id'];
-          final id = int.tryParse(idString ?? '');
-
-          if (id == null) {
-            return const Scaffold(
-                body: Center(child: Text('Błąd: Nieprawidłowe ID paragonu')));
-          }
-
-          return ReceiptDetailsPage(receiptId: id);
-        },
       ),
     ],
   );

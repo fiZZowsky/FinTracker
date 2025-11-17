@@ -130,4 +130,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get receiptUpdateError => 'Error updating receipt';
+
+  @override
+  String get unsavedChangesTitle => 'Unsaved changes';
+
+  @override
+  String get unsavedChangesMessage =>
+      'You have unsaved changes. Are you sure you want to leave and discard them?';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get confirm => 'Leave';
 }

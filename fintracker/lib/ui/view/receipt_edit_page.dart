@@ -10,6 +10,7 @@ import '../../helpers/notification_service.dart';
 import '../../helpers/service_locator.dart';
 import '../widgets/custom_loader.dart';
 import '../view_models/receipt_details_view_model.dart';
+import '../view_models/navigation_guard_view_model.dart';
 
 class ReceiptEditPage extends StatefulWidget {
   final ReceiptModel receipt;
@@ -26,6 +27,9 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
   late final TextEditingController _totalAmountController;
   late DateTime _dateShopping;
 
+  late NavigationGuardViewModel _navGuard;
+  bool _isNavGuardInitialized = false;
+
   @override
   void initState() {
     super.initState();
@@ -37,7 +41,19 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isNavGuardInitialized) {
+      _navGuard = context.read<NavigationGuardViewModel>();
+      _navGuard.setEditing(true);
+      _isNavGuardInitialized = true;
+    }
+  }
+
+  @override
   void dispose() {
+    _navGuard.setEditing(false);
+
     _storeNameController.dispose();
     _totalAmountController.dispose();
     super.dispose();
@@ -64,6 +80,7 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
 
     final viewModel = context.read<ReceiptEditViewModel>();
     final notificationService = getIt<NotificationService>();
+    final guard = context.read<NavigationGuardViewModel>();
 
     final totalAmount =
         double.tryParse(_totalAmountController.text.replaceAll(',', '.')) ??
@@ -81,6 +98,7 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
 
     if (mounted) {
       if (success) {
+        guard.setEditing(false);
         final messageKey = widget.receipt.id > 0
             ? 'receiptUpdateSuccess'
             : 'receiptSaveSuccess';
@@ -107,89 +125,109 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
     }
   }
 
+  Future<void> _onWillPop(bool didPop) async {
+    if (didPop) {
+      return;
+    }
+
+    final guard = context.read<NavigationGuardViewModel>();
+    final bool canPop = await guard.canNavigate(context);
+
+    if (canPop && context.mounted) {
+      context.pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final isLoading = context.watch<ReceiptEditViewModel>().isLoading;
     final theme = Theme.of(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.receiptEditTitle),
-      ),
-      body: Stack(
-        children: [
-          Form(
-            key: _formKey,
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  TextFormField(
-                    controller: _storeNameController,
-                    decoration: InputDecoration(
-                      labelText: l10n.receiptStoreName,
-                      border: const OutlineInputBorder(),
+    return PopScope(
+      canPop: false,
+      onPopInvoked: _onWillPop,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(widget.receipt.id > 0
+              ? l10n.receiptEditTitle
+              : "Dodaj Paragon"), // TODO: Dodaj "Dodaj Paragon" do .arb
+        ),
+        body: Stack(
+          children: [
+            Form(
+              key: _formKey,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    TextFormField(
+                      controller: _storeNameController,
+                      decoration: InputDecoration(
+                        labelText: l10n.receiptStoreName,
+                        border: const OutlineInputBorder(),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return l10n.fieldRequired;
+                        }
+                        return null;
+                      },
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return l10n.fieldRequired;
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _totalAmountController,
-                    decoration: InputDecoration(
-                      labelText: l10n.receiptTotalAmount,
-                      suffixText: 'PLN',
-                      border: const OutlineInputBorder(),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _totalAmountController,
+                      decoration: InputDecoration(
+                        labelText: l10n.receiptTotalAmount,
+                        suffixText: 'PLN',
+                        border: const OutlineInputBorder(),
+                      ),
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return l10n.fieldRequired;
+                        }
+                        if (double.tryParse(value.replaceAll(',', '.')) ==
+                            null) {
+                          return 'Nieprawidłowa wartość'; // TODO: Przenieść do .arb
+                        }
+                        return null;
+                      },
                     ),
-                    keyboardType:
-                        const TextInputType.numberWithOptions(decimal: true),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return l10n.fieldRequired;
-                      }
-                      if (double.tryParse(value.replaceAll(',', '.')) == null) {
-                        return 'Nieprawidłowa wartość'; // TODO: Przenieść do .arb
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  ListTile(
-                    title: Text(l10n.receiptDate),
-                    subtitle: Text(DateFormat.yMd().format(_dateShopping)),
-                    trailing: const Icon(Icons.calendar_today),
-                    onTap: () => _pickDate(context),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      side: BorderSide(color: theme.dividerColor),
+                    const SizedBox(height: 16),
+                    ListTile(
+                      title: Text(l10n.receiptDate),
+                      subtitle: Text(DateFormat.yMd().format(_dateShopping)),
+                      trailing: const Icon(Icons.calendar_today),
+                      onTap: () => _pickDate(context),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        side: BorderSide(color: theme.dividerColor),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 32),
-                  ElevatedButton.icon(
-                    onPressed: isLoading ? null : _saveReceipt,
-                    icon: const Icon(Icons.save),
-                    label: Text(l10n.receiptSaveButton),
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 50),
+                    const SizedBox(height: 32),
+                    ElevatedButton.icon(
+                      onPressed: isLoading ? null : _saveReceipt,
+                      icon: const Icon(Icons.save),
+                      label: Text(l10n.receiptSaveButton),
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(double.infinity, 50),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          if (isLoading)
-            Container(
-              color: Colors.black.withOpacity(0.3),
-              child: const Center(
-                child: CustomLoader(size: 80),
+            if (isLoading)
+              Container(
+                color: Colors.black.withOpacity(0.3),
+                child: const Center(
+                  child: CustomLoader(size: 80),
+                ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }

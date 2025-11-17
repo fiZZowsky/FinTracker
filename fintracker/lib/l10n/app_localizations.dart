@@ -343,6 +343,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Error updating receipt'**
   String get receiptUpdateError;
+
+  /// No description provided for @unsavedChangesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsaved changes'**
+  String get unsavedChangesTitle;
+
+  /// No description provided for @unsavedChangesMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You have unsaved changes. Are you sure you want to leave and discard them?'**
+  String get unsavedChangesMessage;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave'**
+  String get confirm;
 }
 
 class _AppLocalizationsDelegate

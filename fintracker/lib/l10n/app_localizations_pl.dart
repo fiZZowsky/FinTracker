@@ -130,4 +130,17 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get receiptUpdateError => 'Błąd aktualizacji paragonu';
+
+  @override
+  String get unsavedChangesTitle => 'Niezapisane zmiany';
+
+  @override
+  String get unsavedChangesMessage =>
+      'Masz niezapisane zmiany. Czy na pewno chcesz wyjść i odrzucić zmiany?';
+
+  @override
+  String get cancel => 'Anuluj';
+
+  @override
+  String get confirm => 'Opuść';
 }

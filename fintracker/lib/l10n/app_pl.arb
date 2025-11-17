@@ -40,5 +40,9 @@
     "receiptDetails": "Szczegóły paragonu",
     "edit": "Edytuj",
     "receiptUpdateSuccess": "Paragon zaktualizowany pomyślnie",
-    "receiptUpdateError": "Błąd aktualizacji paragonu"
+    "receiptUpdateError": "Błąd aktualizacji paragonu",
+    "unsavedChangesTitle": "Niezapisane zmiany",
+    "unsavedChangesMessage": "Masz niezapisane zmiany. Czy na pewno chcesz wyjść i odrzucić zmiany?",
+    "cancel": "Anuluj",
+    "confirm": "Opuść"
 }

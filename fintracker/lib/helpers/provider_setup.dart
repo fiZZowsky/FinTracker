@@ -1,3 +1,4 @@
+import 'package:fintracker/ui/view_models/navigation_guard_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import '../ui/view_models/theme_view_model.dart';
@@ -21,5 +22,6 @@ List<SingleChildWidget> getGlobalProviders() {
     ),
     ChangeNotifierProvider(create: (context) => ReceiptEditViewModel()),
     ChangeNotifierProvider(create: (context) => ReceiptDetailsViewModel()),
+    ChangeNotifierProvider(create: (context) => NavigationGuardViewModel()),
   ];
 }
