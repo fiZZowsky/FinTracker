@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 
 class ReceiptModel {
@@ -5,12 +7,14 @@ class ReceiptModel {
   final String storeName;
   final double totalAmount;
   final DateTime dateShopping;
+  final Uint8List? storeLogo;
 
   ReceiptModel({
     required this.id,
     required this.storeName,
     required this.totalAmount,
     required this.dateShopping,
+    required this.storeLogo,
   });
 
   factory ReceiptModel.fromJson(Map<String, dynamic> json) {
@@ -20,6 +24,9 @@ class ReceiptModel {
         storeName: json['storeName'] as String,
         totalAmount: (json['totalAmount'] as num).toDouble(),
         dateShopping: DateTime.parse(json['dateShopping'] as String),
+        storeLogo: json['storeLogo'] != null
+            ? base64Decode(json['storeLogo'] as String)
+            : null,
       );
     } catch (e) {
       debugPrint('Receipt parsing error: $e. Invalid JSON: $json');

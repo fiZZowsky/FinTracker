@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
 using FinTracker.Models;
 using FinTracker.Repositories;
+using OpenCvSharp;
 using System.Globalization;
-using System.Text.RegularExpressions;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace FinTracker.Services
 {
@@ -19,6 +20,15 @@ namespace FinTracker.Services
             _receiptRepository = repository;
             _ocrService = ocrService;
             _storeRepository = storeRepository;
+        }
+
+        public override async Task<ReceiptDTO> GetByIdAsync(int id)
+        {
+            var receiptDto = await base.GetByIdAsync(id);
+            if (receiptDto == null) return null;
+
+            receiptDto.StoreLogo = await _GetLogoBytesForStore(receiptDto.StoreName);
+            return receiptDto;
         }
 
         public async Task<IEnumerable<ReceiptDTO>> GetPagedAsync(ReceiptQueryParameters query)
@@ -168,8 +178,53 @@ namespace FinTracker.Services
             
             return stringBuilder.ToString()
                 .Normalize(NormalizationForm.FormC)
-                .Replace('Ł', 'L')
-                .Replace('ł', 'l');
+                .Replace("ą", "a")
+                .Replace("ć", "c")
+                .Replace("ę", "e")
+                .Replace("ł", "l")
+                .Replace("ń", "n")
+                .Replace("ó", "o")
+                .Replace("ś", "s")
+                .Replace("ź", "z")
+                .Replace("ż", "z");
+        }
+
+        private async Task<byte[]?> _GetLogoBytesForStore(string storeName)
+        {
+            var stores = await _storeRepository.GetAllAsync();
+            var store = stores.FirstOrDefault(s => s.Name.Equals(storeName, StringComparison.CurrentCultureIgnoreCase));
+
+            if (store == null || string.IsNullOrEmpty(store.LogoUrl))
+            {
+                return null;
+            }
+
+            string filename = Path.GetFileName(store.LogoUrl);
+
+            return await _ReadFileBytes(filename);
+        }
+
+        private async Task<byte[]?> _ReadFileBytes(string fileName)
+        {
+            try
+            {
+                string basePath = AppDomain.CurrentDomain.BaseDirectory;
+                string filePath = Path.Combine(basePath, "Logos", fileName);
+
+                if (File.Exists(filePath))
+                {
+                    return await File.ReadAllBytesAsync(filePath);
+                }
+                else
+                {
+                    Console.WriteLine($"[ReceiptService] Nie znaleziono pliku logo: {filePath}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[ReceiptService] Błąd odczytu logo: {ex.Message}");
+            }
+            return null;
         }
     }
 }

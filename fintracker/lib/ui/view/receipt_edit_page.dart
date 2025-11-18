@@ -87,11 +87,11 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
             0.0;
 
     final updatedReceipt = ReceiptModel(
-      id: widget.receipt.id,
-      storeName: _storeNameController.text,
-      totalAmount: totalAmount,
-      dateShopping: _dateShopping,
-    );
+        id: widget.receipt.id,
+        storeName: _storeNameController.text,
+        totalAmount: totalAmount,
+        dateShopping: _dateShopping,
+        storeLogo: null);
 
     final success = await viewModel.saveReceipt(updatedReceipt);
 

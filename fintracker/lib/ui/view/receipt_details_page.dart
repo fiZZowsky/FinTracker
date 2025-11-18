@@ -79,27 +79,35 @@ class _ReceiptDetailsPageState extends State<ReceiptDetailsPage> {
 
     final receipt = viewModel.receipt!;
     final theme = Theme.of(context);
+    final iconColor = theme.colorScheme.primary;
 
     return ListView(
       padding: const EdgeInsets.all(16.0),
       children: [
         _buildDetailRow(
           theme,
-          icon: Icons.store,
+          iconWidget: receipt.storeLogo != null
+              ? Image.memory(
+                  receipt.storeLogo!,
+                  width: 40,
+                  height: 40,
+                  fit: BoxFit.contain,
+                )
+              : Icon(Icons.store, size: 40, color: iconColor),
           label: l10n.receiptStoreName,
           value: receipt.storeName,
         ),
         const Divider(height: 24),
         _buildDetailRow(
           theme,
-          icon: Icons.calendar_today,
+          iconWidget: Icon(Icons.calendar_today, size: 28, color: iconColor),
           label: l10n.receiptDate,
-          value: DateFormat.yMd().format(receipt.dateShopping),
+          value: DateFormat('dd.MM.yyyy').format(receipt.dateShopping),
         ),
         const Divider(height: 24),
         _buildDetailRow(
           theme,
-          icon: Icons.paid,
+          iconWidget: Icon(Icons.paid, size: 28, color: iconColor),
           label: l10n.receiptTotalAmount,
           value: NumberFormat.simpleCurrency(locale: 'pl_PL')
               .format(receipt.totalAmount),
@@ -113,14 +121,18 @@ class _ReceiptDetailsPageState extends State<ReceiptDetailsPage> {
   }
 
   Widget _buildDetailRow(ThemeData theme,
-      {required IconData icon,
+      {required Widget iconWidget,
       required String label,
       required String value,
       TextStyle? valueStyle}) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Icon(icon, color: theme.colorScheme.primary, size: 28),
+        SizedBox(
+          width: 40,
+          height: 40,
+          child: Center(child: iconWidget),
+        ),
         const SizedBox(width: 16),
         Expanded(
           child: Column(

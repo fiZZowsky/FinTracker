@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using System.Text;
 
 namespace FinTracker.Models
 {
@@ -42,30 +43,53 @@ namespace FinTracker.Models
 
             return null;
         }
-        
+
         private static string? SaveLogoBytes(byte[]? logoBytes, string storeName)
         {
-            if (logoBytes == null || logoBytes.Length == 0)
+            if (logoBytes == null || logoBytes.Length == 0 || string.IsNullOrWhiteSpace(storeName))
                 return null;
 
             try
             {
-                string safeName = storeName.ToLower().Replace(" ", "-");
-
-                // TODO: Poprawić detekcję rozszerzenia (np. sprawdzając "magic bytes" pliku)
+                string normalized = storeName.ToLower();
+                
+                normalized = normalized
+                    .Replace("ą", "a")
+                    .Replace("ć", "c")
+                    .Replace("ę", "e")
+                    .Replace("ł", "l")
+                    .Replace("ń", "n")
+                    .Replace("ó", "o")
+                    .Replace("ś", "s")
+                    .Replace("ź", "z")
+                    .Replace("ż", "z");
+                
+                var sb = new StringBuilder();
+                foreach (char c in normalized)
+                {
+                    if (char.IsLetterOrDigit(c) || c == '-')
+                    {
+                        sb.Append(c);
+                    }
+                    else if (char.IsWhiteSpace(c))
+                    {
+                        sb.Append('-');
+                    }
+                }
+                string safeName = sb.ToString();
+                
                 string extension = ".png";
-                string fileName = $"{safeName}-{Guid.NewGuid().ToString().Substring(0, 8)}{extension}";
+                string fileName = $"{safeName}{extension}";
 
                 string basePath = AppDomain.CurrentDomain.BaseDirectory;
                 string logosDir = Path.Combine(basePath, "Logos");
-                
+
                 if (!Directory.Exists(logosDir))
                 {
                     Directory.CreateDirectory(logosDir);
                 }
 
                 string fullPath = Path.Combine(logosDir, fileName);
-
                 File.WriteAllBytes(fullPath, logoBytes);
 
                 return fileName;
