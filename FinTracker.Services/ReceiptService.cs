@@ -11,12 +11,14 @@ namespace FinTracker.Services
     {
         private readonly IReceiptRepository _receiptRepository;
         private readonly IOcrService _ocrService;
+        private readonly IStoreRepository _storeRepository;
 
-        public ReceiptService(IReceiptRepository repository, IOcrService ocrService, IMapper mapper)
+        public ReceiptService(IReceiptRepository repository, IOcrService ocrService, IStoreRepository storeRepository, IMapper mapper)
             : base(repository, mapper)
         {
             _receiptRepository = repository;
             _ocrService = ocrService;
+            _storeRepository = storeRepository;
         }
 
         public async Task<IEnumerable<ReceiptDTO>> GetPagedAsync(ReceiptQueryParameters query)
@@ -37,7 +39,7 @@ namespace FinTracker.Services
             {
                 string ocrText = await _ocrService.RecognizeTextAsync(imageStream);
 
-                ReceiptDTO newReceipt = _ParseTextToReceipt(ocrText);
+                ReceiptDTO newReceipt = await _ParseTextToReceipt(ocrText);
                 return newReceipt;
             }
             catch (Exception e)
@@ -47,12 +49,12 @@ namespace FinTracker.Services
             }
         }
 
-        private ReceiptDTO _ParseTextToReceipt(string ocrText)
+        private async Task<ReceiptDTO> _ParseTextToReceipt(string ocrText)
         {
             decimal totalAmount = 0.0m;
             DateTime dateShopping = DateTime.UtcNow;
 
-            string storeName = _ParseStoreName(ocrText);
+            string storeName = await _ParseStoreName(ocrText);
 
             var totalMatch = Regex.Match(ocrText,
                 @"(SUMA:|RAZEM:|SUMA PLN|KWOTA:|DO ZAPŁATY:)\s*(PLN)?\s*(\d+[\s,.]+(\d{2}|S{2}|O{2}))",
@@ -96,20 +98,15 @@ namespace FinTracker.Services
             };
         }
 
-        private string _ParseStoreName(string ocrText)
+        private async  Task<string> _ParseStoreName(string ocrText)
         {
-            var knownStores = new List<string>
-            {
-                "SPOŁEM", "BIEDRONKA", "LIDL", "ŻABKA", "AUCHAN",
-                "CARREFOUR", "KAUFLAND", "ROSSMANN", "HEBE", "NETTO",
-                "ALDI", "STOKROTKA", "INTERMARCHE", "LEWIATAN", "ORLEN"
-            };
+            var stores = await _storeRepository.GetAllStoresName();
 
             string normalizedOcrText = _RemoveDiacritics(ocrText.ToUpper()).Replace(" ", "");
 
             const int maxDistanceThreshold = 1;
 
-            foreach (var store in knownStores)
+            foreach (var store in stores)
             {
                 string normalizedStore = _RemoveDiacritics(store.ToUpper());
                 int storeLen = normalizedStore.Length;

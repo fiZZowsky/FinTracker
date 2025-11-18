@@ -1,5 +1,4 @@
-﻿using FinTracker.Services.Base;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace FinTracker.Services
 {
@@ -8,6 +7,7 @@ namespace FinTracker.Services
         public static void AddServices(this IServiceCollection services)
         {
             services.AddScoped<IReceiptService, ReceiptService>();
+            services.AddScoped<IStoreService, StoreService>();
             services.AddSingleton<IOcrService, TesseractOcrService>();
             //services.AddSingleton<IOcrService, AzureVisionOcrService>();
         }

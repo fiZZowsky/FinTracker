@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FinTracker.Assets\FinTracker.Assets.csproj" />
     <ProjectReference Include="..\FinTracker.Models\FinTracker.Models.csproj" />
     <ProjectReference Include="..\FinTracker.Repositories\FinTracker.Repositories.csproj" />
   </ItemGroup>

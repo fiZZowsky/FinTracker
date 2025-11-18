@@ -10,5 +10,6 @@ namespace FinTracker.DataAccess
         }
 
         public DbSet<Receipt> Receipts { get; set; }
+        public DbSet<Store> Stores { get; set; }
     }
 }

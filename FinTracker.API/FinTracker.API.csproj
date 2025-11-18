@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FinTracker.Assets\FinTracker.Assets.csproj" />
     <ProjectReference Include="..\FinTracker.DataAccess\FinTracker.DataAccess.csproj" />
     <ProjectReference Include="..\FinTracker.Models\FinTracker.Models.csproj" />
     <ProjectReference Include="..\FinTracker.Services\FinTracker.Services.csproj" />
