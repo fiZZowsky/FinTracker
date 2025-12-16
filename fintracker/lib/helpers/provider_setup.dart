@@ -8,6 +8,7 @@ import '../ui/view_models/finanses_view_model.dart';
 import '../ui/view_models/scanner_view_model.dart';
 import '../ui/view_models/receipt_edit_view_model.dart';
 import '../ui/view_models/receipt_details_view_model.dart';
+import '../ui/view_models/stores_view_model.dart';
 
 List<SingleChildWidget> getGlobalProviders() {
   return [
@@ -23,5 +24,6 @@ List<SingleChildWidget> getGlobalProviders() {
     ChangeNotifierProvider(create: (context) => ReceiptEditViewModel()),
     ChangeNotifierProvider(create: (context) => ReceiptDetailsViewModel()),
     ChangeNotifierProvider(create: (context) => NavigationGuardViewModel()),
+    ChangeNotifierProvider(create: (context) => StoresViewModel()),
   ];
 }

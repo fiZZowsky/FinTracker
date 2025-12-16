@@ -11,6 +11,8 @@ import '../../helpers/service_locator.dart';
 import '../widgets/custom_loader.dart';
 import '../view_models/receipt_details_view_model.dart';
 import '../view_models/navigation_guard_view_model.dart';
+import '../view_models/stores_view_model.dart';
+import '../../data/models/store_model.dart';
 
 class ReceiptEditPage extends StatefulWidget {
   final ReceiptModel receipt;
@@ -23,7 +25,7 @@ class ReceiptEditPage extends StatefulWidget {
 
 class _ReceiptEditPageState extends State<ReceiptEditPage> {
   final _formKey = GlobalKey<FormState>();
-  late final TextEditingController _storeNameController;
+  String? _selectedStoreName;
   late final TextEditingController _totalAmountController;
   late DateTime _dateShopping;
 
@@ -33,11 +35,16 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
   @override
   void initState() {
     super.initState();
-    _storeNameController =
-        TextEditingController(text: widget.receipt.storeName);
+    if (widget.receipt.storeName.isNotEmpty) {
+      _selectedStoreName = widget.receipt.storeName;
+    }
     _totalAmountController = TextEditingController(
         text: widget.receipt.totalAmount.toStringAsFixed(2));
     _dateShopping = widget.receipt.dateShopping;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<StoresViewModel>().fetchStores();
+    });
   }
 
   @override
@@ -54,7 +61,6 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
   void dispose() {
     _navGuard.setEditing(false);
 
-    _storeNameController.dispose();
     _totalAmountController.dispose();
     super.dispose();
   }
@@ -88,7 +94,7 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
 
     final updatedReceipt = ReceiptModel(
         id: widget.receipt.id,
-        storeName: _storeNameController.text,
+        storeName: _selectedStoreName!,
         totalAmount: totalAmount,
         dateShopping: _dateShopping,
         storeLogo: null);
@@ -141,6 +147,7 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final isLoading = context.watch<ReceiptEditViewModel>().isLoading;
+    final storesVM = context.watch<StoresViewModel>();
     final theme = Theme.of(context);
 
     return PopScope(
@@ -160,19 +167,48 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    TextFormField(
-                      controller: _storeNameController,
-                      decoration: InputDecoration(
-                        labelText: l10n.receiptStoreName,
-                        border: const OutlineInputBorder(),
+                    if (storesVM.isLoading)
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 20.0),
+                        child: Center(child: CustomLoader(size: 50)),
+                      )
+                    else
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          _buildSelectedStoreLogo(storesVM, _selectedStoreName),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: DropdownButtonFormField<String>(
+                              value: _isValidStore(
+                                      storesVM.stores, _selectedStoreName)
+                                  ? _selectedStoreName
+                                  : null,
+                              decoration: InputDecoration(
+                                labelText: l10n.receiptStoreName,
+                                border: const OutlineInputBorder(),
+                              ),
+                              items: storesVM.stores.map((StoreModel store) {
+                                return DropdownMenuItem<String>(
+                                  value: store.name,
+                                  child: Text(store.name),
+                                );
+                              }).toList(),
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  _selectedStoreName = newValue;
+                                });
+                              },
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return l10n.fieldRequired;
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                        ],
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return l10n.fieldRequired;
-                        }
-                        return null;
-                      },
-                    ),
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: _totalAmountController,
@@ -228,6 +264,33 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
           ],
         ),
       ),
+    );
+  }
+
+  bool _isValidStore(List<StoreModel> stores, String? name) {
+    if (name == null) return false;
+    return stores.any((s) => s.name == name);
+  }
+
+  Widget _buildSelectedStoreLogo(StoresViewModel vm, String? storeName) {
+    Widget content = const Icon(Icons.store, size: 30, color: Colors.grey);
+
+    if (storeName != null) {
+      final store = vm.findByName(storeName);
+      if (store?.logo != null) {
+        content = Image.memory(store!.logo!,
+            width: 40, height: 40, fit: BoxFit.contain);
+      }
+    }
+
+    return Container(
+      width: 50,
+      height: 50,
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Center(child: content),
     );
   }
 }

@@ -12,7 +12,7 @@ class ApiClient {
   ApiClient()
       : _dio = Dio(BaseOptions(
           baseUrl: _baseUrl,
-          connectTimeout: const Duration(seconds: 10),
+          connectTimeout: const Duration(seconds: 30),
           receiveTimeout: const Duration(seconds: 30),
         )) {
     (_dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {

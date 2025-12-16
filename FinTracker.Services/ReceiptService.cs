@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using FinTracker.Models;
 using FinTracker.Repositories;
-using OpenCvSharp;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -66,30 +65,23 @@ namespace FinTracker.Services
 
             string storeName = await _ParseStoreName(ocrText);
 
-            var totalMatch = Regex.Match(ocrText,
-                @"(SUMA:|RAZEM:|SUMA PLN|KWOTA:|DO ZAPŁATY:)\s*(PLN)?\s*(\d+[\s,.]+(\d{2}|S{2}|O{2}))",
-                RegexOptions.IgnoreCase | RegexOptions.Multiline);
+            string amountPattern = @"(SUMA|S[U0O]M[A4]|RAZEM|KWOTA|DO\s*ZAP[LŁ1I]ATY|WARTOŚĆ)\s*[\s:.;]*\s*(PLN|Z[LŁ1I]|P1N)?\s*([0-9OoSsDd]{1,}[\s.,]+[0-9OoSs]{2})\b";
+            var matches = Regex.Matches(ocrText, amountPattern, RegexOptions.IgnoreCase | RegexOptions.Multiline);
 
-            if (totalMatch.Success)
+            if (matches.Count > 0)
             {
-                string amountStr = totalMatch.Groups[3].Value
-                    .Replace(',', '.')
-                    .Replace('S', '5')
-                    .Replace('O', '0')
-                    .Replace(" ", "");
+                var lastMatch = matches[matches.Count - 1];
 
-                decimal.TryParse(amountStr,
-                    NumberStyles.Any,
-                    CultureInfo.InvariantCulture,
-                    out totalAmount);
+                string dirtyAmount = lastMatch.Groups[3].Value;
+                string cleanAmount = CleanOcrNumber(dirtyAmount);
+
+                decimal.TryParse(cleanAmount, NumberStyles.Any, CultureInfo.InvariantCulture, out totalAmount);
             }
-            
-            var dateMatch = Regex.Match(ocrText, @"(\d{4}-\d{2}-\d{2})|(\d{2}[.-]\d{2}[.-]\d{4})");
 
+            var dateMatch = Regex.Match(ocrText, @"(\d{4}-\d{2}-\d{2})|(\d{2}[.-]\d{2}[.-]\d{4})");
             if (dateMatch.Success)
             {
                 string dateStr = dateMatch.Value;
-                
                 if (DateTime.TryParse(dateStr, CultureInfo.GetCultureInfo("pl-PL"), DateTimeStyles.None, out DateTime parsedDate))
                 {
                     dateShopping = parsedDate;
@@ -106,6 +98,23 @@ namespace FinTracker.Services
                 TotalAmount = totalAmount,
                 DateShopping = dateShopping
             };
+        }
+
+        private string CleanOcrNumber(string input)
+        {
+            if (string.IsNullOrEmpty(input)) return "0";
+
+            return input
+                .ToUpper()
+                .Replace(" ", "")
+                .Replace(",", ".")
+                .Replace("S", "5")
+                .Replace("O", "0")
+                .Replace("D", "0")
+                .Replace("Q", "0")
+                .Replace("B", "8")
+                .Replace("I", "1")
+                .Replace("L", "1");
         }
 
         private async  Task<string> _ParseStoreName(string ocrText)
