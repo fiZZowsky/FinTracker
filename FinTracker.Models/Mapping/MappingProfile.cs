@@ -7,7 +7,10 @@ namespace FinTracker.Models
     {
         public MappingProfile()
         {
-            CreateMap<Receipt, ReceiptDTO>().ReverseMap();
+            CreateMap<Receipt, ReceiptDTO>()
+                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category != null ? src.Category.Name : null))
+                .ReverseMap();
+
             CreateMap<Store, StoreDTO>()
                 .ForMember(
                     dest => dest.Logo,
@@ -19,6 +22,8 @@ namespace FinTracker.Models
                     dest => dest.LogoUrl,
                     opt => opt.MapFrom(src => SaveLogoBytes(src.Logo, src.Name))
                 );
+
+            CreateMap<Category, CategoryDTO>().ReverseMap();
         }
 
         private static byte[]? LoadLogoBytes(string? logoFileName)

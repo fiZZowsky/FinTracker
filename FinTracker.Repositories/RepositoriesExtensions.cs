@@ -9,6 +9,7 @@ namespace FinTracker.Repositories
             services.AddScoped(typeof(IBaseRepository<,>), typeof(BaseRepository<,>));
             services.AddScoped<IReceiptRepository, ReceiptRepository>();
             services.AddScoped<IStoreRepository, StoreRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
         }
     }
 }

@@ -13,6 +13,7 @@ namespace FinTracker.Repositories
         public async Task<IEnumerable<Receipt>> GetPagedAsync(ReceiptQueryParameters queryParams)
         {
             var query = _dbSet.AsQueryable();
+            query = query.Include(r => r.Category);
 
             if (queryParams.StartDate.HasValue)
             {
@@ -29,6 +30,13 @@ namespace FinTracker.Repositories
                 .Skip((queryParams.Page - 1) * queryParams.PageSize)
                 .Take(queryParams.PageSize)
                 .ToListAsync();
+        }
+
+        public new async Task<Receipt?> GetByIdAsync(int id)
+        {
+            return await _dbSet
+                .Include(r => r.Category)
+                .FirstOrDefaultAsync(r => r.Id == id);
         }
 
         public async Task<IEnumerable<SummaryDataDTO>> GetSummaryAsync(ReceiptQueryParameters queryParams)
