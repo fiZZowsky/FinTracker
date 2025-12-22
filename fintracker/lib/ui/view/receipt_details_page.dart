@@ -32,7 +32,9 @@ class _ReceiptDetailsPageState extends State<ReceiptDetailsPage> {
   }
 
   void _navigateToEdit(BuildContext context, ReceiptModel receipt) {
-    context.push('/receipt-edit', extra: receipt);
+    context.push('/receipt-edit', extra: receipt).then((_) {
+      _fetchData();
+    });
   }
 
   @override
@@ -98,6 +100,27 @@ class _ReceiptDetailsPageState extends State<ReceiptDetailsPage> {
           value: receipt.storeName,
         ),
         const Divider(height: 24),
+        if (receipt.categoryName != null &&
+            receipt.categoryName!.isNotEmpty) ...[
+          _buildDetailRow(
+            theme,
+            iconWidget:
+                Icon(Icons.category_outlined, size: 28, color: iconColor),
+            label: l10n.receiptCategory,
+            value: receipt.categoryName!,
+          ),
+          const Divider(height: 24),
+        ] else ...[
+          _buildDetailRow(
+            theme,
+            iconWidget:
+                Icon(Icons.category_outlined, size: 28, color: Colors.grey),
+            label: l10n.receiptCategory,
+            value: l10n.noCategory,
+            valueStyle: theme.textTheme.bodyLarge?.copyWith(color: Colors.grey),
+          ),
+          const Divider(height: 24),
+        ],
         _buildDetailRow(
           theme,
           iconWidget: Icon(Icons.calendar_today, size: 28, color: iconColor),

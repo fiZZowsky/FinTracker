@@ -4,15 +4,17 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:fintracker/l10n/app_localizations.dart';
 import '../../data/models/receipt_model.dart';
+import '../../data/models/store_model.dart';
+import '../../data/models/category_model.dart';
 import '../view_models/receipt_edit_view_model.dart';
 import '../view_models/finanses_view_model.dart';
-import '../../helpers/notification_service.dart';
-import '../../helpers/service_locator.dart';
-import '../widgets/custom_loader.dart';
 import '../view_models/receipt_details_view_model.dart';
 import '../view_models/navigation_guard_view_model.dart';
 import '../view_models/stores_view_model.dart';
-import '../../data/models/store_model.dart';
+import '../view_models/categories_view_model.dart';
+import '../../helpers/notification_service.dart';
+import '../../helpers/service_locator.dart';
+import '../widgets/custom_loader.dart';
 
 class ReceiptEditPage extends StatefulWidget {
   final ReceiptModel receipt;
@@ -25,7 +27,9 @@ class ReceiptEditPage extends StatefulWidget {
 
 class _ReceiptEditPageState extends State<ReceiptEditPage> {
   final _formKey = GlobalKey<FormState>();
+
   String? _selectedStoreName;
+  int? _selectedCategoryId;
   late final TextEditingController _totalAmountController;
   late DateTime _dateShopping;
 
@@ -35,15 +39,20 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
   @override
   void initState() {
     super.initState();
+
     if (widget.receipt.storeName.isNotEmpty) {
       _selectedStoreName = widget.receipt.storeName;
     }
+
+    _selectedCategoryId = widget.receipt.categoryId;
+
     _totalAmountController = TextEditingController(
         text: widget.receipt.totalAmount.toStringAsFixed(2));
     _dateShopping = widget.receipt.dateShopping;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<StoresViewModel>().fetchStores();
+      context.read<CategoriesViewModel>().fetchCategories();
     });
   }
 
@@ -60,7 +69,6 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
   @override
   void dispose() {
     _navGuard.setEditing(false);
-
     _totalAmountController.dispose();
     super.dispose();
   }
@@ -93,11 +101,14 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
             0.0;
 
     final updatedReceipt = ReceiptModel(
-        id: widget.receipt.id,
-        storeName: _selectedStoreName!,
-        totalAmount: totalAmount,
-        dateShopping: _dateShopping,
-        storeLogo: null);
+      id: widget.receipt.id,
+      storeName: _selectedStoreName!,
+      totalAmount: totalAmount,
+      dateShopping: _dateShopping,
+      storeLogo: null,
+      categoryId: _selectedCategoryId,
+      categoryName: null,
+    );
 
     final success = await viewModel.saveReceipt(updatedReceipt);
 
@@ -146,8 +157,10 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+
     final isLoading = context.watch<ReceiptEditViewModel>().isLoading;
     final storesVM = context.watch<StoresViewModel>();
+    final categoriesVM = context.watch<CategoriesViewModel>();
     final theme = Theme.of(context);
 
     return PopScope(
@@ -208,6 +221,33 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
                             ),
                           ),
                         ],
+                      ),
+                    const SizedBox(height: 16),
+                    if (categoriesVM.isLoading)
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: LinearProgressIndicator(),
+                      )
+                    else
+                      DropdownButtonFormField<int>(
+                        value: _selectedCategoryId,
+                        decoration: InputDecoration(
+                          labelText: l10n.receiptCategory,
+                          hintText: l10n.selectCategory,
+                          border: const OutlineInputBorder(),
+                          prefixIcon: const Icon(Icons.category_outlined),
+                        ),
+                        items: categoriesVM.categories.map((CategoryModel cat) {
+                          return DropdownMenuItem<int>(
+                            value: cat.id,
+                            child: Text(cat.name),
+                          );
+                        }).toList(),
+                        onChanged: (int? newValue) {
+                          setState(() {
+                            _selectedCategoryId = newValue;
+                          });
+                        },
                       ),
                     const SizedBox(height: 16),
                     TextFormField(

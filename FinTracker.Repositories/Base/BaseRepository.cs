@@ -14,14 +14,14 @@ namespace FinTracker.Repositories
             _dbSet = _context.Set<TEntity>();
         }
 
-        public async Task<TEntity> CreateAsync(TEntity entity)
+        public virtual async Task<TEntity> CreateAsync(TEntity entity)
         {
             await _dbSet.AddAsync(entity);
             await _context.SaveChangesAsync();
             return entity;
         }
 
-        public async Task<bool> DeleteAsync(TId id)
+        public virtual async Task<bool> DeleteAsync(TId id)
         {
             var entity = await _dbSet.FindAsync(id);
 
@@ -35,17 +35,17 @@ namespace FinTracker.Repositories
             return true;
         }
 
-        public async Task<IEnumerable<TEntity>> GetAllAsync()
+        public virtual async Task<IEnumerable<TEntity>> GetAllAsync()
         {
             return await _dbSet.ToListAsync();
         }
 
-        public async Task<TEntity?> GetByIdAsync(TId id)
+        public virtual async Task<TEntity?> GetByIdAsync(TId id)
         {
             return await _dbSet.FindAsync(id);
         }
 
-        public async Task UpdateAsync(TEntity entity)
+        public virtual async Task UpdateAsync(TEntity entity)
         {
             _context.Entry(entity).State = EntityState.Modified;
             await _context.SaveChangesAsync();

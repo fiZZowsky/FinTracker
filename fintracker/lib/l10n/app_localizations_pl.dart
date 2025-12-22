@@ -152,4 +152,13 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get tryAgain => 'Spróbuj ponownie';
+
+  @override
+  String get receiptCategory => 'Kategoria';
+
+  @override
+  String get selectCategory => 'Wybierz kategorię';
+
+  @override
+  String get noCategory => 'Brak kategorii';
 }

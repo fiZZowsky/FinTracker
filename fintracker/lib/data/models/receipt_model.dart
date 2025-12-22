@@ -8,6 +8,8 @@ class ReceiptModel {
   final double totalAmount;
   final DateTime dateShopping;
   final Uint8List? storeLogo;
+  final int? categoryId;
+  final String? categoryName;
 
   ReceiptModel({
     required this.id,
@@ -15,6 +17,8 @@ class ReceiptModel {
     required this.totalAmount,
     required this.dateShopping,
     required this.storeLogo,
+    this.categoryId,
+    this.categoryName,
   });
 
   factory ReceiptModel.fromJson(Map<String, dynamic> json) {
@@ -27,6 +31,8 @@ class ReceiptModel {
         storeLogo: json['storeLogo'] != null
             ? base64Decode(json['storeLogo'] as String)
             : null,
+        categoryId: json['categoryId'] as int?,
+        categoryName: json['categoryName'] as String?,
       );
     } catch (e) {
       debugPrint('Receipt parsing error: $e. Invalid JSON: $json');
@@ -40,6 +46,7 @@ class ReceiptModel {
       'storeName': storeName,
       'totalAmount': totalAmount,
       'dateShopping': dateShopping.toIso8601String(),
+      'categoryId': categoryId,
     };
   }
 }

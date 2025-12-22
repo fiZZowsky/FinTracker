@@ -9,7 +9,8 @@ namespace FinTracker.Models
         {
             CreateMap<Receipt, ReceiptDTO>()
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category != null ? src.Category.Name : null))
-                .ReverseMap();
+                .ReverseMap()
+                .ForMember(dest => dest.Category, opt => opt.Ignore()); ;
 
             CreateMap<Store, StoreDTO>()
                 .ForMember(

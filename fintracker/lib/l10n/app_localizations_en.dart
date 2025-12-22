@@ -152,4 +152,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tryAgain => 'Try again';
+
+  @override
+  String get receiptCategory => 'Category';
+
+  @override
+  String get selectCategory => 'Select Category';
+
+  @override
+  String get noCategory => 'No category';
 }

@@ -47,5 +47,8 @@
     "confirm": "Leave",
     "receiptAddTitle": "Add Receipt",
     "invalidValue": "Invalid value",
-    "tryAgain": "Try again"
+    "tryAgain": "Try again",
+    "receiptCategory": "Category",
+    "selectCategory": "Select Category",
+    "noCategory": "No category"
 }

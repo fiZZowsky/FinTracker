@@ -47,5 +47,8 @@
     "confirm": "Opuść",
     "receiptAddTitle": "Dodaj Paragon",
     "invalidValue": "Nieprawidłowa wartość",
-    "tryAgain": "Spróbuj ponownie"
+    "tryAgain": "Spróbuj ponownie",
+    "receiptCategory": "Kategoria",
+    "selectCategory": "Wybierz kategorię",
+    "noCategory": "Brak kategorii"
 }

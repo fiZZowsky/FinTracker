@@ -32,7 +32,7 @@ namespace FinTracker.Repositories
                 .ToListAsync();
         }
 
-        public new async Task<Receipt?> GetByIdAsync(int id)
+        public override async Task<Receipt?> GetByIdAsync(int id)
         {
             return await _dbSet
                 .Include(r => r.Category)
