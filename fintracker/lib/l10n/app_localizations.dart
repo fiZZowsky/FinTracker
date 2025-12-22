@@ -403,6 +403,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No category'**
   String get noCategory;
+
+  /// No description provided for @welcomeBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome back!'**
+  String get welcomeBack;
+
+  /// No description provided for @recentReceipts.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Receipts'**
+  String get recentReceipts;
+
+  /// No description provided for @scanAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan'**
+  String get scanAction;
+
+  /// No description provided for @addAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get addAction;
+
+  /// No description provided for @currentMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'(Current Month)'**
+  String get currentMonth;
 }
 
 class _AppLocalizationsDelegate

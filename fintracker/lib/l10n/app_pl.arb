@@ -50,5 +50,10 @@
     "tryAgain": "Spróbuj ponownie",
     "receiptCategory": "Kategoria",
     "selectCategory": "Wybierz kategorię",
-    "noCategory": "Brak kategorii"
+    "noCategory": "Brak kategorii",
+    "welcomeBack": "Witaj ponownie!",
+    "recentReceipts": "Ostatnie paragony",
+    "scanAction": "Skanuj",
+    "addAction": "Dodaj",
+    "currentMonth": "(Bieżący miesiąc)"
 }

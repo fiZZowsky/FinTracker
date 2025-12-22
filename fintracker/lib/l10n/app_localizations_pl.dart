@@ -161,4 +161,19 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get noCategory => 'Brak kategorii';
+
+  @override
+  String get welcomeBack => 'Witaj ponownie!';
+
+  @override
+  String get recentReceipts => 'Ostatnie paragony';
+
+  @override
+  String get scanAction => 'Skanuj';
+
+  @override
+  String get addAction => 'Dodaj';
+
+  @override
+  String get currentMonth => '(Bieżący miesiąc)';
 }

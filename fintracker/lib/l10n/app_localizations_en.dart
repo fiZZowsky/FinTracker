@@ -161,4 +161,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noCategory => 'No category';
+
+  @override
+  String get welcomeBack => 'Welcome back!';
+
+  @override
+  String get recentReceipts => 'Recent Receipts';
+
+  @override
+  String get scanAction => 'Scan';
+
+  @override
+  String get addAction => 'Add';
+
+  @override
+  String get currentMonth => '(Current Month)';
 }

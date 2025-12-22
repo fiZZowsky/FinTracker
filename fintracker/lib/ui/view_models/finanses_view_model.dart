@@ -11,22 +11,26 @@ class FinansesViewModel extends ChangeNotifier {
   final ReceiptService _receiptService = getIt<ReceiptService>();
 
   bool _isLoading = true;
+  bool get isLoading => _isLoading;
+
   bool _hasError = false;
+  bool get hasError => _hasError;
+
   DateFilter _selectedFilter = DateFilter.month;
+  DateFilter get selectedFilter => _selectedFilter;
 
   List<SummaryData> _summaryData = [];
-
   List<ReceiptModel> _receipts = [];
+  List<SummaryData> get summaryData => _summaryData;
+  List<ReceiptModel> get receipts => _receipts;
+
+  List<ReceiptModel> _recentReceipts = [];
+  List<ReceiptModel> get recentReceipts => _recentReceipts;
+
   int _currentPage = 1;
   bool _hasMore = true;
   bool _isLoadingMore = false;
   static const int _pageSize = 100;
-
-  bool get isLoading => _isLoading;
-  bool get hasError => _hasError;
-  DateFilter get selectedFilter => _selectedFilter;
-  List<SummaryData> get summaryData => _summaryData;
-  List<ReceiptModel> get receipts => _receipts;
   bool get isLoadingMore => _isLoadingMore;
   bool get hasMore => _hasMore;
 
@@ -64,6 +68,20 @@ class FinansesViewModel extends ChangeNotifier {
 
     _isLoading = false;
     notifyListeners();
+  }
+
+  Future<void> fetchRecentReceipts() async {
+    try {
+      _recentReceipts = await _receiptService.getReceipts(
+        page: 1,
+        pageSize: 5,
+        startDate: null,
+        endDate: null,
+      );
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error fetching recent receipts: $e');
+    }
   }
 
   Future<void> setFilter(DateFilter filter) async {

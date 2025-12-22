@@ -50,5 +50,10 @@
     "tryAgain": "Try again",
     "receiptCategory": "Category",
     "selectCategory": "Select Category",
-    "noCategory": "No category"
+    "noCategory": "No category",
+    "welcomeBack": "Welcome back!",
+    "recentReceipts": "Recent Receipts",
+    "scanAction": "Scan",
+    "addAction": "Add",
+    "currentMonth": "(Current Month)"
 }
