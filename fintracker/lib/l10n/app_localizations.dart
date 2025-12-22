@@ -433,6 +433,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'(Current Month)'**
   String get currentMonth;
+
+  /// No description provided for @budgetRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining'**
+  String get budgetRemaining;
+
+  /// No description provided for @budgetSpent.
+  ///
+  /// In en, this message translates to:
+  /// **'Spent'**
+  String get budgetSpent;
+
+  /// No description provided for @budgetLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Limit'**
+  String get budgetLimit;
+
+  /// No description provided for @categorySpozywcze.
+  ///
+  /// In en, this message translates to:
+  /// **'Groceries'**
+  String get categorySpozywcze;
+
+  /// No description provided for @categoryTransport.
+  ///
+  /// In en, this message translates to:
+  /// **'Transport'**
+  String get categoryTransport;
+
+  /// No description provided for @categoryMieszkanie.
+  ///
+  /// In en, this message translates to:
+  /// **'Housing'**
+  String get categoryMieszkanie;
+
+  /// No description provided for @categoryInne.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get categoryInne;
+
+  /// No description provided for @chartTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Over Time'**
+  String get chartTime;
+
+  /// No description provided for @chartCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get chartCategories;
+
+  /// No description provided for @today.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get today;
+
+  /// No description provided for @yesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get yesterday;
+
+  /// No description provided for @noExpenses.
+  ///
+  /// In en, this message translates to:
+  /// **'No expenses in this period'**
+  String get noExpenses;
+
+  /// No description provided for @settingsFinanceSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Finance'**
+  String get settingsFinanceSection;
+
+  /// No description provided for @budgetLimitSetting.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly Budget Limit'**
+  String get budgetLimitSetting;
+
+  /// No description provided for @setBudgetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set Monthly Limit'**
+  String get setBudgetTitle;
+
+  /// No description provided for @amountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get amountLabel;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
 }
 
 class _AppLocalizationsDelegate

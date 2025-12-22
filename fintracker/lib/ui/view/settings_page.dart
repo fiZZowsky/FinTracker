@@ -1,10 +1,12 @@
 import 'package:fintracker/l10n/app_localizations.dart';
+import 'package:fintracker/ui/view_models/finanses_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../view_models/theme_view_model.dart';
 import '../view_models/locale_view_model.dart';
 import '../../helpers/notification_service.dart';
 import '../../helpers/service_locator.dart';
+import 'package:flutter/services.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -71,6 +73,64 @@ class SettingsPage extends StatelessWidget {
                   'languageChangedToEn',
                   type: NotificationType.success);
             },
+          ),
+          const Divider(),
+          Padding(
+            padding: const EdgeInsets.only(top: 16.0, left: 16.0, bottom: 8.0),
+            child: Text(
+              l10n.settingsFinanceSection,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+          ),
+          Consumer<FinansesViewModel>(
+            builder: (context, finansesVM, child) {
+              return ListTile(
+                title: Text(l10n.budgetLimitSetting),
+                subtitle: Text(
+                    '${finansesVM.monthlyBudgetLimit.toStringAsFixed(0)} PLN'),
+                leading: const Icon(Icons.savings_outlined),
+                onTap: () => _showBudgetEditDialog(context, finansesVM),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showBudgetEditDialog(BuildContext context, FinansesViewModel vm) {
+    final l10n = AppLocalizations.of(context)!;
+    final controller =
+        TextEditingController(text: vm.monthlyBudgetLimit.toStringAsFixed(0));
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.setBudgetTitle),
+        content: TextField(
+          controller: controller,
+          keyboardType: TextInputType.number,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          decoration: InputDecoration(
+            labelText: l10n.amountLabel,
+            border: const OutlineInputBorder(),
+            suffixText: 'PLN',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(l10n.cancel),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              final newLimit = double.tryParse(controller.text);
+              if (newLimit != null && newLimit > 0) {
+                vm.updateBudgetLimit(newLimit);
+                Navigator.pop(ctx);
+              }
+            },
+            child: Text(l10n.save),
           ),
         ],
       ),

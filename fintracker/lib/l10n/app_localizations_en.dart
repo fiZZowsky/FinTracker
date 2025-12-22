@@ -176,4 +176,55 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get currentMonth => '(Current Month)';
+
+  @override
+  String get budgetRemaining => 'Remaining';
+
+  @override
+  String get budgetSpent => 'Spent';
+
+  @override
+  String get budgetLimit => 'Limit';
+
+  @override
+  String get categorySpozywcze => 'Groceries';
+
+  @override
+  String get categoryTransport => 'Transport';
+
+  @override
+  String get categoryMieszkanie => 'Housing';
+
+  @override
+  String get categoryInne => 'Other';
+
+  @override
+  String get chartTime => 'Over Time';
+
+  @override
+  String get chartCategories => 'Categories';
+
+  @override
+  String get today => 'Today';
+
+  @override
+  String get yesterday => 'Yesterday';
+
+  @override
+  String get noExpenses => 'No expenses in this period';
+
+  @override
+  String get settingsFinanceSection => 'Finance';
+
+  @override
+  String get budgetLimitSetting => 'Monthly Budget Limit';
+
+  @override
+  String get setBudgetTitle => 'Set Monthly Limit';
+
+  @override
+  String get amountLabel => 'Amount';
+
+  @override
+  String get save => 'Save';
 }

@@ -1,355 +1,376 @@
-import 'package:fintracker/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
+import 'package:go_router/go_router.dart';
+import 'package:fintracker/l10n/app_localizations.dart';
+
 import '../view_models/finanses_view_model.dart';
 import '../widgets/custom_loader.dart';
-import '../../data/models/summary_data.dart';
-import 'package:go_router/go_router.dart';
+import '../widgets/budget_bar.dart';
+import '../widgets/receipt_card.dart';
 
-class FinansesPage extends StatefulWidget {
+class FinansesPage extends StatelessWidget {
   const FinansesPage({super.key});
 
   @override
-  State<FinansesPage> createState() => _FinansesPageState();
-}
-
-class _FinansesPageState extends State<FinansesPage>
-    with SingleTickerProviderStateMixin {
-  late final TabController _tabController;
-  final ScrollController _scrollController = ScrollController();
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-
-    final viewModel = context.read<FinansesViewModel>();
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels >=
-              _scrollController.position.maxScrollExtent * 0.9 &&
-          !viewModel.isLoadingMore &&
-          viewModel.hasMore) {
-        viewModel.loadMoreReceipts();
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    return Scaffold(
+      body: SafeArea(
+        child: Consumer<FinansesViewModel>(
+          builder: (context, viewModel, child) {
+            if (viewModel.isLoading) {
+              return const Center(child: CustomLoader(size: 80));
+            }
 
-    return Consumer<FinansesViewModel>(
-      builder: (context, viewModel, child) {
-        return SafeArea(
-          child: Column(
-            children: [
-              _DateFilterSelector(
-                selectedFilter: viewModel.selectedFilter,
-                onFilterChanged: (filter) {
-                  if (filter != null) {
-                    viewModel.setFilter(filter);
-                  }
-                },
-              ),
-              TabBar(
-                controller: _tabController,
-                tabs: [
-                  Tab(text: l10n.finansesSummaryTab),
-                  Tab(text: l10n.finansesAllTab),
+            return RefreshIndicator(
+              onRefresh: () async => await viewModel.fetchData(),
+              child: CustomScrollView(
+                slivers: [
+                  SliverPadding(
+                    padding: const EdgeInsets.all(16.0),
+                    sliver: SliverToBoxAdapter(
+                      child: _buildDateHeader(context, viewModel),
+                    ),
+                  ),
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    sliver: SliverToBoxAdapter(
+                      child: BudgetBar(
+                        spent: viewModel.totalSpent,
+                        limit: viewModel.monthlyBudgetLimit,
+                      ),
+                    ),
+                  ),
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(vertical: 24.0),
+                    sliver: SliverToBoxAdapter(
+                      child: SizedBox(
+                        height: 250,
+                        child: _ChartsCarousel(viewModel: viewModel),
+                      ),
+                    ),
+                  ),
+                  _buildGroupedList(context, viewModel),
+                  const SliverPadding(padding: EdgeInsets.only(bottom: 80)),
                 ],
               ),
-              Expanded(
-                child: _buildContent(context, viewModel, l10n),
-              ),
-            ],
-          ),
-        );
-      },
+            );
+          },
+        ),
+      ),
     );
   }
 
-  Widget _buildContent(BuildContext context, FinansesViewModel viewModel,
-      AppLocalizations l10n) {
-    if (viewModel.isLoading) {
-      return const Center(
-        child: CustomLoader(size: 100),
-      );
-    }
+  Widget _buildDateHeader(BuildContext context, FinansesViewModel vm) {
+    final dateStr =
+        DateFormat.yMMMM(Intl.getCurrentLocale()).format(vm.currentDate);
+    final capitalizedDate = dateStr[0].toUpperCase() + dateStr.substring(1);
 
-    if (viewModel.hasError) {
-      return Center(
-        child: Text(
-          l10n.errorFetchingData,
-          style: TextStyle(color: Theme.of(context).colorScheme.error),
-        ),
-      );
-    }
-
-    if (viewModel.receipts.isEmpty && viewModel.summaryData.isEmpty) {
-      return Center(
-        child: Text(
-          l10n.noReceiptsAdded,
-          style: const TextStyle(fontSize: 16),
-        ),
-      );
-    }
-
-    return TabBarView(
-      controller: _tabController,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _SummaryView(summaryData: viewModel.summaryData, viewModel: viewModel),
-        _AllReceiptsView(
-          controller: _scrollController,
-          viewModel: viewModel,
+        IconButton(
+          icon: const Icon(Icons.chevron_left),
+          onPressed: () => vm.changeMonth(-1),
+        ),
+        Text(
+          capitalizedDate,
+          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+        ),
+        IconButton(
+          icon: const Icon(Icons.chevron_right),
+          onPressed: () => vm.changeMonth(1),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGroupedList(BuildContext context, FinansesViewModel vm) {
+    final grouped = vm.groupedReceipts;
+    final sortedKeys = grouped.keys.toList()..sort((a, b) => b.compareTo(a));
+
+    if (sortedKeys.isEmpty) {
+      return SliverToBoxAdapter(
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: Center(
+            child: Text(
+              AppLocalizations.of(context)!.noExpenses,
+              style: const TextStyle(color: Colors.grey),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (context, index) {
+          final dateKey = sortedKeys[index];
+          final receipts = grouped[dateKey]!;
+
+          return Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 4.0, bottom: 8.0),
+                  child: Text(
+                    _formatFriendlyDate(context, dateKey),
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                ),
+                ...receipts.map((receipt) => ReceiptCard(
+                      receipt: receipt,
+                      onTap: () {
+                        context.push('/receipt-details/${receipt.id}');
+                      },
+                    )),
+              ],
+            ),
+          );
+        },
+        childCount: sortedKeys.length,
+      ),
+    );
+  }
+
+  String _formatFriendlyDate(BuildContext context, String dateStr) {
+    final date = DateTime.parse(dateStr);
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+    final checkDate = DateTime(date.year, date.month, date.day);
+
+    final l10n = AppLocalizations.of(context)!;
+
+    if (checkDate == today) return l10n.today;
+    if (checkDate == yesterday) return l10n.yesterday;
+
+    return DateFormat.EEEE(Intl.getCurrentLocale()).format(date) +
+        ', ' +
+        DateFormat.MMMd(Intl.getCurrentLocale()).format(date);
+  }
+}
+
+class _ChartsCarousel extends StatefulWidget {
+  final FinansesViewModel viewModel;
+  const _ChartsCarousel({required this.viewModel});
+
+  @override
+  State<_ChartsCarousel> createState() => _ChartsCarouselState();
+}
+
+class _ChartsCarouselState extends State<_ChartsCarousel> {
+  final PageController _controller = PageController(viewportFraction: 0.9);
+
+  @override
+  Widget build(BuildContext context) {
+    return PageView(
+      controller: _controller,
+      padEnds: false,
+      children: [
+        _ChartCard(
+          title: AppLocalizations.of(context)!.chartTime,
+          child: _buildBarChart(context),
+        ),
+        _ChartCard(
+          title: AppLocalizations.of(context)!.chartCategories,
+          child: _buildPieChart(context),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBarChart(BuildContext context) {
+    final data = widget.viewModel.summaryData;
+    final theme = Theme.of(context);
+
+    if (data.isEmpty) return const Center(child: Text("Brak danych"));
+
+    return BarChart(
+      BarChartData(
+        alignment: BarChartAlignment.spaceAround,
+        maxY: data.map((e) => e.total).reduce((a, b) => a > b ? a : b) * 1.2,
+        titlesData: FlTitlesData(
+          show: true,
+          topTitles:
+              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          rightTitles:
+              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          leftTitles:
+              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              getTitlesWidget: (value, meta) {
+                final index = value.toInt();
+                if (index < 0 || index >= data.length) return const SizedBox();
+                if (data.length > 15 && index % 3 != 0) return const SizedBox();
+
+                return Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Text(
+                    data[index].label,
+                    style: const TextStyle(fontSize: 10),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+        gridData: const FlGridData(show: false),
+        borderData: FlBorderData(show: false),
+        barGroups: data.asMap().entries.map((entry) {
+          return BarChartGroupData(
+            x: entry.key,
+            barRods: [
+              BarChartRodData(
+                toY: entry.value.total,
+                color: theme.colorScheme.primary,
+                width: 12,
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(4)),
+                backDrawRodData: BackgroundBarChartRodData(
+                  show: true,
+                  toY:
+                      data.map((e) => e.total).reduce((a, b) => a > b ? a : b) *
+                          1.2,
+                  color: theme.colorScheme.surfaceContainerHighest
+                      .withOpacity(0.5),
+                ),
+              ),
+            ],
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildPieChart(BuildContext context) {
+    final stats = widget.viewModel.categoryStats;
+    if (stats.isEmpty) return const Center(child: Text("Brak danych"));
+
+    final theme = Theme.of(context);
+    final colors = [
+      theme.colorScheme.primary,
+      theme.colorScheme.secondary,
+      theme.colorScheme.tertiary,
+      Colors.orange,
+      Colors.purple,
+      Colors.blue,
+    ];
+
+    int colorIndex = 0;
+
+    return Row(
+      children: [
+        Expanded(
+          flex: 2,
+          child: PieChart(
+            PieChartData(
+              sectionsSpace: 2,
+              centerSpaceRadius: 30,
+              sections: stats.entries.map((entry) {
+                final color = colors[colorIndex % colors.length];
+                colorIndex++;
+                return PieChartSectionData(
+                  value: entry.value,
+                  color: color,
+                  title: '',
+                  radius: 40,
+                );
+              }).toList(),
+            ),
+          ),
+        ),
+        Expanded(
+          flex: 3,
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: stats.entries.toList().asMap().entries.map((entry) {
+              final index = entry.key;
+              final mapEntry = entry.value;
+              final color = colors[index % colors.length];
+
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 12,
+                      height: 12,
+                      decoration:
+                          BoxDecoration(color: color, shape: BoxShape.circle),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        mapEntry.key,
+                        style: const TextStyle(fontSize: 12),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Text(
+                      NumberFormat.simpleCurrency(
+                              locale: 'pl_PL', decimalDigits: 0)
+                          .format(mapEntry.value),
+                      style: const TextStyle(
+                          fontSize: 12, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+          ),
         ),
       ],
     );
   }
 }
 
-class _DateFilterSelector extends StatelessWidget {
-  final DateFilter selectedFilter;
-  final ValueChanged<DateFilter?> onFilterChanged;
+class _ChartCard extends StatelessWidget {
+  final String title;
+  final Widget child;
 
-  const _DateFilterSelector({
-    required this.selectedFilter,
-    required this.onFilterChanged,
-  });
+  const _ChartCard({required this.title, required this.child});
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final isSmallScreen = MediaQuery.of(context).size.width < 500;
-
-    final String allLabelText;
-    if (isSmallScreen) {
-      final locale = Localizations.localeOf(context).languageCode;
-      allLabelText = (locale == 'pl') ? 'Wsz.' : 'All';
-    } else {
-      allLabelText = l10n.filterAll;
-    }
-
-    final segments = <ButtonSegment<DateFilter>>[
-      ButtonSegment(
-        value: DateFilter.week,
-        label: Text(l10n.filterWeek, overflow: TextOverflow.ellipsis),
-      ),
-      ButtonSegment(
-        value: DateFilter.month,
-        label: Text(l10n.filterMonth, overflow: TextOverflow.ellipsis),
-      ),
-      ButtonSegment(
-        value: DateFilter.sixMonths,
-        label: Text(isSmallScreen ? '6M' : l10n.filter6Months,
-            overflow: TextOverflow.ellipsis),
-      ),
-      ButtonSegment(
-        value: DateFilter.year,
-        label: Text(l10n.filterYear, overflow: TextOverflow.ellipsis),
-      ),
-      ButtonSegment(
-        value: DateFilter.all,
-        label: Text(allLabelText, overflow: TextOverflow.ellipsis),
-      ),
-    ];
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: NotificationListener<OverscrollIndicatorNotification>(
-          onNotification: (overscroll) {
-            overscroll.disallowIndicator();
-            return true;
-          },
-          child: SegmentedButton<DateFilter>(
-            segments: segments,
-            selected: {selectedFilter},
-            onSelectionChanged: (Set<DateFilter> newSelection) {
-              onFilterChanged(newSelection.first);
-            },
-            style: SegmentedButton.styleFrom(
-              padding: EdgeInsets.symmetric(
-                horizontal: isSmallScreen ? 6.0 : 10.0,
-              ),
-              textStyle: isSmallScreen ? const TextStyle(fontSize: 12) : null,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _SummaryView extends StatelessWidget {
-  final List<SummaryData> summaryData;
-  final FinansesViewModel viewModel;
-
-  const _SummaryView({required this.summaryData, required this.viewModel});
-
-  @override
-  Widget build(BuildContext context) {
-    if (summaryData.isEmpty) {
-      return Center(child: Text(AppLocalizations.of(context)!.noReceiptsAdded));
-    }
-
-    final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
-    final total = summaryData.fold(0.0, (sum, item) => sum + item.total);
-
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        children: [
-          Text(
-              '${l10n.finansesTotal}: ${NumberFormat.simpleCurrency(locale: 'pl_PL').format(total)}',
-              style: theme.textTheme.headlineSmall
-                  ?.copyWith(fontWeight: FontWeight.bold)),
-          const SizedBox(height: 24),
-          Expanded(
-            child: BarChart(
-              BarChartData(
-                alignment: BarChartAlignment.spaceAround,
-                maxY: summaryData
-                        .map((d) => d.total)
-                        .reduce((a, b) => a > b ? a : b) *
-                    1.2,
-                titlesData: FlTitlesData(
-                  show: true,
-                  bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      reservedSize: 30,
-                      getTitlesWidget: (double value, TitleMeta meta) {
-                        final index = value.toInt();
-                        if (index < 0 || index >= summaryData.length) {
-                          return const SizedBox();
-                        }
-                        return Padding(
-                          padding: const EdgeInsets.only(top: 6.0),
-                          child: Text(
-                              viewModel
-                                  .getFormattedDate(summaryData[index].label),
-                              style: theme.textTheme.bodySmall),
-                        );
-                      },
-                    ),
-                  ),
-                  leftTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      reservedSize: 50,
-                      getTitlesWidget: (value, meta) {
-                        if (value == 0 || value == meta.max) {
-                          return const SizedBox();
-                        }
-                        return Text(
-                            NumberFormat.compactSimpleCurrency(locale: 'pl_PL')
-                                .format(value),
-                            style: theme.textTheme.bodySmall);
-                      },
-                    ),
-                  ),
-                  topTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false)),
-                  rightTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false)),
-                ),
-                borderData: FlBorderData(show: false),
-                gridData: FlGridData(
-                    show: true,
-                    drawVerticalLine: false,
-                    horizontalInterval: summaryData
-                            .map((d) => d.total)
-                            .reduce((a, b) => a > b ? a : b) /
-                        4,
-                    getDrawingHorizontalLine: (value) => FlLine(
-                          color: theme.colorScheme.onSurface.withOpacity(0.1),
-                          strokeWidth: 1,
-                        )),
-                barGroups: summaryData.asMap().entries.map((entry) {
-                  final index = entry.key;
-                  final data = entry.value;
-                  return BarChartGroupData(
-                    x: index,
-                    barRods: [
-                      BarChartRodData(
-                          toY: data.total,
-                          color: theme.colorScheme.primary,
-                          width: 16,
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(4),
-                            topRight: Radius.circular(4),
-                          )),
-                    ],
-                  );
-                }).toList(),
-              ),
-            ),
+    return Container(
+      margin: const EdgeInsets.only(right: 16, left: 4),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
-    );
-  }
-}
-
-class _AllReceiptsView extends StatelessWidget {
-  final ScrollController controller;
-  final FinansesViewModel viewModel;
-
-  const _AllReceiptsView({required this.controller, required this.viewModel});
-
-  @override
-  Widget build(BuildContext context) {
-    final receipts = viewModel.receipts;
-
-    if (receipts.isEmpty) {
-      return Center(child: Text(AppLocalizations.of(context)!.noReceiptsAdded));
-    }
-
-    return ListView.builder(
-      controller: controller,
-      itemCount: receipts.length + (viewModel.hasMore ? 1 : 0),
-      itemBuilder: (context, index) {
-        if (index == receipts.length) {
-          return viewModel.isLoadingMore
-              ? const Center(
-                  child: Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: CustomLoader(size: 40),
-                ))
-              : const SizedBox();
-        }
-
-        final receipt = receipts[index];
-        return ListTile(
-          leading: const Icon(Icons.receipt_long),
-          title: Text(receipt.storeName),
-          subtitle: Text(
-            DateFormat.yMd(Intl.systemLocale).format(receipt.dateShopping),
-          ),
-          trailing: Text(
-            NumberFormat.simpleCurrency(locale: 'pl_PL')
-                .format(receipt.totalAmount),
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-            ),
-          ),
-          onTap: () {
-            context.push('/receipt-details/${receipt.id}');
-          },
-        );
-      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title,
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 16),
+          Expanded(child: child),
+        ],
+      ),
     );
   }
 }
