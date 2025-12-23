@@ -55,7 +55,7 @@ namespace FinTracker.API.Controllers
         }
 
         [HttpPost("Upload")]
-        public async Task<IActionResult> UploadReceipt(IFormFile file)
+        public async Task<IActionResult> UploadReceipt(IFormFile file, [FromQuery] bool useAzure = false)
         {
             if (file == null || file.Length == 0)
             {
@@ -66,7 +66,7 @@ namespace FinTracker.API.Controllers
             {
                 try
                 {
-                    var createdReceipt = await _receiptService.CreateReceiptFromImageAsync(stream);
+                    var createdReceipt = await _receiptService.CreateReceiptFromImageAsync(stream, useAzure);
                     return Ok(createdReceipt);
                 }
                 catch (Exception ex)

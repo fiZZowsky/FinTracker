@@ -73,5 +73,8 @@
     "setBudgetTitle": "Set Monthly Limit",
     "amountLabel": "Amount",
     "save": "Save",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "ocrSettingsTitle": "OCR Engine",
+    "useAzureOcr": "Use Azure AI Vision (Cloud)",
+    "useAzureOcrSubtitle": "Requires internet. More accurate but slower."
 }

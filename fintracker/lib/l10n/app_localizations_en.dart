@@ -227,4 +227,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get save => 'Save';
+
+  @override
+  String get ocrSettingsTitle => 'OCR Engine';
+
+  @override
+  String get useAzureOcr => 'Use Azure AI Vision (Cloud)';
+
+  @override
+  String get useAzureOcrSubtitle =>
+      'Requires internet. More accurate but slower.';
 }

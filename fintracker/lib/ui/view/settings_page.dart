@@ -1,5 +1,6 @@
 import 'package:fintracker/l10n/app_localizations.dart';
 import 'package:fintracker/ui/view_models/finanses_view_model.dart';
+import 'package:fintracker/ui/view_models/settings_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../view_models/theme_view_model.dart';
@@ -90,6 +91,29 @@ class SettingsPage extends StatelessWidget {
                     '${finansesVM.monthlyBudgetLimit.toStringAsFixed(0)} PLN'),
                 leading: const Icon(Icons.savings_outlined),
                 onTap: () => _showBudgetEditDialog(context, finansesVM),
+              );
+            },
+          ),
+          const Divider(),
+          Padding(
+            padding: const EdgeInsets.only(top: 16.0, left: 16.0, bottom: 8.0),
+            child: Text(
+              l10n.ocrSettingsTitle,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+          ),
+          Consumer<SettingsViewModel>(
+            builder: (context, vm, child) {
+              return SwitchListTile(
+                title: Text(l10n.useAzureOcr),
+                subtitle: Text(l10n.useAzureOcrSubtitle,
+                    style: const TextStyle(fontSize: 12)),
+                secondary: Icon(
+                  Icons.cloud_done_outlined,
+                  color: vm.useAzureOcr ? Colors.blue : null,
+                ),
+                value: vm.useAzureOcr,
+                onChanged: (value) => vm.toggleAzureOcr(value),
               );
             },
           ),

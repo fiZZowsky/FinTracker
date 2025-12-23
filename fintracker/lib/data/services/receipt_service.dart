@@ -4,9 +4,12 @@ import 'api_client.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
+import 'preferences_service.dart';
+import '../../helpers/service_locator.dart';
 
 class ReceiptService {
   final ApiClient _apiClient;
+  final PreferencesService _prefs = getIt<PreferencesService>();
 
   ReceiptService(this._apiClient);
 
@@ -69,8 +72,11 @@ class ReceiptService {
         "file": await MultipartFile.fromFile(file.path, filename: fileName),
       });
 
-      final dynamic data =
-          await _apiClient.postFormData('/api/Receipts/Upload', formData);
+      bool useAzure = await _prefs.getUseAzureOcr();
+
+      final dynamic data = await _apiClient.postFormData(
+          '/api/Receipts/Upload?useAzure=$useAzure', formData);
+
       if (data is Map<String, dynamic>) {
         return ReceiptModel.fromJson(data);
       } else {

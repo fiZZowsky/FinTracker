@@ -73,5 +73,8 @@
     "setBudgetTitle": "Ustaw miesięczny limit",
     "amountLabel": "Kwota",
     "save": "Zapisz",
-    "cancel": "Anuluj"
+    "cancel": "Anuluj",
+    "ocrSettingsTitle": "Silnik OCR",
+    "useAzureOcr": "Użyj Azure AI Vision (Chmura)",
+    "useAzureOcrSubtitle": "Wymaga internetu. Dokładniejszy, ale wolniejszy."
 }

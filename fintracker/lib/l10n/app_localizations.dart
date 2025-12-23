@@ -535,6 +535,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save'**
   String get save;
+
+  /// No description provided for @ocrSettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'OCR Engine'**
+  String get ocrSettingsTitle;
+
+  /// No description provided for @useAzureOcr.
+  ///
+  /// In en, this message translates to:
+  /// **'Use Azure AI Vision (Cloud)'**
+  String get useAzureOcr;
+
+  /// No description provided for @useAzureOcrSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Requires internet. More accurate but slower.'**
+  String get useAzureOcrSubtitle;
 }
 
 class _AppLocalizationsDelegate

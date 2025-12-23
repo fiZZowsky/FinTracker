@@ -227,4 +227,14 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get save => 'Zapisz';
+
+  @override
+  String get ocrSettingsTitle => 'Silnik OCR';
+
+  @override
+  String get useAzureOcr => 'Użyj Azure AI Vision (Chmura)';
+
+  @override
+  String get useAzureOcrSubtitle =>
+      'Wymaga internetu. Dokładniejszy, ale wolniejszy.';
 }

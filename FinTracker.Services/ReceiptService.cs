@@ -12,13 +12,15 @@ namespace FinTracker.Services
         private readonly IReceiptRepository _receiptRepository;
         private readonly IOcrService _ocrService;
         private readonly IStoreRepository _storeRepository;
+        private readonly IAzureOcrService _azureOcrService;
 
-        public ReceiptService(IReceiptRepository repository, IOcrService ocrService, IStoreRepository storeRepository, IMapper mapper)
+        public ReceiptService(IReceiptRepository repository, IOcrService ocrService, IStoreRepository storeRepository, IAzureOcrService azureOcrService, IMapper mapper)
             : base(repository, mapper)
         {
             _receiptRepository = repository;
             _ocrService = ocrService;
             _storeRepository = storeRepository;
+            _azureOcrService = azureOcrService;
         }
 
         public override async Task<ReceiptDTO> GetByIdAsync(int id)
@@ -42,11 +44,19 @@ namespace FinTracker.Services
             return await _receiptRepository.GetSummaryAsync(query);
         }
 
-        public async Task<ReceiptDTO> CreateReceiptFromImageAsync(Stream imageStream)
+        public async Task<ReceiptDTO> CreateReceiptFromImageAsync(Stream imageStream, bool useAzure)
         {
             try
             {
-                string ocrText = await _ocrService.RecognizeTextAsync(imageStream);
+                string ocrText;
+                if (useAzure)
+                {
+                    ocrText = await _azureOcrService.RecognizeTextAsync(imageStream);
+                }
+                else
+                {
+                    ocrText = await _ocrService.RecognizeTextAsync(imageStream);
+                }
 
                 ReceiptDTO newReceipt = await _ParseTextToReceipt(ocrText);
                 return newReceipt;
