@@ -48,7 +48,13 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
 
     _totalAmountController = TextEditingController(
         text: widget.receipt.totalAmount.toStringAsFixed(2));
-    _dateShopping = widget.receipt.dateShopping;
+    final now = DateTime.now();
+    if (widget.receipt.dateShopping.isAfter(now) ||
+        widget.receipt.dateShopping.year < 2000) {
+      _dateShopping = now;
+    } else {
+      _dateShopping = widget.receipt.dateShopping;
+    }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<StoresViewModel>().fetchStores();
@@ -74,11 +80,13 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
   }
 
   Future<void> _pickDate(BuildContext context) async {
+    final now = DateTime.now();
+
     final pickedDate = await showDatePicker(
       context: context,
       initialDate: _dateShopping,
       firstDate: DateTime(2000),
-      lastDate: DateTime.now().add(const Duration(days: 365)),
+      lastDate: now,
     );
     if (pickedDate != null && pickedDate != _dateShopping) {
       setState(() {
@@ -89,6 +97,23 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
 
   Future<void> _saveReceipt() async {
     if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    final now = DateTime.now();
+    final isFuture = _dateShopping.difference(now).inDays > 0;
+
+    if (isFuture) {
+      getIt<NotificationService>().showNotification(
+          'Data zakupu nie może być z przyszłości',
+          type: NotificationType.error);
+      return;
+    }
+
+    if (_dateShopping.year < 2000) {
+      getIt<NotificationService>().showNotification(
+          'Data zakupu jest nieprawidłowa (zbyt stara)',
+          type: NotificationType.error);
       return;
     }
 
