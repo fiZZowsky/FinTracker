@@ -29,4 +29,8 @@ class ReceiptEditViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<int?> suggestCategory(String storeName) async {
+    return await _receiptService.getSuggestedCategory(storeName);
+  }
 }

@@ -191,10 +191,11 @@ class _ChartsCarouselState extends State<_ChartsCarousel> {
   }
 
   Widget _buildBarChart(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final data = widget.viewModel.summaryData;
     final theme = Theme.of(context);
 
-    if (data.isEmpty) return const Center(child: Text("Brak danych"));
+    if (data.isEmpty) return Center(child: Text(l10n.noData));
 
     return BarChart(
       BarChartData(
@@ -245,7 +246,7 @@ class _ChartsCarouselState extends State<_ChartsCarousel> {
                       data.map((e) => e.total).reduce((a, b) => a > b ? a : b) *
                           1.2,
                   color: theme.colorScheme.surfaceContainerHighest
-                      .withOpacity(0.5),
+                      .withValues(alpha: 0.5),
                 ),
               ),
             ],
@@ -256,8 +257,10 @@ class _ChartsCarouselState extends State<_ChartsCarousel> {
   }
 
   Widget _buildPieChart(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final stats = widget.viewModel.categoryStats;
-    if (stats.isEmpty) return const Center(child: Text("Brak danych"));
+
+    if (stats.isEmpty) return Center(child: Text(l10n.noData));
 
     final theme = Theme.of(context);
     final colors = [
@@ -353,7 +356,7 @@ class _ChartCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),

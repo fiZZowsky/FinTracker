@@ -8,5 +8,6 @@ namespace FinTracker.Services
         Task<ReceiptDTO> CreateReceiptFromImageAsync(Stream imageStream, bool useAzure = false);
         Task<IEnumerable<ReceiptDTO>> GetPagedAsync(ReceiptQueryParameters query);
         Task<IEnumerable<SummaryDataDTO>> GetSummaryAsync(ReceiptQueryParameters query);
+        Task<int?> GetSuggestedCategoryForStoreAsync(string storeName);
     }
 }

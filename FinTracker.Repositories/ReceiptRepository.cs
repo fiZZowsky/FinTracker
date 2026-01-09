@@ -126,5 +126,19 @@ namespace FinTracker.Repositories
                         .ToListAsync();
             }
         }
+
+        public async Task<int?> GetMostFrequentCategoryIdAsync(string storeName)
+        {
+            if (string.IsNullOrWhiteSpace(storeName)) return null;
+
+            var normalizedStoreName = storeName.ToLower();
+
+            return await _dbSet
+                .Where(r => r.StoreName.ToLower() == normalizedStoreName && r.CategoryId != null)
+                .GroupBy(r => r.CategoryId)
+                .OrderByDescending(g => g.Count())
+                .Select(g => g.Key)
+                .FirstOrDefaultAsync();
+        }
     }
 }

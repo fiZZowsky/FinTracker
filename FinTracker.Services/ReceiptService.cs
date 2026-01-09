@@ -245,5 +245,10 @@ namespace FinTracker.Services
             }
             return null;
         }
+
+        public async Task<int?> GetSuggestedCategoryForStoreAsync(string storeName)
+        {
+            return await _receiptRepository.GetMostFrequentCategoryIdAsync(storeName);
+        }
     }
 }

@@ -237,4 +237,7 @@ class AppLocalizationsPl extends AppLocalizations {
   @override
   String get useAzureOcrSubtitle =>
       'Wymaga internetu. Dokładniejszy, ale wolniejszy.';
+
+  @override
+  String get noData => 'Brak danych';
 }

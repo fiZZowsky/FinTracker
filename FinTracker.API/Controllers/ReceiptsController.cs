@@ -40,7 +40,20 @@ namespace FinTracker.API.Controllers
             var summaryData = await _receiptService.GetSummaryAsync(query);
             return Ok(summaryData);
         }
-        
+
+        [HttpGet("suggest-category")]
+        public async Task<IActionResult> GetSuggestedCategory([FromQuery] string storeName)
+        {
+            var categoryId = await _receiptService.GetSuggestedCategoryForStoreAsync(storeName);
+
+            if (categoryId == null)
+            {
+                return NoContent();
+            }
+
+            return Ok(categoryId);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateReceipt([FromBody] ReceiptDTO receiptDto)
         {

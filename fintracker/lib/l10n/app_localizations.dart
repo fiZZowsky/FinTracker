@@ -553,6 +553,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Requires internet. More accurate but slower.'**
   String get useAzureOcrSubtitle;
+
+  /// No description provided for @noData.
+  ///
+  /// In en, this message translates to:
+  /// **'No data'**
+  String get noData;
 }
 
 class _AppLocalizationsDelegate

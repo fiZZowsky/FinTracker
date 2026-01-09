@@ -6,5 +6,6 @@ namespace FinTracker.Repositories
     {
         Task<IEnumerable<Receipt>> GetPagedAsync(ReceiptQueryParameters query);
         Task<IEnumerable<SummaryDataDTO>> GetSummaryAsync(ReceiptQueryParameters query);
+        Task<int?> GetMostFrequentCategoryIdAsync(string storeName);
     }
 }

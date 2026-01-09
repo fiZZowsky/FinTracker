@@ -207,10 +207,24 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
                                   child: Text(store.name),
                                 );
                               }).toList(),
-                              onChanged: (String? newValue) {
+                              onChanged: (String? newValue) async {
+                                if (newValue == null) return;
+
                                 setState(() {
                                   _selectedStoreName = newValue;
                                 });
+
+                                if (_selectedCategoryId == null) {
+                                  final suggestion = await context
+                                      .read<ReceiptEditViewModel>()
+                                      .suggestCategory(newValue);
+
+                                  if (suggestion != null && mounted) {
+                                    setState(() {
+                                      _selectedCategoryId = suggestion;
+                                    });
+                                  }
+                                }
                               },
                               validator: (value) {
                                 if (value == null || value.isEmpty) {

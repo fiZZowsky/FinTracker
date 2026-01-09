@@ -76,5 +76,6 @@
     "cancel": "Anuluj",
     "ocrSettingsTitle": "Silnik OCR",
     "useAzureOcr": "Użyj Azure AI Vision (Chmura)",
-    "useAzureOcrSubtitle": "Wymaga internetu. Dokładniejszy, ale wolniejszy."
+    "useAzureOcrSubtitle": "Wymaga internetu. Dokładniejszy, ale wolniejszy.",
+    "noData": "Brak danych"
 }

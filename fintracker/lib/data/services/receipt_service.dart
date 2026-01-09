@@ -127,4 +127,20 @@ class ReceiptService {
       return false;
     }
   }
+
+  Future<int?> getSuggestedCategory(String storeName) async {
+    try {
+      final response = await _apiClient.get(
+        '/api/Receipts/suggest-category',
+        queryParameters: {'storeName': storeName},
+      );
+
+      if (response is int) {
+        return response;
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
 }
