@@ -13,14 +13,22 @@ namespace FinTracker.Services
         private readonly IOcrService _ocrService;
         private readonly IStoreRepository _storeRepository;
         private readonly IAzureOcrService _azureOcrService;
+        private readonly IUserContextRepository _userContextRepository;
 
-        public ReceiptService(IReceiptRepository repository, IOcrService ocrService, IStoreRepository storeRepository, IAzureOcrService azureOcrService, IMapper mapper)
+        public ReceiptService(
+            IReceiptRepository repository,
+            IOcrService ocrService,
+            IStoreRepository storeRepository,
+            IAzureOcrService azureOcrService,
+            IUserContextRepository userContextRepository,
+            IMapper mapper)
             : base(repository, mapper)
         {
             _receiptRepository = repository;
             _ocrService = ocrService;
             _storeRepository = storeRepository;
             _azureOcrService = azureOcrService;
+            _userContextRepository = userContextRepository;
         }
 
         public override async Task<ReceiptDTO> GetByIdAsync(int id)
@@ -32,13 +40,43 @@ namespace FinTracker.Services
             return receiptDto;
         }
 
+        public override async Task<ReceiptDTO> CreateAsync(ReceiptDTO dto)
+        {
+            var userId = _userContextRepository.GetUserId();
+
+            if (userId == null)
+            {
+                throw new UnauthorizedAccessException("Nie można zidentyfikować użytkownika.");
+            }
+
+            var entity = _mapper.Map<Receipt>(dto);
+            entity.UserId = userId.Value;
+
+            var createdEntity = await _receiptRepository.CreateAsync(entity);
+
+            return _mapper.Map<ReceiptDTO>(createdEntity);
+        }
+
+        public override async Task<bool> UpdateAsync(int id, ReceiptDTO dto)
+        {
+            var existingEntity = await _receiptRepository.GetByIdAsync(id);
+            if (existingEntity == null)
+            {
+                return false;
+            }
+
+            _mapper.Map(dto, existingEntity);
+
+            await _receiptRepository.UpdateAsync(existingEntity);
+            return true;
+        }
+
         public async Task<IEnumerable<ReceiptDTO>> GetPagedAsync(ReceiptQueryParameters query)
         {
             var entities = await _receiptRepository.GetPagedAsync(query);
-            
             return _mapper.Map<IEnumerable<ReceiptDTO>>(entities);
         }
-        
+
         public async Task<IEnumerable<SummaryDataDTO>> GetSummaryAsync(ReceiptQueryParameters query)
         {
             return await _receiptRepository.GetSummaryAsync(query);
@@ -81,10 +119,8 @@ namespace FinTracker.Services
             if (matches.Count > 0)
             {
                 var lastMatch = matches[matches.Count - 1];
-
                 string dirtyAmount = lastMatch.Groups[3].Value;
                 string cleanAmount = CleanOcrNumber(dirtyAmount);
-
                 decimal.TryParse(cleanAmount, NumberStyles.Any, CultureInfo.InvariantCulture, out totalAmount);
             }
 
@@ -113,71 +149,42 @@ namespace FinTracker.Services
         private string CleanOcrNumber(string input)
         {
             if (string.IsNullOrEmpty(input)) return "0";
-
-            return input
-                .ToUpper()
-                .Replace(" ", "")
-                .Replace(",", ".")
-                .Replace("S", "5")
-                .Replace("O", "0")
-                .Replace("D", "0")
-                .Replace("Q", "0")
-                .Replace("B", "8")
-                .Replace("I", "1")
-                .Replace("L", "1");
+            return input.ToUpper().Replace(" ", "").Replace(",", ".").Replace("S", "5").Replace("O", "0").Replace("D", "0").Replace("Q", "0").Replace("B", "8").Replace("I", "1").Replace("L", "1");
         }
 
-        private async  Task<string> _ParseStoreName(string ocrText)
+        private async Task<string> _ParseStoreName(string ocrText)
         {
             var stores = await _storeRepository.GetAllStoresName();
-
             string normalizedOcrText = _RemoveDiacritics(ocrText.ToUpper()).Replace(" ", "");
-
             const int maxDistanceThreshold = 1;
 
             foreach (var store in stores)
             {
                 string normalizedStore = _RemoveDiacritics(store.ToUpper());
                 int storeLen = normalizedStore.Length;
-                
                 if (storeLen < 4) continue;
-                
                 for (int i = 0; i <= normalizedOcrText.Length - storeLen; i++)
                 {
                     string ocrSubstring = normalizedOcrText.Substring(i, storeLen);
                     int distance = _LevenshteinDistance(ocrSubstring, normalizedStore);
-                    if (distance <= maxDistanceThreshold)
-                    {
-                        return store;
-                    }
+                    if (distance <= maxDistanceThreshold) return store;
                 }
             }
-            
             return "Nieznany Sklep";
         }
 
         private int _LevenshteinDistance(string s, string t)
         {
-            int n = s.Length;
-            int m = t.Length;
-            int[,] d = new int[n + 1, m + 1];
-
-            if (n == 0) return m;
-            if (m == 0) return n;
-
+            int n = s.Length; int m = t.Length; int[,] d = new int[n + 1, m + 1];
+            if (n == 0) return m; if (m == 0) return n;
             for (int i = 0; i <= n; d[i, 0] = i++) { }
             for (int j = 0; j <= m; d[0, j] = j++) { }
-
             for (int i = 1; i <= n; i++)
-            {
                 for (int j = 1; j <= m; j++)
                 {
                     int cost = (t[j - 1] == s[i - 1]) ? 0 : 1;
-                    d[i, j] = Math.Min(
-                        Math.Min(d[i - 1, j] + 1, d[i, j - 1] + 1),
-                        d[i - 1, j - 1] + cost);
+                    d[i, j] = Math.Min(Math.Min(d[i - 1, j] + 1, d[i, j - 1] + 1), d[i - 1, j - 1] + cost);
                 }
-            }
             return d[n, m];
         }
 
@@ -185,41 +192,16 @@ namespace FinTracker.Services
         {
             var normalizedString = text.Normalize(NormalizationForm.FormD);
             var stringBuilder = new StringBuilder();
-
-            foreach (var c in normalizedString)
-            {
-                var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
-                if (unicodeCategory != UnicodeCategory.NonSpacingMark)
-                {
-                    stringBuilder.Append(c);
-                }
-            }
-            
-            return stringBuilder.ToString()
-                .Normalize(NormalizationForm.FormC)
-                .Replace("ą", "a")
-                .Replace("ć", "c")
-                .Replace("ę", "e")
-                .Replace("ł", "l")
-                .Replace("ń", "n")
-                .Replace("ó", "o")
-                .Replace("ś", "s")
-                .Replace("ź", "z")
-                .Replace("ż", "z");
+            foreach (var c in normalizedString) if (CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark) stringBuilder.Append(c);
+            return stringBuilder.ToString().Normalize(NormalizationForm.FormC).Replace("ą", "a").Replace("ć", "c").Replace("ę", "e").Replace("ł", "l").Replace("ń", "n").Replace("ó", "o").Replace("ś", "s").Replace("ź", "z").Replace("ż", "z");
         }
 
         private async Task<byte[]?> _GetLogoBytesForStore(string storeName)
         {
             var stores = await _storeRepository.GetAllAsync();
             var store = stores.FirstOrDefault(s => s.Name.Equals(storeName, StringComparison.CurrentCultureIgnoreCase));
-
-            if (store == null || string.IsNullOrEmpty(store.LogoUrl))
-            {
-                return null;
-            }
-
+            if (store == null || string.IsNullOrEmpty(store.LogoUrl)) return null;
             string filename = Path.GetFileName(store.LogoUrl);
-
             return await _ReadFileBytes(filename);
         }
 
@@ -229,20 +211,10 @@ namespace FinTracker.Services
             {
                 string basePath = AppDomain.CurrentDomain.BaseDirectory;
                 string filePath = Path.Combine(basePath, "Logos", fileName);
-
-                if (File.Exists(filePath))
-                {
-                    return await File.ReadAllBytesAsync(filePath);
-                }
-                else
-                {
-                    Console.WriteLine($"[ReceiptService] Nie znaleziono pliku logo: {filePath}");
-                }
+                if (File.Exists(filePath)) return await File.ReadAllBytesAsync(filePath);
+                else Console.WriteLine($"[ReceiptService] Nie znaleziono pliku logo: {filePath}");
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"[ReceiptService] Błąd odczytu logo: {ex.Message}");
-            }
+            catch (Exception ex) { Console.WriteLine($"[ReceiptService] Błąd odczytu logo: {ex.Message}"); }
             return null;
         }
 

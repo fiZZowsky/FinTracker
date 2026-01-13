@@ -1,11 +1,13 @@
 ﻿using FinTracker.Models;
 using FinTracker.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FinTracker.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ReceiptsController : ControllerBase
     {
         private readonly IReceiptService _receiptService;

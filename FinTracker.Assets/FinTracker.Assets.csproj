@@ -23,13 +23,9 @@
     <None Remove="Logos\media-expert.png" />
     <None Remove="Logos\media-markt.png" />
     <None Remove="Logos\netto.png" />
-    <None Remove="Logos\orlen.jpg" />
-    <None Remove="Logos\piekarnia-pod-telegrafem.jpg" />
-    <None Remove="Logos\rossman.jpg" />
     <None Remove="Logos\rtv-euro-agd.png" />
     <None Remove="Logos\spolem.png" />
     <None Remove="Logos\stokrotka.png" />
-    <None Remove="Logos\wafelek.jpg" />
     <None Remove="Logos\x-kom.png" />
     <None Remove="Logos\zabka.png" />
   </ItemGroup>
@@ -83,13 +79,13 @@
     <Content Include="Logos\netto.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Logos\orlen.jpg">
+    <Content Include="Logos\orlen.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Logos\piekarnia-pod-telegrafem.jpg">
+    <Content Include="Logos\piekarnia-pod-telegrafem.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Logos\rossman.jpg">
+    <Content Include="Logos\rossman.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Logos\rtv-euro-agd.png">
@@ -101,7 +97,7 @@
     <Content Include="Logos\stokrotka.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Logos\wafelek.jpg">
+    <Content Include="Logos\wafelek.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Logos\x-kom.png">
