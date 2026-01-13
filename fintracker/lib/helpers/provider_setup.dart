@@ -11,6 +11,7 @@ import '../ui/view_models/receipt_edit_view_model.dart';
 import '../ui/view_models/receipt_details_view_model.dart';
 import '../ui/view_models/stores_view_model.dart';
 import '../ui/view_models/categories_view_model.dart';
+import '../ui/view_models/auth_view_model.dart';
 
 List<SingleChildWidget> getGlobalProviders() {
   return [
@@ -18,6 +19,7 @@ List<SingleChildWidget> getGlobalProviders() {
     ChangeNotifierProvider(create: (context) => LoadingViewModel()),
     ChangeNotifierProvider(create: (context) => LocaleViewModel()),
     ChangeNotifierProvider(create: (context) => FinansesViewModel()),
+    ChangeNotifierProvider(create: (context) => AuthViewModel()),
     ChangeNotifierProvider(
       create: (context) => ScannerViewModel(
         loadingViewModel: context.read<LoadingViewModel>(),

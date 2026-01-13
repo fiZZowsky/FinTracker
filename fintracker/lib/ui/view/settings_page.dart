@@ -3,11 +3,12 @@ import 'package:fintracker/ui/view_models/finanses_view_model.dart';
 import 'package:fintracker/ui/view_models/settings_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/services.dart';
 import '../view_models/theme_view_model.dart';
 import '../view_models/locale_view_model.dart';
+import '../view_models/auth_view_model.dart';
 import '../../helpers/notification_service.dart';
 import '../../helpers/service_locator.dart';
-import 'package:flutter/services.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -18,6 +19,7 @@ class SettingsPage extends StatelessWidget {
 
     final themeVM = context.watch<ThemeViewModel>();
     final localeVM = context.watch<LocaleViewModel>();
+    final authVM = context.watch<AuthViewModel>();
 
     final isDark = themeVM.isDarkMode(context);
 
@@ -25,6 +27,28 @@ class SettingsPage extends StatelessWidget {
       child: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 16.0, bottom: 8.0),
+            child: Text(
+              'Konto',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+          ),
+          ListTile(
+            leading: CircleAvatar(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              child: Text(
+                authVM.userName?.isNotEmpty == true
+                    ? authVM.userName![0].toUpperCase()
+                    : 'U',
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+              ),
+            ),
+            title: Text(authVM.userName ?? 'Użytkownik'),
+            subtitle: const Text('Zalogowany'),
+          ),
+          const Divider(),
           SwitchListTile(
             title: Text(l10n.themeSwitch),
             secondary: Icon(
@@ -116,6 +140,22 @@ class SettingsPage extends StatelessWidget {
                 onChanged: (value) => vm.toggleAzureOcr(value),
               );
             },
+          ),
+          const Divider(),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ElevatedButton.icon(
+              onPressed: () {
+                context.read<AuthViewModel>().logout();
+              },
+              icon: const Icon(Icons.logout),
+              label: const Text('Wyloguj się'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.error,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+              ),
+            ),
           ),
         ],
       ),

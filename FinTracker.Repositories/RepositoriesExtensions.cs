@@ -10,6 +10,7 @@ namespace FinTracker.Repositories
             services.AddScoped<IReceiptRepository, ReceiptRepository>();
             services.AddScoped<IStoreRepository, StoreRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IUserContextRepository, UserContextRepository>();
         }
     }
 }

@@ -1,4 +1,5 @@
 import 'package:fintracker/l10n/app_localizations.dart';
+import 'package:fintracker/ui/view_models/auth_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'helpers/app_router.dart';
@@ -28,6 +29,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeViewModel = Provider.of<ThemeViewModel>(context);
     final localeViewModel = context.watch<LocaleViewModel>();
+    final authViewModel = context.watch<AuthViewModel>();
+
+    final router = AppRouter.createRouter(authViewModel);
 
     return MaterialApp.router(
       title: 'FinTracker',
@@ -37,13 +41,13 @@ class MyApp extends StatelessWidget {
       darkTheme: AppTheme.darkTheme,
       themeMode: themeViewModel.themeMode,
       locale: localeViewModel.locale,
-      routerConfig: AppRouter.router,
+      routerConfig: router,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      builder: (context, router) {
+      builder: (context, child) {
         return Stack(
           children: [
-            router!,
+            child!,
             const GlobalLoaderOverlay(),
           ],
         );

@@ -11,6 +11,7 @@ namespace FinTracker.Services
             services.AddSingleton<IOcrService, TesseractOcrService>();
             services.AddSingleton<IAzureOcrService, AzureVisionOcrService>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IAuthService, AuthService>();
         }
     }
 }

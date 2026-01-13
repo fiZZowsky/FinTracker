@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
+import '../../helpers/service_locator.dart';
+import 'preferences_service.dart';
 
 class ApiClient {
   final Dio _dio;
@@ -21,6 +23,25 @@ class ApiClient {
           (X509Certificate cert, String host, int port) => true;
       return client;
     };
+
+    _dio.interceptors.add(InterceptorsWrapper(
+      onRequest: (options, handler) async {
+        final prefs = getIt<PreferencesService>();
+        final token = await prefs.getAuthToken();
+
+        if (token != null) {
+          options.headers['Authorization'] = 'Bearer $token';
+        }
+        return handler.next(options);
+      },
+      onError: (DioException e, handler) async {
+        if (e.response?.statusCode == 401) {
+          debugPrint(
+              "Token expired or invalid. Logout logic could trigger here.");
+        }
+        return handler.next(e);
+      },
+    ));
   }
 
   Future<dynamic> get(String path,
@@ -45,26 +66,16 @@ class ApiClient {
       debugPrint('ApiClient POST error: $e');
       rethrow;
     } catch (e) {
-      debugPrint('ApiClient POST Unknown error: $e');
       rethrow;
     }
   }
 
   Future<dynamic> postFormData(String path, FormData data) async {
     try {
-      final response = await _dio.post(
-        path,
-        data: data,
-        options: Options(
-          sendTimeout: const Duration(seconds: 30),
-        ),
-      );
+      final response = await _dio.post(path, data: data);
       return response.data;
     } on DioException catch (e) {
       debugPrint('ApiClient POST FormData error: $e');
-      rethrow;
-    } catch (e) {
-      debugPrint('ApiClient POST FormData Unknown error: $e');
       rethrow;
     }
   }
@@ -76,9 +87,6 @@ class ApiClient {
     } on DioException catch (e) {
       debugPrint('ApiClient PUT error: $e');
       rethrow;
-    } catch (e) {
-      debugPrint('ApiClient PUT Unknown error: $e');
-      rethrow;
     }
   }
 
@@ -88,9 +96,6 @@ class ApiClient {
       return response.data;
     } on DioException catch (e) {
       debugPrint('ApiClient DELETE error: $e');
-      rethrow;
-    } catch (e) {
-      debugPrint('ApiClient DELETE Unknown error: $e');
       rethrow;
     }
   }

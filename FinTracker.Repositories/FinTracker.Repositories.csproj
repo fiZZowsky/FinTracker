@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.9" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\FinTracker.DataAccess\FinTracker.DataAccess.csproj" />
     <ProjectReference Include="..\FinTracker.Models\FinTracker.Models.csproj" />
   </ItemGroup>
