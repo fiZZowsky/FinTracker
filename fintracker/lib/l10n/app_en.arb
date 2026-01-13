@@ -76,6 +76,10 @@
     "cancel": "Cancel",
     "ocrSettingsTitle": "OCR Engine",
     "useAzureOcr": "Use Azure AI Vision (Cloud)",
-    "useAzureOcrSubtitle": "Requires internet. More accurate but slower.",
-    "noData": "No data"
+    "useAzureOcrSubtitle": "More accurate but slower.",
+    "noData": "No data",
+    "noInternetTitle": "No Connection",
+    "noInternetMessage": "This app requires an internet connection to work properly.",
+    "tryAgain": "Try again",
+    "exitApp": "Exit"
 }

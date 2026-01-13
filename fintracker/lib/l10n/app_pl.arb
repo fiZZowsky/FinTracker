@@ -76,6 +76,10 @@
     "cancel": "Anuluj",
     "ocrSettingsTitle": "Silnik OCR",
     "useAzureOcr": "Użyj Azure AI Vision (Chmura)",
-    "useAzureOcrSubtitle": "Wymaga internetu. Dokładniejszy, ale wolniejszy.",
-    "noData": "Brak danych"
+    "useAzureOcrSubtitle": "Dokładniejszy, ale wolniejszy.",
+    "noData": "Brak danych",
+    "noInternetTitle": "Brak połączenia",
+    "noInternetMessage": "Aplikacja wymaga połączenia z internetem do poprawnego działania.",
+    "tryAgain": "Spróbuj ponownie",
+    "exitApp": "Wyjdź"
 }

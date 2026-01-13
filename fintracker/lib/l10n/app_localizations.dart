@@ -551,7 +551,7 @@ abstract class AppLocalizations {
   /// No description provided for @useAzureOcrSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Requires internet. More accurate but slower.'**
+  /// **'More accurate but slower.'**
   String get useAzureOcrSubtitle;
 
   /// No description provided for @noData.
@@ -559,6 +559,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No data'**
   String get noData;
+
+  /// No description provided for @noInternetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Connection'**
+  String get noInternetTitle;
+
+  /// No description provided for @noInternetMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This app requires an internet connection to work properly.'**
+  String get noInternetMessage;
+
+  /// No description provided for @exitApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit'**
+  String get exitApp;
 }
 
 class _AppLocalizationsDelegate

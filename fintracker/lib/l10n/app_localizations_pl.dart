@@ -235,9 +235,18 @@ class AppLocalizationsPl extends AppLocalizations {
   String get useAzureOcr => 'Użyj Azure AI Vision (Chmura)';
 
   @override
-  String get useAzureOcrSubtitle =>
-      'Wymaga internetu. Dokładniejszy, ale wolniejszy.';
+  String get useAzureOcrSubtitle => 'Dokładniejszy, ale wolniejszy.';
 
   @override
   String get noData => 'Brak danych';
+
+  @override
+  String get noInternetTitle => 'Brak połączenia';
+
+  @override
+  String get noInternetMessage =>
+      'Aplikacja wymaga połączenia z internetem do poprawnego działania.';
+
+  @override
+  String get exitApp => 'Wyjdź';
 }
