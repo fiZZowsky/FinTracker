@@ -2,6 +2,7 @@ import 'package:fintracker/l10n/app_localizations.dart';
 import 'package:fintracker/ui/view_models/finanses_view_model.dart';
 import 'package:fintracker/ui/view_models/settings_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
 import '../view_models/theme_view_model.dart';
@@ -117,6 +118,13 @@ class SettingsPage extends StatelessWidget {
                 onTap: () => _showBudgetEditDialog(context, finansesVM),
               );
             },
+          ),
+          const Divider(),
+          ListTile(
+            title: const Text('Zarządzaj kategoriami'),
+            leading: const Icon(Icons.category_outlined),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => context.push('/settings/categories'),
           ),
           const Divider(),
           Padding(

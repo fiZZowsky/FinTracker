@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../ui/view/login_page.dart';
 import '../ui/view_models/auth_view_model.dart';
+import '../ui/view/manage_categories_page.dart';
 
 class AppRouter {
   static final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -85,6 +86,10 @@ class AppRouter {
                   return const Scaffold(body: Center(child: Text('Error ID')));
                 return ReceiptDetailsPage(receiptId: id);
               },
+            ),
+            GoRoute(
+              path: '/settings/categories',
+              builder: (context, state) => const ManageCategoriesPage(),
             ),
           ],
         ),
