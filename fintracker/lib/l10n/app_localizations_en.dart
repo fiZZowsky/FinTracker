@@ -249,4 +249,38 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get exitApp => 'Exit';
+
+  @override
+  String get accountManagement => 'Account Management';
+
+  @override
+  String get changePassword => 'Change Password';
+
+  @override
+  String get deleteAccount => 'Delete Account';
+
+  @override
+  String get currentPassword => 'Current Password';
+
+  @override
+  String get newPassword => 'New Password';
+
+  @override
+  String get confirmNewPassword => 'Confirm New Password';
+
+  @override
+  String get passwordChangedSuccess => 'Password changed successfully.';
+
+  @override
+  String get deleteAccountConfirmationTitle => 'Delete Account';
+
+  @override
+  String get deleteAccountConfirmationMessage =>
+      'Are you sure you want to delete your account? This action is irreversible and will delete all your receipts and settings.';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get passwordsDoNotMatch => 'Passwords do not match';
 }

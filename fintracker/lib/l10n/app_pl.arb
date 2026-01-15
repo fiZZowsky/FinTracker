@@ -81,5 +81,16 @@
     "noInternetTitle": "Brak połączenia",
     "noInternetMessage": "Aplikacja wymaga połączenia z internetem do poprawnego działania.",
     "tryAgain": "Spróbuj ponownie",
-    "exitApp": "Wyjdź"
+    "exitApp": "Wyjdź",
+    "accountManagement": "Zarządzanie kontem",
+    "changePassword": "Zmień hasło",
+    "deleteAccount": "Usuń konto",
+    "currentPassword": "Aktualne hasło",
+    "newPassword": "Nowe hasło",
+    "confirmNewPassword": "Potwierdź nowe hasło",
+    "passwordChangedSuccess": "Hasło zostało zmienione pomyślnie.",
+    "deleteAccountConfirmationTitle": "Usuwanie konta",
+    "deleteAccountConfirmationMessage": "Czy na pewno chcesz usunąć konto? Ta operacja jest nieodwracalna i usunie wszystkie Twoje paragony oraz ustawienia.",
+    "delete": "Usuń",
+    "passwordsDoNotMatch": "Hasła nie są identyczne"
 }

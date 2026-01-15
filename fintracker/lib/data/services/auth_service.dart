@@ -64,4 +64,30 @@ class AuthService {
       rethrow;
     }
   }
+
+  Future<void> changePassword(String currentPassword, String newPassword,
+      String confirmNewPassword) async {
+    try {
+      await _apiClient.post(
+        '/api/Auth/change-password',
+        data: {
+          'currentPassword': currentPassword,
+          'newPassword': newPassword,
+          'confirmNewPassword': confirmNewPassword,
+        },
+      );
+    } catch (e) {
+      debugPrint('ChangePassword error: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> deleteAccount() async {
+    try {
+      await _apiClient.delete('/api/Auth/delete-account');
+    } catch (e) {
+      debugPrint('DeleteAccount error: $e');
+      rethrow;
+    }
+  }
 }

@@ -88,4 +88,34 @@ class AuthViewModel extends ChangeNotifier {
     _userName = null;
     notifyListeners();
   }
+
+  Future<bool> changePassword(
+      String current, String newPass, String confirm) async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      await _authService.changePassword(current, newPass, confirm);
+      return true;
+    } catch (e) {
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> deleteAccount() async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      await _authService.deleteAccount();
+      await logout();
+      return true;
+    } catch (e) {
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
 }

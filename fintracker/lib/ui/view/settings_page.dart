@@ -157,6 +157,23 @@ class SettingsPage extends StatelessWidget {
             },
           ),
           const Divider(),
+          ListTile(
+            leading: CircleAvatar(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              child: Text(
+                authVM.userName?.isNotEmpty == true
+                    ? authVM.userName![0].toUpperCase()
+                    : 'U',
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+              ),
+            ),
+            title: Text(authVM.userName ?? 'Użytkownik'),
+            subtitle: Text(l10n.accountManagement),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => context.push('/settings/account'),
+          ),
+          const Divider(),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: ElevatedButton.icon(

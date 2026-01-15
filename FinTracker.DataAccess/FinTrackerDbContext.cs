@@ -22,6 +22,18 @@ namespace FinTracker.DataAccess
                 .HasForeignKey(r => r.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<Category>()
+                .HasOne<User>()
+                .WithMany()
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Store>()
+                .HasOne<User>()
+                .WithMany()
+                .HasForeignKey(s => s.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<Receipt>()
                 .Property(r => r.TotalAmount)
                 .HasColumnType("decimal(18,2)");

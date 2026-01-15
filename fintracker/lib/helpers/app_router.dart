@@ -12,6 +12,7 @@ import '../ui/view/login_page.dart';
 import '../ui/view_models/auth_view_model.dart';
 import '../ui/view/manage_categories_page.dart';
 import '../ui/view/manage_stores_page.dart';
+import '../ui/view/account_page.dart';
 
 class AppRouter {
   static final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -95,6 +96,10 @@ class AppRouter {
             GoRoute(
               path: '/settings/stores',
               builder: (context, state) => const ManageStoresPage(),
+            ),
+            GoRoute(
+              path: '/settings/account',
+              builder: (context, state) => const AccountPage(),
             ),
           ],
         ),

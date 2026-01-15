@@ -138,5 +138,31 @@ namespace FinTracker.Services
 
             return principal;
         }
+
+        public async Task ChangePasswordAsync(Guid userId, ChangePasswordDTO dto)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) throw new KeyNotFoundException("Użytkownik nie istnieje.");
+
+            if (!BCrypt.Net.BCrypt.Verify(dto.CurrentPassword, user.PasswordHash))
+            {
+                throw new ArgumentException("Obecne hasło jest nieprawidłowe.");
+            }
+
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
+            user.RefreshToken = null;
+
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteAccountAsync(Guid userId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) throw new KeyNotFoundException("Użytkownik nie istnieje.");
+
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+        }
     }
 }

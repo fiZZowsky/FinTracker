@@ -577,6 +577,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Exit'**
   String get exitApp;
+
+  /// No description provided for @accountManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Management'**
+  String get accountManagement;
+
+  /// No description provided for @changePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Password'**
+  String get changePassword;
+
+  /// No description provided for @deleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Account'**
+  String get deleteAccount;
+
+  /// No description provided for @currentPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Password'**
+  String get currentPassword;
+
+  /// No description provided for @newPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'New Password'**
+  String get newPassword;
+
+  /// No description provided for @confirmNewPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm New Password'**
+  String get confirmNewPassword;
+
+  /// No description provided for @passwordChangedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Password changed successfully.'**
+  String get passwordChangedSuccess;
+
+  /// No description provided for @deleteAccountConfirmationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Account'**
+  String get deleteAccountConfirmationTitle;
+
+  /// No description provided for @deleteAccountConfirmationMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete your account? This action is irreversible and will delete all your receipts and settings.'**
+  String get deleteAccountConfirmationMessage;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// No description provided for @passwordsDoNotMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get passwordsDoNotMatch;
 }
 
 class _AppLocalizationsDelegate

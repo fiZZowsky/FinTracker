@@ -81,5 +81,16 @@
     "noInternetTitle": "No Connection",
     "noInternetMessage": "This app requires an internet connection to work properly.",
     "tryAgain": "Try again",
-    "exitApp": "Exit"
+    "exitApp": "Exit",
+    "accountManagement": "Account Management",
+    "changePassword": "Change Password",
+    "deleteAccount": "Delete Account",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmNewPassword": "Confirm New Password",
+    "passwordChangedSuccess": "Password changed successfully.",
+    "deleteAccountConfirmationTitle": "Delete Account",
+    "deleteAccountConfirmationMessage": "Are you sure you want to delete your account? This action is irreversible and will delete all your receipts and settings.",
+    "delete": "Delete",
+    "passwordsDoNotMatch": "Passwords do not match"
 }

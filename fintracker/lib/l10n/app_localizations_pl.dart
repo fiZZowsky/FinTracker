@@ -249,4 +249,38 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get exitApp => 'Wyjdź';
+
+  @override
+  String get accountManagement => 'Zarządzanie kontem';
+
+  @override
+  String get changePassword => 'Zmień hasło';
+
+  @override
+  String get deleteAccount => 'Usuń konto';
+
+  @override
+  String get currentPassword => 'Aktualne hasło';
+
+  @override
+  String get newPassword => 'Nowe hasło';
+
+  @override
+  String get confirmNewPassword => 'Potwierdź nowe hasło';
+
+  @override
+  String get passwordChangedSuccess => 'Hasło zostało zmienione pomyślnie.';
+
+  @override
+  String get deleteAccountConfirmationTitle => 'Usuwanie konta';
+
+  @override
+  String get deleteAccountConfirmationMessage =>
+      'Czy na pewno chcesz usunąć konto? Ta operacja jest nieodwracalna i usunie wszystkie Twoje paragony oraz ustawienia.';
+
+  @override
+  String get delete => 'Usuń';
+
+  @override
+  String get passwordsDoNotMatch => 'Hasła nie są identyczne';
 }
