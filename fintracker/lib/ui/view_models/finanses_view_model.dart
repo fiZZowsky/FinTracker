@@ -5,10 +5,12 @@ import '../../data/services/receipt_service.dart';
 import '../../helpers/service_locator.dart';
 import 'package:intl/intl.dart';
 import '../../data/services/preferences_service.dart';
+import '../../data/services/export_service.dart';
 
 class FinansesViewModel extends ChangeNotifier {
   final ReceiptService _receiptService = getIt<ReceiptService>();
   final PreferencesService _prefsService = getIt<PreferencesService>();
+  final ExportService _exportService = getIt<ExportService>();
 
   bool _isLoading = true;
   bool get isLoading => _isLoading;
@@ -101,6 +103,35 @@ class FinansesViewModel extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       debugPrint('Error fetching recent receipts: $e');
+    }
+  }
+
+  Future<void> exportData(DateTime start, DateTime end, bool isPdf) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final allReceipts = await _receiptService.getReceipts(
+        page: 1,
+        pageSize: 10000,
+        startDate: start,
+        endDate: end,
+      );
+
+      if (allReceipts.isEmpty) {
+        debugPrint("Brak danych do eksportu");
+      } else {
+        if (isPdf) {
+          await _exportService.exportToPdf(allReceipts, start, end);
+        } else {
+          await _exportService.exportToCsv(allReceipts, start, end);
+        }
+      }
+    } catch (e) {
+      debugPrint("Błąd eksportu: $e");
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 

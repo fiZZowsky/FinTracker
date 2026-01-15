@@ -4,7 +4,6 @@ import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
 import '../../helpers/service_locator.dart';
 import 'preferences_service.dart';
-import 'auth_service.dart';
 
 class ApiClient {
   final Dio _dio;

@@ -53,6 +53,17 @@ class FinansesPage extends StatelessWidget {
                   ),
                   _buildGroupedList(context, viewModel),
                   const SliverPadding(padding: EdgeInsets.only(bottom: 80)),
+                  SliverAppBar(
+                    title: const Text('Finanse'),
+                    floating: true,
+                    actions: [
+                      IconButton(
+                        icon: const Icon(Icons.file_download),
+                        tooltip: "Eksportuj raport",
+                        onPressed: () => _showExportDialog(context),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             );
@@ -140,6 +151,13 @@ class FinansesPage extends StatelessWidget {
         },
         childCount: sortedKeys.length,
       ),
+    );
+  }
+
+  void _showExportDialog(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (ctx) => const _ExportBottomSheet(),
     );
   }
 
@@ -372,6 +390,107 @@ class _ChartCard extends StatelessWidget {
                   ?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           Expanded(child: child),
+        ],
+      ),
+    );
+  }
+}
+
+class _ExportBottomSheet extends StatefulWidget {
+  const _ExportBottomSheet();
+
+  @override
+  State<_ExportBottomSheet> createState() => _ExportBottomSheetState();
+}
+
+class _ExportBottomSheetState extends State<_ExportBottomSheet> {
+  DateTimeRange? _selectedRange;
+
+  @override
+  void initState() {
+    super.initState();
+    final now = DateTime.now();
+    _selectedRange = DateTimeRange(
+      start: DateTime(now.year, now.month, 1),
+      end: DateTime(now.year, now.month + 1, 0),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final vm = context.read<FinansesViewModel>();
+
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Eksportuj dane",
+            style: theme.textTheme.headlineSmall,
+          ),
+          const SizedBox(height: 16),
+          ListTile(
+            title: const Text("Wybierz okres"),
+            subtitle: Text(
+              "${DateFormat('dd.MM.yyyy').format(_selectedRange!.start)} - ${DateFormat('dd.MM.yyyy').format(_selectedRange!.end)}",
+            ),
+            trailing: const Icon(Icons.calendar_today),
+            onTap: () async {
+              final picked = await showDateRangePicker(
+                context: context,
+                firstDate: DateTime(2020),
+                lastDate: DateTime.now(),
+                initialDateRange: _selectedRange,
+              );
+              if (picked != null) {
+                setState(() {
+                  _selectedRange = picked;
+                });
+              }
+            },
+          ),
+          const SizedBox(height: 24),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    vm.exportData(_selectedRange!.start, _selectedRange!.end,
+                        false); // false = CSV
+                  },
+                  icon: const Icon(Icons.table_chart),
+                  label: const Text("CSV (Excel)"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green.shade600,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    vm.exportData(_selectedRange!.start, _selectedRange!.end,
+                        true); // true = PDF
+                  },
+                  icon: const Icon(Icons.picture_as_pdf),
+                  label: const Text("PDF"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red.shade600,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
         ],
       ),
     );
