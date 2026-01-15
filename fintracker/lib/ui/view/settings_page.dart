@@ -127,6 +127,13 @@ class SettingsPage extends StatelessWidget {
             onTap: () => context.push('/settings/categories'),
           ),
           const Divider(),
+          ListTile(
+            title: const Text('Zarządzaj sklepami'),
+            leading: const Icon(Icons.store_mall_directory_outlined),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => context.push('/settings/stores'),
+          ),
+          const Divider(),
           Padding(
             padding: const EdgeInsets.only(top: 16.0, left: 16.0, bottom: 8.0),
             child: Text(

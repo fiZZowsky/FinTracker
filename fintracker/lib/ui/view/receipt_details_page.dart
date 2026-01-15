@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:fintracker/l10n/app_localizations.dart';
-
 import '../view_models/receipt_details_view_model.dart';
 import '../widgets/custom_loader.dart';
 import '../../data/models/receipt_model.dart';
@@ -88,14 +87,18 @@ class _ReceiptDetailsPageState extends State<ReceiptDetailsPage> {
       children: [
         _buildDetailRow(
           theme,
-          iconWidget: receipt.storeLogo != null
-              ? Image.memory(
-                  receipt.storeLogo!,
-                  width: 40,
-                  height: 40,
-                  fit: BoxFit.contain,
-                )
-              : Icon(Icons.store, size: 40, color: iconColor),
+          iconWidget:
+              (receipt.storeLogo != null && receipt.storeLogo!.isNotEmpty)
+                  ? Image.memory(
+                      receipt.storeLogo!,
+                      width: 40,
+                      height: 40,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Icon(Icons.store, size: 40, color: iconColor);
+                      },
+                    )
+                  : Icon(Icons.store, size: 40, color: iconColor),
           label: l10n.receiptStoreName,
           value: receipt.storeName,
         ),
@@ -113,8 +116,8 @@ class _ReceiptDetailsPageState extends State<ReceiptDetailsPage> {
         ] else ...[
           _buildDetailRow(
             theme,
-            iconWidget:
-                Icon(Icons.category_outlined, size: 28, color: Colors.grey),
+            iconWidget: const Icon(Icons.category_outlined,
+                size: 28, color: Colors.grey),
             label: l10n.receiptCategory,
             value: l10n.noCategory,
             valueStyle: theme.textTheme.bodyLarge?.copyWith(color: Colors.grey),

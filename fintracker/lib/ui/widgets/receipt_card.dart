@@ -16,10 +16,12 @@ class ReceiptCard extends StatelessWidget {
     if (category == null) return Icons.receipt;
     final cat = category.toLowerCase();
     if (cat.contains('spożyw')) return Icons.shopping_basket;
-    if (cat.contains('transp') || cat.contains('paliwo'))
+    if (cat.contains('transp') || cat.contains('paliwo')) {
       return Icons.local_gas_station;
-    if (cat.contains('restaur') || cat.contains('jedzenie'))
+    }
+    if (cat.contains('restaur') || cat.contains('jedzenie')) {
       return Icons.restaurant;
+    }
     if (cat.contains('dom')) return Icons.home;
     if (cat.contains('zdrow')) return Icons.medical_services;
     return Icons.category;
@@ -48,16 +50,25 @@ class ReceiptCard extends StatelessWidget {
                   color: theme.colorScheme.surface,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: receipt.storeLogo != null
-                    ? Padding(
-                        padding: const EdgeInsets.all(6.0),
-                        child: Image.memory(receipt.storeLogo!,
-                            fit: BoxFit.contain),
-                      )
-                    : Icon(
-                        _getCategoryIcon(receipt.categoryName),
-                        color: theme.colorScheme.primary,
-                      ),
+                child:
+                    (receipt.storeLogo != null && receipt.storeLogo!.isNotEmpty)
+                        ? Padding(
+                            padding: const EdgeInsets.all(6.0),
+                            child: Image.memory(
+                              receipt.storeLogo!,
+                              fit: BoxFit.contain,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Icon(
+                                  _getCategoryIcon(receipt.categoryName),
+                                  color: theme.colorScheme.primary,
+                                );
+                              },
+                            ),
+                          )
+                        : Icon(
+                            _getCategoryIcon(receipt.categoryName),
+                            color: theme.colorScheme.primary,
+                          ),
               ),
               const SizedBox(width: 16),
               Expanded(

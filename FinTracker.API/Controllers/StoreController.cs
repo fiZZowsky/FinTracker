@@ -79,5 +79,27 @@ namespace FinTracker.API.Controllers
 
             return NoContent();
         }
+
+        [HttpPost("user")]
+        public async Task<IActionResult> CreateUserStore([FromBody] CreateUserStoreDTO dto)
+        {
+            if (dto == null) return BadRequest();
+            var storeDto = new StoreDTO { Name = dto.Name, Logo = null };
+
+            var created = await _storeService.CreateAsync(storeDto);
+            return Ok(created);
+        }
+
+        [HttpPut("user/{id}")]
+        public async Task<IActionResult> UpdateUserStore(int id, [FromBody] CreateUserStoreDTO dto)
+        {
+            if (dto == null) return BadRequest();
+
+            var result = await _storeService.UpdateAsync(id, new StoreDTO { Id = id, Name = dto.Name });
+
+            if (!result) return NotFound("Nie znaleziono sklepu lub jest on systemowy.");
+
+            return NoContent();
+        }
     }
 }

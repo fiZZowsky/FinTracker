@@ -14,6 +14,7 @@ import '../ui/view_models/categories_view_model.dart';
 import '../ui/view_models/auth_view_model.dart';
 import '../ui/view_models/connectivity_view_model.dart';
 import '../ui/view_models/manage_categories_view_model.dart';
+import '../ui/view_models/manage_stores_view_model.dart';
 
 List<SingleChildWidget> getGlobalProviders() {
   return [
@@ -35,5 +36,6 @@ List<SingleChildWidget> getGlobalProviders() {
     ChangeNotifierProvider(create: (context) => CategoriesViewModel()),
     ChangeNotifierProvider(create: (context) => SettingsViewModel()),
     ChangeNotifierProvider(create: (context) => ManageCategoriesViewModel()),
+    ChangeNotifierProvider(create: (context) => ManageStoresViewModel()),
   ];
 }

@@ -11,6 +11,7 @@ import 'package:go_router/go_router.dart';
 import '../ui/view/login_page.dart';
 import '../ui/view_models/auth_view_model.dart';
 import '../ui/view/manage_categories_page.dart';
+import '../ui/view/manage_stores_page.dart';
 
 class AppRouter {
   static final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -90,6 +91,10 @@ class AppRouter {
             GoRoute(
               path: '/settings/categories',
               builder: (context, state) => const ManageCategoriesPage(),
+            ),
+            GoRoute(
+              path: '/settings/stores',
+              builder: (context, state) => const ManageStoresPage(),
             ),
           ],
         ),
