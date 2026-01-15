@@ -42,4 +42,26 @@ class AuthService {
       rethrow;
     }
   }
+
+  Future<AuthResponse> refreshToken(
+      String accessToken, String refreshToken) async {
+    try {
+      final dynamic data = await _apiClient.post(
+        '/api/Auth/refresh-token',
+        data: {
+          'accessToken': accessToken,
+          'refreshToken': refreshToken,
+        },
+      );
+
+      if (data is Map<String, dynamic>) {
+        return AuthResponse.fromJson(data);
+      } else {
+        throw Exception('Invalid response format');
+      }
+    } catch (e) {
+      debugPrint('RefreshToken error: $e');
+      rethrow;
+    }
+  }
 }

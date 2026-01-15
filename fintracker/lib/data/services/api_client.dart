@@ -4,9 +4,11 @@ import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
 import '../../helpers/service_locator.dart';
 import 'preferences_service.dart';
+import 'auth_service.dart';
 
 class ApiClient {
   final Dio _dio;
+  bool _isRefreshing = false;
 
   static const String _baseUrl =
       kIsWeb ? 'https://localhost:7297' : 'https://10.0.2.2:7297';
@@ -28,16 +30,55 @@ class ApiClient {
       onRequest: (options, handler) async {
         final prefs = getIt<PreferencesService>();
         final token = await prefs.getAuthToken();
-
         if (token != null) {
           options.headers['Authorization'] = 'Bearer $token';
         }
         return handler.next(options);
       },
       onError: (DioException e, handler) async {
-        if (e.response?.statusCode == 401) {
-          debugPrint(
-              "Token expired or invalid. Logout logic could trigger here.");
+        if (e.response?.statusCode == 401 && !_isRefreshing) {
+          _isRefreshing = true;
+          try {
+            final prefs = getIt<PreferencesService>();
+            final oldAccessToken = await prefs.getAuthToken();
+            final oldRefreshToken = await prefs.getRefreshToken();
+
+            if (oldAccessToken != null && oldRefreshToken != null) {
+              final refreshDio = Dio(BaseOptions(baseUrl: _baseUrl));
+              (refreshDio.httpClientAdapter as IOHttpClientAdapter)
+                  .createHttpClient = () {
+                final client = HttpClient();
+                client.badCertificateCallback = (cert, host, port) => true;
+                return client;
+              };
+
+              final response =
+                  await refreshDio.post('/api/Auth/refresh-token', data: {
+                'accessToken': oldAccessToken,
+                'refreshToken': oldRefreshToken,
+              });
+
+              if (response.statusCode == 200) {
+                final newToken = response.data['token'];
+                final newRefreshToken = response.data['refreshToken'];
+
+                await prefs.setAuthToken(newToken);
+                await prefs.setRefreshToken(newRefreshToken);
+
+                final options = e.requestOptions;
+                options.headers['Authorization'] = 'Bearer $newToken';
+
+                final retryResponse = await _dio.fetch(options);
+                _isRefreshing = false;
+                return handler.resolve(retryResponse);
+              }
+            }
+          } catch (refreshError) {
+            debugPrint('Refresh token failed: $refreshError');
+            await getIt<PreferencesService>().clearAuthData();
+          } finally {
+            _isRefreshing = false;
+          }
         }
         return handler.next(e);
       },
@@ -50,10 +91,6 @@ class ApiClient {
       final response = await _dio.get(path, queryParameters: queryParameters);
       return response.data;
     } on DioException catch (e) {
-      debugPrint('ApiClient GET error: $e');
-      rethrow;
-    } catch (e) {
-      debugPrint('ApiClient GET Unknown error: $e');
       rethrow;
     }
   }
@@ -63,9 +100,6 @@ class ApiClient {
       final response = await _dio.post(path, data: data);
       return response.data;
     } on DioException catch (e) {
-      debugPrint('ApiClient POST error: $e');
-      rethrow;
-    } catch (e) {
       rethrow;
     }
   }
@@ -75,7 +109,6 @@ class ApiClient {
       final response = await _dio.post(path, data: data);
       return response.data;
     } on DioException catch (e) {
-      debugPrint('ApiClient POST FormData error: $e');
       rethrow;
     }
   }
@@ -85,7 +118,6 @@ class ApiClient {
       final response = await _dio.put(path, data: data);
       return response.data;
     } on DioException catch (e) {
-      debugPrint('ApiClient PUT error: $e');
       rethrow;
     }
   }
@@ -95,7 +127,6 @@ class ApiClient {
       final response = await _dio.delete(path);
       return response.data;
     } on DioException catch (e) {
-      debugPrint('ApiClient DELETE error: $e');
       rethrow;
     }
   }

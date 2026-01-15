@@ -28,5 +28,12 @@ namespace FinTracker.API.Controllers
             var result = await _authService.LoginAsync(dto);
             return Ok(result);
         }
+
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken([FromBody] TokenRequestDTO dto)
+        {
+            var result = await _authService.RefreshTokenAsync(dto);
+            return Ok(result);
+        }
     }
 }

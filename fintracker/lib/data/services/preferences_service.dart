@@ -5,6 +5,7 @@ class PreferencesService {
   static const String _azureOcrKey = 'use_azure_ocr';
   static const String _tokenKey = 'auth_token';
   static const String _userNameKey = 'user_name';
+  static const String _refreshTokenKey = 'refresh_token';
 
   Future<void> setBudgetLimit(double amount) async {
     final prefs = await SharedPreferences.getInstance();
@@ -46,9 +47,20 @@ class PreferencesService {
     return prefs.getString(_userNameKey);
   }
 
+  Future<void> setRefreshToken(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_refreshTokenKey, token);
+  }
+
+  Future<String?> getRefreshToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_refreshTokenKey);
+  }
+
   Future<void> clearAuthData() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_tokenKey);
+    await prefs.remove(_refreshTokenKey);
     await prefs.remove(_userNameKey);
   }
 }

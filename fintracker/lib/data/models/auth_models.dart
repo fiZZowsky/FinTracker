@@ -33,11 +33,13 @@ class RegisterRequest {
 
 class AuthResponse {
   final String token;
+  final String refreshToken;
   final String userId;
   final String name;
 
   AuthResponse({
     required this.token,
+    required this.refreshToken,
     required this.userId,
     required this.name,
   });
@@ -45,6 +47,7 @@ class AuthResponse {
   factory AuthResponse.fromJson(Map<String, dynamic> json) {
     return AuthResponse(
       token: json['token'] as String,
+      refreshToken: json['refreshToken'] as String,
       userId: json['userId'] as String,
       name: json['name'] as String,
     );

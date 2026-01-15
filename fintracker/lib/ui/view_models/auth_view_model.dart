@@ -38,6 +38,7 @@ class AuthViewModel extends ChangeNotifier {
       );
 
       await _prefs.setAuthToken(response.token);
+      await _prefs.setRefreshToken(response.refreshToken);
       await _prefs.setUserName(response.name);
 
       _userName = response.name;
@@ -67,6 +68,7 @@ class AuthViewModel extends ChangeNotifier {
       );
 
       await _prefs.setAuthToken(response.token);
+      await _prefs.setRefreshToken(response.refreshToken);
       await _prefs.setUserName(response.name);
 
       _userName = response.name;
