@@ -1,5 +1,4 @@
-﻿using BCrypt.Net;
-using FinTracker.DataAccess;
+﻿using FinTracker.DataAccess;
 using FinTracker.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -24,7 +23,7 @@ namespace FinTracker.Services
         public async Task<AuthResponseDto> RegisterAsync(RegisterDto dto)
         {
             if (await _context.Users.AnyAsync(u => u.Email == dto.Email))
-                throw new Exception("Email jest już zajęty.");
+                throw new ArgumentException("Email jest już zajęty.");
 
             var user = new User
             {
@@ -44,7 +43,7 @@ namespace FinTracker.Services
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
             if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
-                throw new Exception("Nieprawidłowy email lub hasło.");
+                throw new ArgumentException("Nieprawidłowy email lub hasło.");
 
             return GenerateToken(user);
         }

@@ -20,7 +20,6 @@ namespace FinTracker.Services
             if (userId == null) throw new UnauthorizedAccessException("Brak użytkownika.");
 
             var entity = _mapper.Map<Category>(dto);
-
             entity.UserId = userId;
             entity.IsDefault = false;
 
@@ -31,27 +30,17 @@ namespace FinTracker.Services
         public override async Task<bool> DeleteAsync(int id)
         {
             var category = await _repository.GetByIdAsync(id);
-
-            if (category == null || category.IsDefault)
-            {
-                return false;
-            }
-
+            if (category == null || category.IsDefault) return false;
             return await _repository.DeleteAsync(id);
         }
 
         public override async Task<bool> UpdateAsync(int id, CategoryDTO dto)
         {
             var category = await _repository.GetByIdAsync(id);
-
-            if (category == null || category.IsDefault)
-            {
-                return false;
-            }
+            if (category == null || category.IsDefault) return false;
 
             _mapper.Map(dto, category);
             category.IsDefault = false;
-
             await _repository.UpdateAsync(category);
             return true;
         }

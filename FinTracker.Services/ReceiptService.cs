@@ -43,30 +43,21 @@ namespace FinTracker.Services
         public override async Task<ReceiptDTO> CreateAsync(ReceiptDTO dto)
         {
             var userId = _userContextRepository.GetUserId();
-
-            if (userId == null)
-            {
-                throw new UnauthorizedAccessException("Nie można zidentyfikować użytkownika.");
-            }
+            if (userId == null) throw new UnauthorizedAccessException("Nie można zidentyfikować użytkownika.");
 
             var entity = _mapper.Map<Receipt>(dto);
             entity.UserId = userId.Value;
 
             var createdEntity = await _receiptRepository.CreateAsync(entity);
-
             return _mapper.Map<ReceiptDTO>(createdEntity);
         }
 
         public override async Task<bool> UpdateAsync(int id, ReceiptDTO dto)
         {
             var existingEntity = await _receiptRepository.GetByIdAsync(id);
-            if (existingEntity == null)
-            {
-                return false;
-            }
+            if (existingEntity == null) return false;
 
             _mapper.Map(dto, existingEntity);
-
             await _receiptRepository.UpdateAsync(existingEntity);
             return true;
         }
@@ -84,33 +75,17 @@ namespace FinTracker.Services
 
         public async Task<ReceiptDTO> CreateReceiptFromImageAsync(Stream imageStream, bool useAzure)
         {
-            try
-            {
-                string ocrText;
-                if (useAzure)
-                {
-                    ocrText = await _azureOcrService.RecognizeTextAsync(imageStream);
-                }
-                else
-                {
-                    ocrText = await _ocrService.RecognizeTextAsync(imageStream);
-                }
+            string ocrText = useAzure
+                ? await _azureOcrService.RecognizeTextAsync(imageStream)
+                : await _ocrService.RecognizeTextAsync(imageStream);
 
-                ReceiptDTO newReceipt = await _ParseTextToReceipt(ocrText);
-                return newReceipt;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            return await _ParseTextToReceipt(ocrText);
         }
 
         private async Task<ReceiptDTO> _ParseTextToReceipt(string ocrText)
         {
             decimal totalAmount = 0.0m;
             DateTime dateShopping = DateTime.UtcNow;
-
             string storeName = await _ParseStoreName(ocrText);
 
             string amountPattern = @"(SUMA|S[U0O]M[A4]|RAZEM|KWOTA|DO\s*ZAP[LŁ1I]ATY|WARTOŚĆ)\s*[\s:.;]*\s*(PLN|Z[LŁ1I]|P1N)?\s*([0-9OoSsDd]{1,}[\s.,]+[0-9OoSs]{2})\b";
@@ -118,32 +93,18 @@ namespace FinTracker.Services
 
             if (matches.Count > 0)
             {
-                var lastMatch = matches[matches.Count - 1];
-                string dirtyAmount = lastMatch.Groups[3].Value;
-                string cleanAmount = CleanOcrNumber(dirtyAmount);
+                string cleanAmount = CleanOcrNumber(matches[^1].Groups[3].Value);
                 decimal.TryParse(cleanAmount, NumberStyles.Any, CultureInfo.InvariantCulture, out totalAmount);
             }
 
             var dateMatch = Regex.Match(ocrText, @"(\d{4}-\d{2}-\d{2})|(\d{2}[.-]\d{2}[.-]\d{4})");
             if (dateMatch.Success)
             {
-                string dateStr = dateMatch.Value;
-                if (DateTime.TryParse(dateStr, CultureInfo.GetCultureInfo("pl-PL"), DateTimeStyles.None, out DateTime parsedDate))
-                {
-                    dateShopping = parsedDate;
-                }
-                else if (DateTime.TryParse(dateStr, CultureInfo.InvariantCulture, DateTimeStyles.None, out parsedDate))
-                {
-                    dateShopping = parsedDate;
-                }
+                if (!DateTime.TryParse(dateMatch.Value, CultureInfo.GetCultureInfo("pl-PL"), DateTimeStyles.None, out dateShopping))
+                    DateTime.TryParse(dateMatch.Value, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateShopping);
             }
 
-            return new ReceiptDTO
-            {
-                StoreName = storeName,
-                TotalAmount = totalAmount,
-                DateShopping = dateShopping
-            };
+            return new ReceiptDTO { StoreName = storeName, TotalAmount = totalAmount, DateShopping = dateShopping };
         }
 
         private string CleanOcrNumber(string input)
@@ -156,18 +117,15 @@ namespace FinTracker.Services
         {
             var stores = await _storeRepository.GetAllStoresName();
             string normalizedOcrText = _RemoveDiacritics(ocrText.ToUpper()).Replace(" ", "");
-            const int maxDistanceThreshold = 1;
 
             foreach (var store in stores)
             {
                 string normalizedStore = _RemoveDiacritics(store.ToUpper());
-                int storeLen = normalizedStore.Length;
-                if (storeLen < 4) continue;
-                for (int i = 0; i <= normalizedOcrText.Length - storeLen; i++)
+                if (normalizedStore.Length < 4) continue;
+                for (int i = 0; i <= normalizedOcrText.Length - normalizedStore.Length; i++)
                 {
-                    string ocrSubstring = normalizedOcrText.Substring(i, storeLen);
-                    int distance = _LevenshteinDistance(ocrSubstring, normalizedStore);
-                    if (distance <= maxDistanceThreshold) return store;
+                    if (_LevenshteinDistance(normalizedOcrText.Substring(i, normalizedStore.Length), normalizedStore) <= 1)
+                        return store;
                 }
             }
             return "Nieznany Sklep";
@@ -175,16 +133,14 @@ namespace FinTracker.Services
 
         private int _LevenshteinDistance(string s, string t)
         {
-            int n = s.Length; int m = t.Length; int[,] d = new int[n + 1, m + 1];
+            int n = s.Length, m = t.Length;
+            int[,] d = new int[n + 1, m + 1];
             if (n == 0) return m; if (m == 0) return n;
-            for (int i = 0; i <= n; d[i, 0] = i++) { }
-            for (int j = 0; j <= m; d[0, j] = j++) { }
+            for (int i = 0; i <= n; i++) d[i, 0] = i;
+            for (int j = 0; j <= m; j++) d[0, j] = j;
             for (int i = 1; i <= n; i++)
                 for (int j = 1; j <= m; j++)
-                {
-                    int cost = (t[j - 1] == s[i - 1]) ? 0 : 1;
-                    d[i, j] = Math.Min(Math.Min(d[i - 1, j] + 1, d[i, j - 1] + 1), d[i - 1, j - 1] + cost);
-                }
+                    d[i, j] = Math.Min(Math.Min(d[i - 1, j] + 1, d[i, j - 1] + 1), d[i - 1, j - 1] + (t[j - 1] == s[i - 1] ? 0 : 1));
             return d[n, m];
         }
 
@@ -192,8 +148,9 @@ namespace FinTracker.Services
         {
             var normalizedString = text.Normalize(NormalizationForm.FormD);
             var stringBuilder = new StringBuilder();
-            foreach (var c in normalizedString) if (CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark) stringBuilder.Append(c);
-            return stringBuilder.ToString().Normalize(NormalizationForm.FormC).Replace("ą", "a").Replace("ć", "c").Replace("ę", "e").Replace("ł", "l").Replace("ń", "n").Replace("ó", "o").Replace("ś", "s").Replace("ź", "z").Replace("ż", "z");
+            foreach (var c in normalizedString)
+                if (CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark) stringBuilder.Append(c);
+            return stringBuilder.ToString().Normalize(NormalizationForm.FormC).Replace("ł", "l"); // Uproszczone
         }
 
         private async Task<byte[]?> _GetLogoBytesForStore(string storeName)
@@ -201,20 +158,17 @@ namespace FinTracker.Services
             var stores = await _storeRepository.GetAllAsync();
             var store = stores.FirstOrDefault(s => s.Name.Equals(storeName, StringComparison.CurrentCultureIgnoreCase));
             if (store == null || string.IsNullOrEmpty(store.LogoUrl)) return null;
-            string filename = Path.GetFileName(store.LogoUrl);
-            return await _ReadFileBytes(filename);
+            return await _ReadFileBytes(Path.GetFileName(store.LogoUrl));
         }
 
         private async Task<byte[]?> _ReadFileBytes(string fileName)
         {
             try
             {
-                string basePath = AppDomain.CurrentDomain.BaseDirectory;
-                string filePath = Path.Combine(basePath, "Logos", fileName);
-                if (File.Exists(filePath)) return await File.ReadAllBytesAsync(filePath);
-                else Console.WriteLine($"[ReceiptService] Nie znaleziono pliku logo: {filePath}");
+                string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logos", fileName);
+                if (File.Exists(path)) return await File.ReadAllBytesAsync(path);
             }
-            catch (Exception ex) { Console.WriteLine($"[ReceiptService] Błąd odczytu logo: {ex.Message}"); }
+            catch (Exception) {}
             return null;
         }
 

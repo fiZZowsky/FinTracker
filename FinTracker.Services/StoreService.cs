@@ -20,7 +20,6 @@ namespace FinTracker.Services
             if (userId == null) throw new UnauthorizedAccessException();
 
             var entity = _mapper.Map<Store>(dto);
-
             entity.UserId = userId;
             entity.IsDefault = false;
 
@@ -31,11 +30,9 @@ namespace FinTracker.Services
         public override async Task<bool> UpdateAsync(int id, StoreDTO dto)
         {
             var store = await _repository.GetByIdAsync(id);
-
             if (store == null || store.IsDefault) return false;
 
             store.Name = dto.Name;
-
             await _repository.UpdateAsync(store);
             return true;
         }
@@ -44,7 +41,6 @@ namespace FinTracker.Services
         {
             var store = await _repository.GetByIdAsync(id);
             if (store == null || store.IsDefault) return false;
-
             return await _repository.DeleteAsync(id);
         }
     }

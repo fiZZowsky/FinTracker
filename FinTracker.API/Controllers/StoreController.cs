@@ -25,69 +25,15 @@ namespace FinTracker.API.Controllers
             return Ok(stores);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetStore(int id)
-        {
-            var store = await _storeService.GetByIdAsync(id);
-            if (store == null)
-            {
-                return NotFound();
-            }
-            return Ok(store);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> CreateStore([FromForm] CreateStoreDTO form)
-        {
-            byte[] logoBytes;
-            using (var memoryStream = new MemoryStream())
-            {
-                await form.Logo.CopyToAsync(memoryStream);
-                logoBytes = memoryStream.ToArray();
-            }
-            var createdStore = await _storeService.CreateAsync(new StoreDTO { Id = 0, Name = form.Name, Logo = logoBytes });
-            return CreatedAtAction(nameof(GetStore), new { id = createdStore.Id }, createdStore);
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateStore(int id, [FromForm] CreateStoreDTO form)
-        {
-            byte[] logoBytes;
-            using (var memoryStream = new MemoryStream())
-            {
-                await form.Logo.CopyToAsync(memoryStream);
-                logoBytes = memoryStream.ToArray();
-            }
-
-            var result = await _storeService.UpdateAsync(id, new StoreDTO(){ Id = id, Name = form.Name, Logo = logoBytes });
-            if (!result)
-            {
-                return NotFound();
-            }
-
-            return NoContent();
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteStore(int id)
-        {
-            var result = await _storeService.DeleteAsync(id);
-            if(!result)
-            {
-                return NotFound();
-            }
-
-            return NoContent();
-        }
-
         [HttpPost("user")]
         public async Task<IActionResult> CreateUserStore([FromBody] CreateUserStoreDTO dto)
         {
             if (dto == null) return BadRequest();
-            var storeDto = new StoreDTO { Name = dto.Name, Logo = null };
 
-            var created = await _storeService.CreateAsync(storeDto);
-            return Ok(created);
+            var storeDto = new StoreDTO { Name = dto.Name, Logo = null };
+            var createdStore = await _storeService.CreateAsync(storeDto);
+
+            return Ok(createdStore);
         }
 
         [HttpPut("user/{id}")]
@@ -96,8 +42,16 @@ namespace FinTracker.API.Controllers
             if (dto == null) return BadRequest();
 
             var result = await _storeService.UpdateAsync(id, new StoreDTO { Id = id, Name = dto.Name });
+            if (!result) return NotFound("Nie znaleziono sklepu lub jest systemowy.");
 
-            if (!result) return NotFound("Nie znaleziono sklepu lub jest on systemowy.");
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteStore(int id)
+        {
+            var result = await _storeService.DeleteAsync(id);
+            if (!result) return NotFound("Nie znaleziono sklepu lub jest systemowy.");
 
             return NoContent();
         }

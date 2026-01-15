@@ -24,44 +24,21 @@ namespace FinTracker.API.Controllers
             return Ok(categories);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
-        {
-            var category = await _categoryService.GetByIdAsync(id);
-            if (category == null)
-            {
-                return NotFound();
-            }
-            return Ok(category);
-        }
-
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CategoryDTO categoryDto)
         {
-            if (categoryDto == null)
-            {
-                return BadRequest("Dane kategorii są nieprawidłowe.");
-            }
-
+            if (categoryDto == null) return BadRequest();
             var created = await _categoryService.CreateAsync(categoryDto);
-
-            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+            return CreatedAtAction(nameof(GetAll), new { id = created.Id }, created);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateCategory(int id, [FromBody] CategoryDTO categoryDto)
         {
-            if (categoryDto == null || id != categoryDto.Id)
-            {
-                return BadRequest("Niezgodność ID lub brak danych.");
-            }
+            if (categoryDto == null || id != categoryDto.Id) return BadRequest();
 
             var result = await _categoryService.UpdateAsync(id, categoryDto);
-
-            if (!result)
-            {
-                return NotFound($"Nie znaleziono kategorii o ID: {id}");
-            }
+            if (!result) return NotFound("Nie znaleziono kategorii lub jest systemowa.");
 
             return NoContent();
         }
@@ -70,11 +47,7 @@ namespace FinTracker.API.Controllers
         public async Task<IActionResult> DeleteCategory(int id)
         {
             var result = await _categoryService.DeleteAsync(id);
-
-            if (!result)
-            {
-                return NotFound($"Nie znaleziono kategorii o ID: {id}");
-            }
+            if (!result) return NotFound("Nie znaleziono kategorii lub jest systemowa.");
 
             return NoContent();
         }
