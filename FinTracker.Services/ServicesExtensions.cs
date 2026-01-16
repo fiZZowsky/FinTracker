@@ -12,6 +12,7 @@ namespace FinTracker.Services
             services.AddSingleton<IAzureOcrService, AzureVisionOcrService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IReceiptParserService, ReceiptParserService>();
         }
     }
 }
