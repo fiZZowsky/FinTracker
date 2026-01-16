@@ -22,7 +22,9 @@ namespace FinTracker.Repositories
 
         public override async Task<IEnumerable<Receipt>> GetAllAsync()
         {
-            return await GetUserReceipts().ToListAsync();
+            return await GetUserReceipts()
+                .AsNoTracking()
+                .ToListAsync();
         }
 
         public override async Task<Receipt?> GetByIdAsync(int id)
@@ -44,7 +46,10 @@ namespace FinTracker.Repositories
 
         public async Task<IEnumerable<Receipt>> GetPagedAsync(ReceiptQueryParameters queryParams)
         {
-            var query = GetUserReceipts().Include(r => r.Category).AsQueryable();
+            var query = GetUserReceipts()
+                .AsNoTracking()
+                .Include(r => r.Category)
+                .AsQueryable();
 
             if (queryParams.StartDate.HasValue)
                 query = query.Where(r => r.DateShopping.Date >= queryParams.StartDate.Value.Date);
@@ -61,7 +66,7 @@ namespace FinTracker.Repositories
 
         public async Task<IEnumerable<SummaryDataDTO>> GetSummaryAsync(ReceiptQueryParameters queryParams)
         {
-            var query = GetUserReceipts();
+            var query = GetUserReceipts().AsNoTracking();
 
             if (queryParams.StartDate.HasValue)
                 query = query.Where(r => r.DateShopping.Date >= queryParams.StartDate.Value.Date);
@@ -103,7 +108,9 @@ namespace FinTracker.Repositories
         {
             if (string.IsNullOrWhiteSpace(storeName)) return null;
             var normalized = storeName.ToLower();
+
             return await GetUserReceipts()
+                .AsNoTracking()
                 .Where(r => r.StoreName.ToLower() == normalized && r.CategoryId != null)
                 .GroupBy(r => r.CategoryId)
                 .OrderByDescending(g => g.Count())
