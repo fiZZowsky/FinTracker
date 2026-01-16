@@ -412,7 +412,7 @@ class _ExportBottomSheetState extends State<_ExportBottomSheet> {
     final now = DateTime.now();
     _selectedRange = DateTimeRange(
       start: DateTime(now.year, now.month, 1),
-      end: DateTime(now.year, now.month + 1, 0),
+      end: DateTime(now.year, now.month, now.day),
     );
   }
 
@@ -459,8 +459,8 @@ class _ExportBottomSheetState extends State<_ExportBottomSheet> {
                 child: ElevatedButton.icon(
                   onPressed: () {
                     Navigator.pop(context);
-                    vm.exportData(_selectedRange!.start, _selectedRange!.end,
-                        false); // false = CSV
+                    vm.exportData(
+                        _selectedRange!.start, _selectedRange!.end, false);
                   },
                   icon: const Icon(Icons.table_chart),
                   label: const Text("CSV (Excel)"),
@@ -476,8 +476,8 @@ class _ExportBottomSheetState extends State<_ExportBottomSheet> {
                 child: ElevatedButton.icon(
                   onPressed: () {
                     Navigator.pop(context);
-                    vm.exportData(_selectedRange!.start, _selectedRange!.end,
-                        true); // true = PDF
+                    vm.exportData(
+                        _selectedRange!.start, _selectedRange!.end, true);
                   },
                   icon: const Icon(Icons.picture_as_pdf),
                   label: const Text("PDF"),
