@@ -4,7 +4,6 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fintracker/l10n/app_localizations.dart';
-
 import '../view_models/finanses_view_model.dart';
 import '../widgets/custom_loader.dart';
 import '../widgets/budget_bar.dart';
@@ -16,59 +15,66 @@ class FinansesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Consumer<FinansesViewModel>(
-          builder: (context, viewModel, child) {
-            if (viewModel.isLoading) {
-              return const Center(child: CustomLoader(size: 80));
-            }
+      // Usunąłem SafeArea tutaj, bo SliverAppBar lepiej sobie radzi z wcięciami systemowymi
+      body: Consumer<FinansesViewModel>(
+        builder: (context, viewModel, child) {
+          if (viewModel.isLoading) {
+            return const Center(child: CustomLoader(size: 80));
+          }
 
-            return RefreshIndicator(
-              onRefresh: () async => await viewModel.fetchData(),
-              child: CustomScrollView(
-                slivers: [
-                  SliverPadding(
-                    padding: const EdgeInsets.all(16.0),
-                    sliver: SliverToBoxAdapter(
-                      child: _buildDateHeader(context, viewModel),
+          return RefreshIndicator(
+            onRefresh: () async => await viewModel.fetchData(),
+            child: CustomScrollView(
+              slivers: [
+                // --- ZMIANA: Pasek na samej górze ---
+                SliverAppBar(
+                  title: const Text('Finanse'),
+                  centerTitle: false, // Tytuł po lewej (standard Androida)
+                  pinned: true, // Pasek zawsze widoczny u góry
+                  floating: false,
+                  actions: [
+                    // Przycisk eksportu w prawym górnym rogu
+                    IconButton(
+                      icon: const Icon(Icons.file_download_outlined),
+                      tooltip: "Eksportuj raport",
+                      onPressed: () => _showExportDialog(context),
+                    ),
+                  ],
+                ),
+                // ------------------------------------
+
+                SliverPadding(
+                  padding: const EdgeInsets.all(16.0),
+                  sliver: SliverToBoxAdapter(
+                    child: _buildDateHeader(context, viewModel),
+                  ),
+                ),
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  sliver: SliverToBoxAdapter(
+                    child: BudgetBar(
+                      spent: viewModel.totalSpent,
+                      limit: viewModel.monthlyBudgetLimit,
                     ),
                   ),
-                  SliverPadding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    sliver: SliverToBoxAdapter(
-                      child: BudgetBar(
-                        spent: viewModel.totalSpent,
-                        limit: viewModel.monthlyBudgetLimit,
-                      ),
+                ),
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(vertical: 24.0),
+                  sliver: SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: 250,
+                      child: _ChartsCarousel(viewModel: viewModel),
                     ),
                   ),
-                  SliverPadding(
-                    padding: const EdgeInsets.symmetric(vertical: 24.0),
-                    sliver: SliverToBoxAdapter(
-                      child: SizedBox(
-                        height: 250,
-                        child: _ChartsCarousel(viewModel: viewModel),
-                      ),
-                    ),
-                  ),
-                  _buildGroupedList(context, viewModel),
-                  const SliverPadding(padding: EdgeInsets.only(bottom: 80)),
-                  SliverAppBar(
-                    title: const Text('Finanse'),
-                    floating: true,
-                    actions: [
-                      IconButton(
-                        icon: const Icon(Icons.file_download),
-                        tooltip: "Eksportuj raport",
-                        onPressed: () => _showExportDialog(context),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            );
-          },
-        ),
+                ),
+                _buildGroupedList(context, viewModel),
+
+                // Dodajemy odstęp na dole, żeby treść nie chowała się pod navbar
+                const SliverPadding(padding: EdgeInsets.only(bottom: 80)),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
@@ -176,6 +182,107 @@ class FinansesPage extends StatelessWidget {
     return DateFormat.EEEE(Intl.getCurrentLocale()).format(date) +
         ', ' +
         DateFormat.MMMd(Intl.getCurrentLocale()).format(date);
+  }
+}
+
+class _ExportBottomSheet extends StatefulWidget {
+  const _ExportBottomSheet();
+
+  @override
+  State<_ExportBottomSheet> createState() => _ExportBottomSheetState();
+}
+
+class _ExportBottomSheetState extends State<_ExportBottomSheet> {
+  DateTimeRange? _selectedRange;
+
+  @override
+  void initState() {
+    super.initState();
+    final now = DateTime.now();
+    _selectedRange = DateTimeRange(
+      start: DateTime(now.year, now.month, 1),
+      end: DateTime(now.year, now.month, now.day),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final vm = context.read<FinansesViewModel>();
+
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Eksportuj dane",
+            style: theme.textTheme.headlineSmall,
+          ),
+          const SizedBox(height: 16),
+          ListTile(
+            title: const Text("Wybierz okres"),
+            subtitle: Text(
+              "${DateFormat('dd.MM.yyyy').format(_selectedRange!.start)} - ${DateFormat('dd.MM.yyyy').format(_selectedRange!.end)}",
+            ),
+            trailing: const Icon(Icons.calendar_today),
+            onTap: () async {
+              final picked = await showDateRangePicker(
+                context: context,
+                firstDate: DateTime(2020),
+                lastDate: DateTime.now(),
+                initialDateRange: _selectedRange,
+              );
+              if (picked != null) {
+                setState(() {
+                  _selectedRange = picked;
+                });
+              }
+            },
+          ),
+          const SizedBox(height: 24),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    vm.exportData(
+                        _selectedRange!.start, _selectedRange!.end, false);
+                  },
+                  icon: const Icon(Icons.table_chart),
+                  label: const Text("CSV (Excel)"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green.shade600,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    vm.exportData(
+                        _selectedRange!.start, _selectedRange!.end, true);
+                  },
+                  icon: const Icon(Icons.picture_as_pdf),
+                  label: const Text("PDF"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red.shade600,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+        ],
+      ),
+    );
   }
 }
 
@@ -390,107 +497,6 @@ class _ChartCard extends StatelessWidget {
                   ?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           Expanded(child: child),
-        ],
-      ),
-    );
-  }
-}
-
-class _ExportBottomSheet extends StatefulWidget {
-  const _ExportBottomSheet();
-
-  @override
-  State<_ExportBottomSheet> createState() => _ExportBottomSheetState();
-}
-
-class _ExportBottomSheetState extends State<_ExportBottomSheet> {
-  DateTimeRange? _selectedRange;
-
-  @override
-  void initState() {
-    super.initState();
-    final now = DateTime.now();
-    _selectedRange = DateTimeRange(
-      start: DateTime(now.year, now.month, 1),
-      end: DateTime(now.year, now.month, now.day),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final vm = context.read<FinansesViewModel>();
-
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Eksportuj dane",
-            style: theme.textTheme.headlineSmall,
-          ),
-          const SizedBox(height: 16),
-          ListTile(
-            title: const Text("Wybierz okres"),
-            subtitle: Text(
-              "${DateFormat('dd.MM.yyyy').format(_selectedRange!.start)} - ${DateFormat('dd.MM.yyyy').format(_selectedRange!.end)}",
-            ),
-            trailing: const Icon(Icons.calendar_today),
-            onTap: () async {
-              final picked = await showDateRangePicker(
-                context: context,
-                firstDate: DateTime(2020),
-                lastDate: DateTime.now(),
-                initialDateRange: _selectedRange,
-              );
-              if (picked != null) {
-                setState(() {
-                  _selectedRange = picked;
-                });
-              }
-            },
-          ),
-          const SizedBox(height: 24),
-          Row(
-            children: [
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    vm.exportData(
-                        _selectedRange!.start, _selectedRange!.end, false);
-                  },
-                  icon: const Icon(Icons.table_chart),
-                  label: const Text("CSV (Excel)"),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green.shade600,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    vm.exportData(
-                        _selectedRange!.start, _selectedRange!.end, true);
-                  },
-                  icon: const Icon(Icons.picture_as_pdf),
-                  label: const Text("PDF"),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red.shade600,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
         ],
       ),
     );
