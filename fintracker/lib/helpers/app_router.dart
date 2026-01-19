@@ -1,42 +1,34 @@
-import 'package:fintracker/data/models/receipt_model.dart';
-import 'package:fintracker/ui/view/finanses_page.dart';
-import 'package:fintracker/ui/view/home_page.dart';
-import 'package:fintracker/ui/view/receipt_details_page.dart';
-import 'package:fintracker/ui/view/receipt_edit_page.dart';
-import 'package:fintracker/ui/view/scanner_page.dart';
-import 'package:fintracker/ui/view/settings_page.dart';
-import 'package:fintracker/ui/widgets/responsive_nav_shell.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../ui/view/splash_screen.dart';
 import '../ui/view/login_page.dart';
-import '../ui/view_models/auth_view_model.dart';
+import '../ui/view/home_page.dart';
+import '../ui/view/finanses_page.dart';
+import '../ui/view/scanner_page.dart';
+import '../ui/view/settings_page.dart';
+import '../ui/view/account_page.dart';
 import '../ui/view/manage_categories_page.dart';
 import '../ui/view/manage_stores_page.dart';
-import '../ui/view/account_page.dart';
+import '../ui/view/receipt_details_page.dart';
+import '../ui/view/receipt_edit_page.dart';
+import '../ui/widgets/responsive_nav_shell.dart';
+import '../ui/view_models/auth_view_model.dart';
+import '../data/models/receipt_model.dart';
 
 class AppRouter {
+  static final _rootNavigatorKey = GlobalKey<NavigatorState>();
   static final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
   static GoRouter createRouter(AuthViewModel authViewModel) {
     return GoRouter(
+      navigatorKey: _rootNavigatorKey,
       initialLocation: '/',
-      navigatorKey: GlobalKey<NavigatorState>(),
       refreshListenable: authViewModel,
-      redirect: (context, state) {
-        final isLoggedIn = authViewModel.isLoggedIn;
-        final isLoggingIn = state.uri.toString() == '/login';
-
-        if (!isLoggedIn && !isLoggingIn) {
-          return '/login';
-        }
-
-        if (isLoggedIn && isLoggingIn) {
-          return '/';
-        }
-
-        return null;
-      },
       routes: [
+        GoRoute(
+          path: '/',
+          builder: (context, state) => const SplashScreen(),
+        ),
         GoRoute(
           path: '/login',
           builder: (context, state) => const LoginPage(),
@@ -48,62 +40,77 @@ class AppRouter {
           },
           routes: [
             GoRoute(
-              path: '/',
+              path: '/home',
               builder: (context, state) => const HomePage(),
-            ),
-            GoRoute(
-              path: '/scanner',
-              builder: (context, state) => const ScannerPage(),
             ),
             GoRoute(
               path: '/finanses',
               builder: (context, state) => const FinansesPage(),
             ),
             GoRoute(
+              path: '/scanner',
+              builder: (context, state) => const ScannerPage(),
+            ),
+            GoRoute(
               path: '/settings',
               builder: (context, state) => const SettingsPage(),
-            ),
-            GoRoute(
-              path: '/receipt-edit',
-              builder: (context, state) {
-                final receipt = state.extra as ReceiptModel?;
-                if (receipt == null) {
-                  return ReceiptEditPage(
-                      receipt: ReceiptModel(
-                          id: 0,
-                          storeName: '',
-                          totalAmount: 0,
-                          dateShopping: DateTime.now(),
-                          storeLogo: null));
-                }
-                return ReceiptEditPage(receipt: receipt);
-              },
-            ),
-            GoRoute(
-              path: '/receipt-details/:id',
-              builder: (context, state) {
-                final idString = state.pathParameters['id'];
-                final id = int.tryParse(idString ?? '');
-                if (id == null)
-                  return const Scaffold(body: Center(child: Text('Error ID')));
-                return ReceiptDetailsPage(receiptId: id);
-              },
-            ),
-            GoRoute(
-              path: '/settings/categories',
-              builder: (context, state) => const ManageCategoriesPage(),
-            ),
-            GoRoute(
-              path: '/settings/stores',
-              builder: (context, state) => const ManageStoresPage(),
-            ),
-            GoRoute(
-              path: '/settings/account',
-              builder: (context, state) => const AccountPage(),
+              routes: [
+                GoRoute(
+                  path: 'account',
+                  builder: (context, state) => const AccountPage(),
+                ),
+                GoRoute(
+                  path: 'categories',
+                  builder: (context, state) => const ManageCategoriesPage(),
+                ),
+                GoRoute(
+                  path: 'stores',
+                  builder: (context, state) => const ManageStoresPage(),
+                ),
+              ],
             ),
           ],
         ),
+        GoRoute(
+          path: '/receipt-details/:id',
+          parentNavigatorKey: _rootNavigatorKey,
+          builder: (context, state) {
+            final id = int.parse(state.pathParameters['id']!);
+            return ReceiptDetailsPage(receiptId: id);
+          },
+        ),
+        GoRoute(
+          path: '/receipt-edit',
+          parentNavigatorKey: _rootNavigatorKey,
+          builder: (context, state) {
+            final receipt = state.extra as ReceiptModel;
+            return ReceiptEditPage(receipt: receipt);
+          },
+        ),
       ],
+      redirect: (context, state) {
+        final isLoggedIn = authViewModel.isLoggedIn;
+        final isInitialized = authViewModel.isAppInitialized;
+
+        final location = state.uri.toString();
+        final isLoggingIn = location == '/login';
+        final isSplash = location == '/';
+
+        if (isSplash) {
+          if (isInitialized) {
+            return isLoggedIn ? '/home' : '/login';
+          }
+          return null;
+        }
+        if (!isLoggedIn && !isLoggingIn) {
+          return '/login';
+        }
+        if (isLoggedIn && isLoggingIn) {
+          return '/home';
+        }
+
+        return null;
+      },
     );
   }
 }

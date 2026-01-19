@@ -57,6 +57,7 @@ dependencies:
   printing: ^5.11.1
   share_plus: ^10.0.0
   cross_file: ^0.3.3
+  flutter_native_splash: ^2.4.0
 
 dev_dependencies:
   flutter_test:
@@ -110,3 +111,14 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+flutter_native_splash:
+  color: "#ffffff"
+  image: "assets/logo.png"
+  color_dark: "#1e1e1e"
+  image_dark: "assets/logo_dark.png"
+  android_12:
+    image: "assets/logo.png"
+    icon_background_color: "#ffffff"
+    image_dark: "assets/logo_dark.png"
+    icon_background_color_dark: "#1e1e1e"

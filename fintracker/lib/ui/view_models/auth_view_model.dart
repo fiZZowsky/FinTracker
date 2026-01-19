@@ -17,8 +17,16 @@ class AuthViewModel extends ChangeNotifier {
   String? _userName;
   String? get userName => _userName;
 
+  bool _isAppInitialized = false;
+  bool get isAppInitialized => _isAppInitialized;
+
   AuthViewModel() {
     checkLoginStatus();
+  }
+
+  void markAppInitialized() {
+    _isAppInitialized = true;
+    notifyListeners();
   }
 
   Future<void> checkLoginStatus() async {
