@@ -9,8 +9,13 @@ class ApiClient {
   final Dio _dio;
   bool _isRefreshing = false;
 
-  static const String _baseUrl =
-      kIsWeb ? 'https://localhost:7297' : 'https://10.0.2.2:7297';
+  static String get _baseUrl {
+    if (Platform.isAndroid) {
+      return 'https://10.0.2.2:7297';
+    } else {
+      return 'https://localhost:7297';
+    }
+  }
 
   ApiClient()
       : _dio = Dio(BaseOptions(
@@ -44,6 +49,7 @@ class ApiClient {
 
             if (oldAccessToken != null && oldRefreshToken != null) {
               final refreshDio = Dio(BaseOptions(baseUrl: _baseUrl));
+
               (refreshDio.httpClientAdapter as IOHttpClientAdapter)
                   .createHttpClient = () {
                 final client = HttpClient();
