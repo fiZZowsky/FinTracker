@@ -282,5 +282,101 @@ class AppLocalizationsPl extends AppLocalizations {
   String get delete => 'Usuń';
 
   @override
-  String get passwordsDoNotMatch => 'Hasła nie są identyczne';
+  String get passwordsDoNotMatch => 'Hasła nie pasują do siebie';
+
+  @override
+  String get exportData => 'Eksportuj dane';
+
+  @override
+  String get selectDateRange => 'Wybierz okres';
+
+  @override
+  String get exportCsv => 'CSV (Excel)';
+
+  @override
+  String get exportPdf => 'PDF';
+
+  @override
+  String get passwordTooShort => 'Hasło za krótkie (min. 6 znaków)';
+
+  @override
+  String get fintracker => 'FinTracker';
+
+  @override
+  String get authError => 'Błąd logowania/rejestracji: Sprawdź dane';
+
+  @override
+  String get loginTitle => 'Zaloguj się';
+
+  @override
+  String get registerTitle => 'Zarejestruj się';
+
+  @override
+  String get enterName => 'Wpisz imię';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get invalidEmail => 'Błędny email';
+
+  @override
+  String get password => 'Hasło';
+
+  @override
+  String get confirmPassword => 'Potwierdź hasło';
+
+  @override
+  String get loginButton => 'Zaloguj';
+
+  @override
+  String get registerButton => 'Zarejestruj';
+
+  @override
+  String get dontHaveAccount => 'Nie masz konta? Zarejestruj się';
+
+  @override
+  String get haveAccount => 'Masz już konto? Zaloguj się';
+
+  @override
+  String get addCategory => 'Dodaj kategorię';
+
+  @override
+  String get operationError => 'Wystąpił błąd';
+
+  @override
+  String get manageCategories => 'Zarządzaj kategoriami';
+
+  @override
+  String get defaultCategory => 'Domyślna';
+
+  @override
+  String get addStore => 'Dodaj sklep';
+
+  @override
+  String get manageStores => 'Zarządzaj sklepami';
+
+  @override
+  String get defaultStore => 'Domyślny';
+
+  @override
+  String get dateFutureError => 'Data zakupu nie może być z przyszłości';
+
+  @override
+  String get dateTooOldError => 'Data zakupu jest nieprawidłowa (zbyt stara)';
+
+  @override
+  String get logout => 'Wyloguj się';
+
+  @override
+  String get operationSuccess => 'Operacja zakończona sukcesem';
+
+  @override
+  String get user => 'Użytkownik';
+
+  @override
+  String get loggedIn => 'Zalogowany';
+
+  @override
+  String get loading => 'Ładowanie';
 }

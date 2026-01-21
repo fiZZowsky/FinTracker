@@ -1,3 +1,4 @@
+import 'package:fintracker/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
@@ -58,6 +59,7 @@ class _SplashScreenState extends State<SplashScreen>
     final theme = Theme.of(context);
     final primaryColor = theme.colorScheme.primary;
     final backgroundColor = theme.scaffoldBackgroundColor;
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -78,7 +80,7 @@ class _SplashScreenState extends State<SplashScreen>
               ),
               const SizedBox(height: 24),
               Text(
-                "FinTracker",
+                l10n.fintracker,
                 style: theme.textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: primaryColor,
@@ -101,7 +103,8 @@ class _SplashScreenState extends State<SplashScreen>
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        "Ładowanie... ${(_progressAnimation.value * 100).toInt()}%",
+                        l10n.loading +
+                            "... ${(_progressAnimation.value * 100).toInt()}%",
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: Colors.grey,
                         ),

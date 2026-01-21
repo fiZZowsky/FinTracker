@@ -99,7 +99,8 @@ class AccountPage extends StatelessWidget {
                   controller: newController,
                   decoration: InputDecoration(labelText: l10n.newPassword),
                   obscureText: true,
-                  validator: (v) => v!.length < 6 ? 'Min. 6 znaków' : null,
+                  validator: (v) =>
+                      v!.length < 6 ? l10n.passwordTooShort : null,
                 ),
                 TextFormField(
                   controller: confirmController,
@@ -132,10 +133,11 @@ class AccountPage extends StatelessWidget {
 
                 if (success) {
                   getIt<NotificationService>().showNotification(
-                      'passwordChangedSuccess',
+                      l10n.passwordChangedSuccess,
                       type: NotificationType.success);
                 } else {
-                  getIt<NotificationService>().showNotification('unknownError',
+                  getIt<NotificationService>().showNotification(
+                      l10n.unknownError,
                       type: NotificationType.error);
                 }
               }
@@ -167,7 +169,7 @@ class AccountPage extends StatelessWidget {
                   await context.read<AuthViewModel>().deleteAccount();
               if (success) {
               } else {
-                getIt<NotificationService>().showNotification('unknownError',
+                getIt<NotificationService>().showNotification(l10n.unknownError,
                     type: NotificationType.error);
               }
             },

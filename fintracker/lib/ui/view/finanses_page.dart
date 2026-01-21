@@ -15,7 +15,6 @@ class FinansesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Usunąłem SafeArea tutaj, bo SliverAppBar lepiej sobie radzi z wcięciami systemowymi
       body: Consumer<FinansesViewModel>(
         builder: (context, viewModel, child) {
           if (viewModel.isLoading) {
@@ -26,23 +25,19 @@ class FinansesPage extends StatelessWidget {
             onRefresh: () async => await viewModel.fetchData(),
             child: CustomScrollView(
               slivers: [
-                // --- ZMIANA: Pasek na samej górze ---
                 SliverAppBar(
-                  title: const Text('Finanse'),
-                  centerTitle: false, // Tytuł po lewej (standard Androida)
-                  pinned: true, // Pasek zawsze widoczny u góry
+                  title: Text(AppLocalizations.of(context)!.finansesPage),
+                  centerTitle: false,
+                  pinned: true,
                   floating: false,
                   actions: [
-                    // Przycisk eksportu w prawym górnym rogu
                     IconButton(
                       icon: const Icon(Icons.file_download_outlined),
-                      tooltip: "Eksportuj raport",
+                      tooltip: AppLocalizations.of(context)!.exportData,
                       onPressed: () => _showExportDialog(context),
                     ),
                   ],
                 ),
-                // ------------------------------------
-
                 SliverPadding(
                   padding: const EdgeInsets.all(16.0),
                   sliver: SliverToBoxAdapter(
@@ -68,8 +63,6 @@ class FinansesPage extends StatelessWidget {
                   ),
                 ),
                 _buildGroupedList(context, viewModel),
-
-                // Dodajemy odstęp na dole, żeby treść nie chowała się pod navbar
                 const SliverPadding(padding: EdgeInsets.only(bottom: 80)),
               ],
             ),
@@ -217,12 +210,12 @@ class _ExportBottomSheetState extends State<_ExportBottomSheet> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Eksportuj dane",
+            AppLocalizations.of(context)!.exportData,
             style: theme.textTheme.headlineSmall,
           ),
           const SizedBox(height: 16),
           ListTile(
-            title: const Text("Wybierz okres"),
+            title: Text(AppLocalizations.of(context)!.selectDateRange),
             subtitle: Text(
               "${DateFormat('dd.MM.yyyy').format(_selectedRange!.start)} - ${DateFormat('dd.MM.yyyy').format(_selectedRange!.end)}",
             ),
@@ -252,7 +245,7 @@ class _ExportBottomSheetState extends State<_ExportBottomSheet> {
                         _selectedRange!.start, _selectedRange!.end, false);
                   },
                   icon: const Icon(Icons.table_chart),
-                  label: const Text("CSV (Excel)"),
+                  label: Text(AppLocalizations.of(context)!.exportCsv),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green.shade600,
                     foregroundColor: Colors.white,
@@ -269,7 +262,7 @@ class _ExportBottomSheetState extends State<_ExportBottomSheet> {
                         _selectedRange!.start, _selectedRange!.end, true);
                   },
                   icon: const Icon(Icons.picture_as_pdf),
-                  label: const Text("PDF"),
+                  label: Text(AppLocalizations.of(context)!.exportPdf),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red.shade600,
                     foregroundColor: Colors.white,

@@ -100,20 +100,19 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
       return;
     }
 
+    final l10n = AppLocalizations.of(context)!;
     final now = DateTime.now();
     final isFuture = _dateShopping.difference(now).inDays > 0;
 
     if (isFuture) {
-      getIt<NotificationService>().showNotification(
-          'Data zakupu nie może być z przyszłości',
-          type: NotificationType.error);
+      getIt<NotificationService>()
+          .showNotification(l10n.dateFutureError, type: NotificationType.error);
       return;
     }
 
     if (_dateShopping.year < 2000) {
-      getIt<NotificationService>().showNotification(
-          'Data zakupu jest nieprawidłowa (zbyt stara)',
-          type: NotificationType.error);
+      getIt<NotificationService>()
+          .showNotification(l10n.dateTooOldError, type: NotificationType.error);
       return;
     }
 
@@ -141,8 +140,8 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
       if (success) {
         guard.setEditing(false);
         final messageKey = widget.receipt.id > 0
-            ? 'receiptUpdateSuccess'
-            : 'receiptSaveSuccess';
+            ? l10n.receiptUpdateSuccess
+            : l10n.receiptSaveSuccess;
         notificationService.showNotification(messageKey,
             type: NotificationType.success);
 
@@ -157,9 +156,9 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
           context.go('/finanses');
         }
       } else {
-        // BŁĄD
-        final messageKey =
-            widget.receipt.id > 0 ? 'receiptUpdateError' : 'receiptSaveError';
+        final messageKey = widget.receipt.id > 0
+            ? l10n.receiptUpdateError
+            : l10n.receiptSaveError;
         notificationService.showNotification(messageKey,
             type: NotificationType.error);
       }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../view_models/manage_categories_view_model.dart';
 import '../widgets/custom_loader.dart';
+import '../../l10n/app_localizations.dart';
 
 class ManageCategoriesPage extends StatefulWidget {
   const ManageCategoriesPage({super.key});
@@ -20,25 +21,29 @@ class _ManageCategoriesPageState extends State<ManageCategoriesPage> {
   }
 
   void _showCategoryDialog({int? id, String? currentName}) {
+    final l10n = AppLocalizations.of(context)!;
     final controller = TextEditingController(text: currentName);
     final isEditing = id != null;
 
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(isEditing ? 'Edytuj kategorię' : 'Nowa kategoria'),
+        title: Text(isEditing
+            ? '${l10n.edit} ${l10n.receiptCategory}'
+            : l10n.addCategory),
         content: TextField(
           controller: controller,
-          decoration: const InputDecoration(
-            labelText: 'Nazwa kategorii',
+          decoration: InputDecoration(
+            labelText: l10n.receiptCategory,
             border: OutlineInputBorder(),
           ),
+          textCapitalization: TextCapitalization.sentences,
           autofocus: true,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Anuluj'),
+            child: Text(l10n.cancel),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -57,12 +62,12 @@ class _ManageCategoriesPageState extends State<ManageCategoriesPage> {
                 Navigator.pop(ctx);
                 if (!success) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Wystąpił błąd')),
+                    SnackBar(content: Text(l10n.operationError)),
                   );
                 }
               }
             },
-            child: const Text('Zapisz'),
+            child: Text(l10n.save),
           ),
         ],
       ),
@@ -73,10 +78,11 @@ class _ManageCategoriesPageState extends State<ManageCategoriesPage> {
   Widget build(BuildContext context) {
     final vm = context.watch<ManageCategoriesViewModel>();
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Kategorie'),
+        title: Text(l10n.manageCategories),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showCategoryDialog(),
@@ -113,7 +119,7 @@ class _ManageCategoriesPageState extends State<ManageCategoriesPage> {
                       ),
                     ),
                     subtitle: isDefault
-                        ? const Text('Kategoria systemowa',
+                        ? Text(l10n.defaultCategory,
                             style: TextStyle(fontSize: 10))
                         : null,
                     trailing: isDefault
@@ -135,19 +141,21 @@ class _ManageCategoriesPageState extends State<ManageCategoriesPage> {
                                   final confirm = await showDialog<bool>(
                                     context: context,
                                     builder: (ctx) => AlertDialog(
-                                      title: const Text('Potwierdzenie'),
+                                      title: Text(l10n.delete),
                                       content: Text(
-                                          'Czy usunąć kategorię "${category.name}"?'),
+                                          '${l10n.delete} "${category.name}"?'),
                                       actions: [
                                         TextButton(
                                           onPressed: () =>
                                               Navigator.pop(ctx, false),
-                                          child: const Text('Nie'),
+                                          child: Text(l10n.cancel),
                                         ),
                                         TextButton(
                                           onPressed: () =>
                                               Navigator.pop(ctx, true),
-                                          child: const Text('Tak'),
+                                          child: Text(l10n.delete,
+                                              style: const TextStyle(
+                                                  color: Colors.red)),
                                         ),
                                       ],
                                     ),

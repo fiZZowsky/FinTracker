@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../view_models/auth_view_model.dart';
 import '../../helpers/notification_service.dart';
 import '../../helpers/service_locator.dart';
+import '../../l10n/app_localizations.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -33,6 +34,7 @@ class _LoginPageState extends State<LoginPage> {
     if (!_formKey.currentState!.validate()) return;
 
     final authVM = context.read<AuthViewModel>();
+    final l10n = AppLocalizations.of(context)!;
     String? error;
 
     if (_isLogin) {
@@ -50,9 +52,8 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     if (error != null) {
-      getIt<NotificationService>().showNotification(
-          'Błąd logowania/rejestracji: Sprawdź dane',
-          type: NotificationType.error);
+      getIt<NotificationService>()
+          .showNotification(l10n.authError, type: NotificationType.error);
     }
   }
 
@@ -60,6 +61,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     final isLoading = context.watch<AuthViewModel>().isLoading;
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       body: Center(
@@ -74,7 +76,7 @@ class _LoginPageState extends State<LoginPage> {
                 Icon(Icons.wallet, size: 80, color: theme.colorScheme.primary),
                 const SizedBox(height: 16),
                 Text(
-                  _isLogin ? 'Witaj ponownie!' : 'Utwórz konto',
+                  _isLogin ? l10n.loginTitle : l10n.registerTitle,
                   textAlign: TextAlign.center,
                   style: theme.textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
@@ -84,47 +86,49 @@ class _LoginPageState extends State<LoginPage> {
                 if (!_isLogin) ...[
                   TextFormField(
                     controller: _nameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Imię',
+                    decoration: InputDecoration(
+                      labelText: l10n.enterName,
                       prefixIcon: Icon(Icons.person),
                       border: OutlineInputBorder(),
                     ),
-                    validator: (v) => v!.isEmpty ? 'Podaj imię' : null,
+                    validator: (v) => v!.isEmpty ? l10n.fieldRequired : null,
                   ),
                   const SizedBox(height: 16),
                 ],
                 TextFormField(
                   controller: _emailController,
-                  decoration: const InputDecoration(
-                    labelText: 'Email',
+                  decoration: InputDecoration(
+                    labelText: l10n.email,
                     prefixIcon: Icon(Icons.email),
                     border: OutlineInputBorder(),
                   ),
-                  validator: (v) => !v!.contains('@') ? 'Błędny email' : null,
+                  validator: (v) =>
+                      !v!.contains('@') ? l10n.invalidEmail : null,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _passwordController,
                   obscureText: true,
-                  decoration: const InputDecoration(
-                    labelText: 'Hasło',
+                  decoration: InputDecoration(
+                    labelText: l10n.password,
                     prefixIcon: Icon(Icons.lock),
                     border: OutlineInputBorder(),
                   ),
-                  validator: (v) => v!.length < 6 ? 'Min. 6 znaków' : null,
+                  validator: (v) =>
+                      v!.length < 6 ? l10n.passwordTooShort : null,
                 ),
                 if (!_isLogin) ...[
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _confirmPasswordController,
                     obscureText: true,
-                    decoration: const InputDecoration(
-                      labelText: 'Potwierdź hasło',
+                    decoration: InputDecoration(
+                      labelText: l10n.confirmPassword,
                       prefixIcon: Icon(Icons.lock_outline),
                       border: OutlineInputBorder(),
                     ),
                     validator: (v) => v != _passwordController.text
-                        ? 'Hasła się nie zgadzają'
+                        ? l10n.passwordsDoNotMatch
                         : null,
                   ),
                 ],
@@ -139,7 +143,7 @@ class _LoginPageState extends State<LoginPage> {
                           width: 20,
                           height: 20,
                           child: CircularProgressIndicator(strokeWidth: 2))
-                      : Text(_isLogin ? 'Zaloguj' : 'Zarejestruj się'),
+                      : Text(_isLogin ? l10n.loginButton : l10n.registerButton),
                 ),
                 const SizedBox(height: 16),
                 TextButton(
@@ -149,9 +153,8 @@ class _LoginPageState extends State<LoginPage> {
                       _formKey.currentState?.reset();
                     });
                   },
-                  child: Text(_isLogin
-                      ? 'Nie masz konta? Zarejestruj się'
-                      : 'Masz już konto? Zaloguj się'),
+                  child:
+                      Text(_isLogin ? l10n.dontHaveAccount : l10n.haveAccount),
                 ),
               ],
             ),

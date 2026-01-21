@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../view_models/manage_stores_view_model.dart';
 import '../widgets/custom_loader.dart';
+import '../../l10n/app_localizations.dart';
 
 class ManageStoresPage extends StatefulWidget {
   const ManageStoresPage({super.key});
@@ -20,17 +21,20 @@ class _ManageStoresPageState extends State<ManageStoresPage> {
   }
 
   void _showStoreDialog({int? id, String? currentName}) {
+    final l10n = AppLocalizations.of(context)!;
     final controller = TextEditingController(text: currentName);
     final isEditing = id != null;
 
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(isEditing ? 'Edytuj sklep' : 'Nowy sklep'),
+        title: Text(isEditing
+            ? '${l10n.edit} ${l10n.receiptStoreName}'
+            : l10n.addStore),
         content: TextField(
           controller: controller,
-          decoration: const InputDecoration(
-            labelText: 'Nazwa sklepu',
+          decoration: InputDecoration(
+            labelText: l10n.receiptStoreName,
             border: OutlineInputBorder(),
           ),
           autofocus: true,
@@ -38,7 +42,7 @@ class _ManageStoresPageState extends State<ManageStoresPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Anuluj'),
+            child: Text(l10n.cancel),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -57,12 +61,12 @@ class _ManageStoresPageState extends State<ManageStoresPage> {
                 Navigator.pop(ctx);
                 if (!success) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Wystąpił błąd')),
+                    SnackBar(content: Text(l10n.operationError)),
                   );
                 }
               }
             },
-            child: const Text('Zapisz'),
+            child: Text(l10n.save),
           ),
         ],
       ),
@@ -73,10 +77,11 @@ class _ManageStoresPageState extends State<ManageStoresPage> {
   Widget build(BuildContext context) {
     final vm = context.watch<ManageStoresViewModel>();
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Moje Sklepy'),
+        title: Text(l10n.manageStores),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showStoreDialog(),
@@ -127,7 +132,7 @@ class _ManageStoresPageState extends State<ManageStoresPage> {
                       ),
                     ),
                     subtitle: isDefault
-                        ? const Text('Systemowy',
+                        ? Text(l10n.defaultStore,
                             style: TextStyle(fontSize: 10))
                         : null,
                     trailing: isDefault
@@ -149,19 +154,21 @@ class _ManageStoresPageState extends State<ManageStoresPage> {
                                   final confirm = await showDialog<bool>(
                                     context: context,
                                     builder: (ctx) => AlertDialog(
-                                      title: const Text('Potwierdzenie'),
+                                      title: Text(l10n.delete),
                                       content: Text(
-                                          'Czy usunąć sklep "${store.name}"?'),
+                                          '${l10n.delete} "${store.name}"?'),
                                       actions: [
                                         TextButton(
                                           onPressed: () =>
                                               Navigator.pop(ctx, false),
-                                          child: const Text('Nie'),
+                                          child: Text(l10n.cancel),
                                         ),
                                         TextButton(
                                           onPressed: () =>
                                               Navigator.pop(ctx, true),
-                                          child: const Text('Tak'),
+                                          child: Text(l10n.delete,
+                                              style: const TextStyle(
+                                                  color: Colors.red)),
                                         ),
                                       ],
                                     ),

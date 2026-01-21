@@ -31,7 +31,7 @@ class SettingsPage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(left: 16.0, bottom: 8.0),
             child: Text(
-              'Konto',
+              l10n.accountManagement,
               style: Theme.of(context).textTheme.titleMedium,
             ),
           ),
@@ -46,8 +46,8 @@ class SettingsPage extends StatelessWidget {
                     TextStyle(color: Theme.of(context).colorScheme.onPrimary),
               ),
             ),
-            title: Text(authVM.userName ?? 'Użytkownik'),
-            subtitle: const Text('Zalogowany'),
+            title: Text(authVM.userName ?? l10n.user),
+            subtitle: Text(l10n.loggedIn),
           ),
           const Divider(),
           SwitchListTile(
@@ -85,7 +85,7 @@ class SettingsPage extends StatelessWidget {
             onChanged: (value) {
               localeVM.setLocale(value!);
               getIt<NotificationService>().showNotification(
-                  'languageChangedToPl',
+                  l10n.operationSuccess,
                   type: NotificationType.success);
             },
           ),
@@ -96,7 +96,7 @@ class SettingsPage extends StatelessWidget {
             onChanged: (value) {
               localeVM.setLocale(value!);
               getIt<NotificationService>().showNotification(
-                  'languageChangedToEn',
+                  l10n.operationSuccess,
                   type: NotificationType.success);
             },
           ),
@@ -121,14 +121,14 @@ class SettingsPage extends StatelessWidget {
           ),
           const Divider(),
           ListTile(
-            title: const Text('Zarządzaj kategoriami'),
+            title: Text(l10n.manageCategories),
             leading: const Icon(Icons.category_outlined),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => context.push('/settings/categories'),
           ),
           const Divider(),
           ListTile(
-            title: const Text('Zarządzaj sklepami'),
+            title: Text(l10n.manageStores),
             leading: const Icon(Icons.store_mall_directory_outlined),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => context.push('/settings/stores'),
@@ -168,7 +168,7 @@ class SettingsPage extends StatelessWidget {
                     TextStyle(color: Theme.of(context).colorScheme.onPrimary),
               ),
             ),
-            title: Text(authVM.userName ?? 'Użytkownik'),
+            title: Text(authVM.userName ?? l10n.user),
             subtitle: Text(l10n.accountManagement),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => context.push('/settings/account'),
@@ -181,7 +181,7 @@ class SettingsPage extends StatelessWidget {
                 context.read<AuthViewModel>().logout();
               },
               icon: const Icon(Icons.logout),
-              label: const Text('Wyloguj się'),
+              label: Text(l10n.logout),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.error,
                 foregroundColor: Colors.white,

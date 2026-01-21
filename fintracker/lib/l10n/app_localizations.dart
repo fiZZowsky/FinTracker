@@ -643,6 +643,198 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Passwords do not match'**
   String get passwordsDoNotMatch;
+
+  /// No description provided for @exportData.
+  ///
+  /// In en, this message translates to:
+  /// **'Export Data'**
+  String get exportData;
+
+  /// No description provided for @selectDateRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Date Range'**
+  String get selectDateRange;
+
+  /// No description provided for @exportCsv.
+  ///
+  /// In en, this message translates to:
+  /// **'CSV (Excel)'**
+  String get exportCsv;
+
+  /// No description provided for @exportPdf.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF'**
+  String get exportPdf;
+
+  /// No description provided for @passwordTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Password too short (min. 6 chars)'**
+  String get passwordTooShort;
+
+  /// No description provided for @fintracker.
+  ///
+  /// In en, this message translates to:
+  /// **'FinTracker'**
+  String get fintracker;
+
+  /// No description provided for @authError.
+  ///
+  /// In en, this message translates to:
+  /// **'Login/Register error: Check your data'**
+  String get authError;
+
+  /// No description provided for @loginTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Login'**
+  String get loginTitle;
+
+  /// No description provided for @registerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Register'**
+  String get registerTitle;
+
+  /// No description provided for @enterName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Name'**
+  String get enterName;
+
+  /// No description provided for @email.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get email;
+
+  /// No description provided for @invalidEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid email'**
+  String get invalidEmail;
+
+  /// No description provided for @password.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get password;
+
+  /// No description provided for @confirmPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Password'**
+  String get confirmPassword;
+
+  /// No description provided for @loginButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Login'**
+  String get loginButton;
+
+  /// No description provided for @registerButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Register'**
+  String get registerButton;
+
+  /// No description provided for @dontHaveAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t have an account? Register'**
+  String get dontHaveAccount;
+
+  /// No description provided for @haveAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Already have an account? Login'**
+  String get haveAccount;
+
+  /// No description provided for @addCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Category'**
+  String get addCategory;
+
+  /// No description provided for @operationError.
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred'**
+  String get operationError;
+
+  /// No description provided for @manageCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Categories'**
+  String get manageCategories;
+
+  /// No description provided for @defaultCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Default'**
+  String get defaultCategory;
+
+  /// No description provided for @addStore.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Store'**
+  String get addStore;
+
+  /// No description provided for @manageStores.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Stores'**
+  String get manageStores;
+
+  /// No description provided for @defaultStore.
+  ///
+  /// In en, this message translates to:
+  /// **'Default'**
+  String get defaultStore;
+
+  /// No description provided for @dateFutureError.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase date cannot be in the future'**
+  String get dateFutureError;
+
+  /// No description provided for @dateTooOldError.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase date is invalid (too old)'**
+  String get dateTooOldError;
+
+  /// No description provided for @logout.
+  ///
+  /// In en, this message translates to:
+  /// **'Log out'**
+  String get logout;
+
+  /// No description provided for @operationSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Operation successful'**
+  String get operationSuccess;
+
+  /// No description provided for @user.
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get user;
+
+  /// No description provided for @loggedIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Logged in'**
+  String get loggedIn;
+
+  /// No description provided for @loading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading'**
+  String get loading;
 }
 
 class _AppLocalizationsDelegate

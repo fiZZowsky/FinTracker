@@ -283,4 +283,100 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get passwordsDoNotMatch => 'Passwords do not match';
+
+  @override
+  String get exportData => 'Export Data';
+
+  @override
+  String get selectDateRange => 'Select Date Range';
+
+  @override
+  String get exportCsv => 'CSV (Excel)';
+
+  @override
+  String get exportPdf => 'PDF';
+
+  @override
+  String get passwordTooShort => 'Password too short (min. 6 chars)';
+
+  @override
+  String get fintracker => 'FinTracker';
+
+  @override
+  String get authError => 'Login/Register error: Check your data';
+
+  @override
+  String get loginTitle => 'Login';
+
+  @override
+  String get registerTitle => 'Register';
+
+  @override
+  String get enterName => 'Enter Name';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get invalidEmail => 'Invalid email';
+
+  @override
+  String get password => 'Password';
+
+  @override
+  String get confirmPassword => 'Confirm Password';
+
+  @override
+  String get loginButton => 'Login';
+
+  @override
+  String get registerButton => 'Register';
+
+  @override
+  String get dontHaveAccount => 'Don\'t have an account? Register';
+
+  @override
+  String get haveAccount => 'Already have an account? Login';
+
+  @override
+  String get addCategory => 'Add Category';
+
+  @override
+  String get operationError => 'An error occurred';
+
+  @override
+  String get manageCategories => 'Manage Categories';
+
+  @override
+  String get defaultCategory => 'Default';
+
+  @override
+  String get addStore => 'Add Store';
+
+  @override
+  String get manageStores => 'Manage Stores';
+
+  @override
+  String get defaultStore => 'Default';
+
+  @override
+  String get dateFutureError => 'Purchase date cannot be in the future';
+
+  @override
+  String get dateTooOldError => 'Purchase date is invalid (too old)';
+
+  @override
+  String get logout => 'Log out';
+
+  @override
+  String get operationSuccess => 'Operation successful';
+
+  @override
+  String get user => 'User';
+
+  @override
+  String get loggedIn => 'Logged in';
+
+  @override
+  String get loading => 'Loading';
 }
