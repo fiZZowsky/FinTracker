@@ -1,8 +1,9 @@
+import 'package:fintracker/data/models/ocr_engine_type.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PreferencesService {
   static const String _budgetKey = 'monthly_budget_limit';
-  static const String _azureOcrKey = 'use_azure_ocr';
+  static const String _ocrEngineKey = 'ocr_engine_type';
   static const String _tokenKey = 'auth_token';
   static const String _userNameKey = 'user_name';
   static const String _refreshTokenKey = 'refresh_token';
@@ -17,14 +18,18 @@ class PreferencesService {
     return prefs.getDouble(_budgetKey) ?? 3000.0;
   }
 
-  Future<void> setUseAzureOcr(bool value) async {
+  Future<void> setOcrEngine(OcrEngineType engine) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_azureOcrKey, value);
+    await prefs.setInt(_ocrEngineKey, engine.index);
   }
 
-  Future<bool> getUseAzureOcr() async {
+  Future<OcrEngineType> getOcrEngine() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(_azureOcrKey) ?? false;
+    final index = prefs.getInt(_ocrEngineKey) ?? 0;
+    return OcrEngineType.values.firstWhere(
+      (e) => e.index == index,
+      orElse: () => OcrEngineType.tesseractOCR,
+    );
   }
 
   Future<void> setAuthToken(String token) async {

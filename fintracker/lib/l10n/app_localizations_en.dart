@@ -232,12 +232,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ocrSettingsTitle => 'OCR Engine';
 
   @override
-  String get useAzureOcr => 'Use Azure AI Vision (Cloud)';
-
-  @override
-  String get useAzureOcrSubtitle => 'More accurate but slower.';
-
-  @override
   String get noData => 'No data';
 
   @override
@@ -379,4 +373,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get loading => 'Loading';
+
+  @override
+  String get ocrEngineTesseract => 'Tesseract';
+
+  @override
+  String get ocrEngineAzure => 'Azure AI Vision';
+
+  @override
+  String get ocrEnginePaddle => 'Paddle';
+
+  @override
+  String get ocrEngineGoogleGemini => 'Google Gemini AI';
+
+  @override
+  String get ocrSubtitle => 'Choose image processing engine';
+
+  @override
+  String get appearance => 'Appearance';
 }

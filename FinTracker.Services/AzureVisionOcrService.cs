@@ -5,7 +5,7 @@ using System.Text;
 
 namespace FinTracker.Services
 {
-    public class AzureVisionOcrService : IAzureOcrService
+    public class AzureVisionOcrService : IOcrService
     {
         private readonly string _endpoint;
         private readonly string _key;

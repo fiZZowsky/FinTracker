@@ -57,12 +57,12 @@ namespace FinTracker.API.Controllers
         }
 
         [HttpPost("Upload")]
-        public async Task<IActionResult> UploadReceipt(IFormFile file, [FromQuery] bool useAzure = false)
+        public async Task<IActionResult> UploadReceipt(IFormFile file, [FromQuery] OcrEngineType ocrEngine = OcrEngineType.TesseractOCR)
         {
             if (file == null || file.Length == 0) return BadRequest("Nie przesłano pliku.");
 
             using var stream = file.OpenReadStream();
-            var createdReceipt = await _receiptService.CreateReceiptFromImageAsync(stream, useAzure);
+            var createdReceipt = await _receiptService.CreateReceiptFromImageAsync(stream, ocrEngine);
             return Ok(createdReceipt);
         }
 

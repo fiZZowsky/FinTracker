@@ -75,8 +75,6 @@
     "save": "Zapisz",
     "cancel": "Anuluj",
     "ocrSettingsTitle": "Silnik OCR",
-    "useAzureOcr": "Użyj Azure AI Vision (Chmura)",
-    "useAzureOcrSubtitle": "Dokładniejszy, ale wolniejszy.",
     "noData": "Brak danych",
     "noInternetTitle": "Brak połączenia",
     "noInternetMessage": "Aplikacja wymaga połączenia z internetem do poprawnego działania.",
@@ -125,5 +123,11 @@
     "operationSuccess": "Operacja zakończona sukcesem",
     "user": "Użytkownik",
     "loggedIn": "Zalogowany",
-    "loading": "Ładowanie"
+    "loading": "Ładowanie",
+    "ocrEngineTesseract": "Tesseract",
+    "ocrEngineAzure": "Azure AI Vision",
+    "ocrEnginePaddle": "Paddle",
+    "ocrEngineGoogleGemini": "Google Gemini AI",
+    "ocrSubtitle": "Wybierz silnik przetwarzania obrazu",
+    "appearance": "Wygląd"
 }

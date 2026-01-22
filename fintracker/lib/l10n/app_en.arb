@@ -74,8 +74,6 @@
     "amountLabel": "Amount",
     "save": "Save",
     "ocrSettingsTitle": "OCR Engine",
-    "useAzureOcr": "Use Azure AI Vision (Cloud)",
-    "useAzureOcrSubtitle": "More accurate but slower.",
     "noData": "No data",
     "noInternetTitle": "No Connection",
     "noInternetMessage": "This app requires an internet connection to work properly.",
@@ -122,5 +120,11 @@
     "operationSuccess": "Operation successful",
     "user": "User",
     "loggedIn": "Logged in",
-    "loading": "Loading"
+    "loading": "Loading",
+    "ocrEngineTesseract": "Tesseract",
+    "ocrEngineAzure": "Azure AI Vision",
+    "ocrEnginePaddle": "Paddle",
+    "ocrEngineGoogleGemini": "Google Gemini AI",
+    "ocrSubtitle": "Choose image processing engine",
+    "appearance": "Appearance"
 }

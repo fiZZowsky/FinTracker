@@ -6,6 +6,7 @@ import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
 import 'preferences_service.dart';
 import '../../helpers/service_locator.dart';
+import '../models/ocr_engine_type.dart';
 
 class ReceiptService {
   final ApiClient _apiClient;
@@ -72,10 +73,10 @@ class ReceiptService {
         "file": await MultipartFile.fromFile(file.path, filename: fileName),
       });
 
-      bool useAzure = await _prefs.getUseAzureOcr();
+      OcrEngineType engine = await _prefs.getOcrEngine();
 
       final dynamic data = await _apiClient.postFormData(
-          '/api/Receipts/Upload?useAzure=$useAzure', formData);
+          '/api/Receipts/Upload?ocrEngine=${engine.index}', formData);
 
       if (data is Map<String, dynamic>) {
         return ReceiptModel.fromJson(data);

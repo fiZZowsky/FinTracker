@@ -542,18 +542,6 @@ abstract class AppLocalizations {
   /// **'OCR Engine'**
   String get ocrSettingsTitle;
 
-  /// No description provided for @useAzureOcr.
-  ///
-  /// In en, this message translates to:
-  /// **'Use Azure AI Vision (Cloud)'**
-  String get useAzureOcr;
-
-  /// No description provided for @useAzureOcrSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'More accurate but slower.'**
-  String get useAzureOcrSubtitle;
-
   /// No description provided for @noData.
   ///
   /// In en, this message translates to:
@@ -835,6 +823,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Loading'**
   String get loading;
+
+  /// No description provided for @ocrEngineTesseract.
+  ///
+  /// In en, this message translates to:
+  /// **'Tesseract'**
+  String get ocrEngineTesseract;
+
+  /// No description provided for @ocrEngineAzure.
+  ///
+  /// In en, this message translates to:
+  /// **'Azure AI Vision'**
+  String get ocrEngineAzure;
+
+  /// No description provided for @ocrEnginePaddle.
+  ///
+  /// In en, this message translates to:
+  /// **'Paddle'**
+  String get ocrEnginePaddle;
+
+  /// No description provided for @ocrEngineGoogleGemini.
+  ///
+  /// In en, this message translates to:
+  /// **'Google Gemini AI'**
+  String get ocrEngineGoogleGemini;
+
+  /// No description provided for @ocrSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose image processing engine'**
+  String get ocrSubtitle;
+
+  /// No description provided for @appearance.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get appearance;
 }
 
 class _AppLocalizationsDelegate

@@ -8,11 +8,14 @@ namespace FinTracker.Services
         {
             services.AddScoped<IReceiptService, ReceiptService>();
             services.AddScoped<IStoreService, StoreService>();
-            services.AddSingleton<IOcrService, TesseractOcrService>();
-            services.AddSingleton<IAzureOcrService, AzureVisionOcrService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IReceiptParserService, ReceiptParserService>();
+            services.AddScoped<TesseractOcrService>();
+            services.AddScoped<AzureVisionOcrService>();
+            services.AddScoped<PaddleOcrService>();
+            services.AddScoped<GoogleGeminiOcrService>();
+            services.AddScoped<IOcrServiceFactory, OcrServiceFactory>();
         }
     }
 }

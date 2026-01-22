@@ -7,43 +7,33 @@ namespace FinTracker.Services
     public class ReceiptService : BaseService<Receipt, ReceiptDTO, int>, IReceiptService
     {
         private readonly IReceiptRepository _receiptRepository;
-        private readonly IOcrService _ocrService;
         private readonly IStoreRepository _storeRepository;
-        private readonly IAzureOcrService _azureOcrService;
         private readonly IUserContextRepository _userContextRepository;
         private readonly IReceiptParserService _receiptParserService;
+        private readonly IOcrServiceFactory _ocrFactory;
 
         public ReceiptService(
             IReceiptRepository repository,
-            IOcrService ocrService,
             IStoreRepository storeRepository,
-            IAzureOcrService azureOcrService,
             IUserContextRepository userContextRepository,
             IReceiptParserService receiptParserService,
+            IOcrServiceFactory ocrFactory,
             IMapper mapper)
             : base(repository, mapper)
         {
             _receiptRepository = repository;
-            _ocrService = ocrService;
             _storeRepository = storeRepository;
-            _azureOcrService = azureOcrService;
             _userContextRepository = userContextRepository;
             _receiptParserService = receiptParserService;
+            _ocrFactory = ocrFactory;
         }
 
-        public async Task<ReceiptDTO> CreateReceiptFromImageAsync(Stream imageStream, bool useAzure)
+        public async Task<ReceiptDTO> CreateReceiptFromImageAsync(Stream imageStream, OcrEngineType ocrEngine)
         {
-            string ocrText;
-            if (useAzure)
-            {
-                ocrText = await _azureOcrService.RecognizeTextAsync(imageStream);
-            }
-            else
-            {
-                ocrText = await _ocrService.RecognizeTextAsync(imageStream);
-            }
+            var ocrService = _ocrFactory.GetOcrService(ocrEngine);
+            var text = await ocrService.RecognizeTextAsync(imageStream);
 
-            return await _receiptParserService.ParseReceiptTextAsync(ocrText);
+            return await _receiptParserService.ParseReceiptTextAsync(text);
         }
 
         public override async Task<ReceiptDTO> GetByIdAsync(int id)

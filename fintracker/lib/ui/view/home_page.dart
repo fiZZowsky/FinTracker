@@ -33,7 +33,7 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(l10n.fintracker),
+        title: Text(l10n.fintracker),
         elevation: 0,
       ),
       body: Consumer<FinansesViewModel>(

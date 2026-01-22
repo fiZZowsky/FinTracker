@@ -10,6 +10,7 @@ import '../view_models/locale_view_model.dart';
 import '../view_models/auth_view_model.dart';
 import '../../helpers/notification_service.dart';
 import '../../helpers/service_locator.dart';
+import '../../data/models/ocr_engine_type.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -17,24 +18,16 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-
     final themeVM = context.watch<ThemeViewModel>();
     final localeVM = context.watch<LocaleViewModel>();
     final authVM = context.watch<AuthViewModel>();
-
     final isDark = themeVM.isDarkMode(context);
 
     return SafeArea(
       child: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 16.0, bottom: 8.0),
-            child: Text(
-              l10n.accountManagement,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-          ),
+          _buildSectionHeader(context, l10n.accountManagement),
           ListTile(
             leading: CircleAvatar(
               backgroundColor: Theme.of(context).colorScheme.primary,
@@ -47,9 +40,12 @@ class SettingsPage extends StatelessWidget {
               ),
             ),
             title: Text(authVM.userName ?? l10n.user),
-            subtitle: Text(l10n.loggedIn),
+            subtitle: Text(authVM.userName ?? ''),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => context.push('/settings/account'),
           ),
           const Divider(),
+          _buildSectionHeader(context, l10n.appearance),
           SwitchListTile(
             title: Text(l10n.themeSwitch),
             secondary: Icon(
@@ -71,22 +67,18 @@ class SettingsPage extends StatelessWidget {
             },
           ),
           const Divider(),
-          Padding(
-            padding: const EdgeInsets.only(top: 16.0, left: 16.0, bottom: 8.0),
-            child: Text(
-              l10n.language,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-          ),
+          _buildSectionHeader(context, l10n.language),
           RadioListTile<Locale>(
             title: Text(l10n.languagePolish),
             value: const Locale('pl'),
             groupValue: localeVM.locale,
             onChanged: (value) {
-              localeVM.setLocale(value!);
-              getIt<NotificationService>().showNotification(
-                  l10n.operationSuccess,
-                  type: NotificationType.success);
+              if (value != null) {
+                localeVM.setLocale(value);
+                getIt<NotificationService>().showNotification(
+                    l10n.operationSuccess,
+                    type: NotificationType.success);
+              }
             },
           ),
           RadioListTile<Locale>(
@@ -94,20 +86,16 @@ class SettingsPage extends StatelessWidget {
             value: const Locale('en'),
             groupValue: localeVM.locale,
             onChanged: (value) {
-              localeVM.setLocale(value!);
-              getIt<NotificationService>().showNotification(
-                  l10n.operationSuccess,
-                  type: NotificationType.success);
+              if (value != null) {
+                localeVM.setLocale(value);
+                getIt<NotificationService>().showNotification(
+                    l10n.operationSuccess,
+                    type: NotificationType.success);
+              }
             },
           ),
           const Divider(),
-          Padding(
-            padding: const EdgeInsets.only(top: 16.0, left: 16.0, bottom: 8.0),
-            child: Text(
-              l10n.settingsFinanceSection,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-          ),
+          _buildSectionHeader(context, l10n.settingsFinanceSection),
           Consumer<FinansesViewModel>(
             builder: (context, finansesVM, child) {
               return ListTile(
@@ -115,18 +103,19 @@ class SettingsPage extends StatelessWidget {
                 subtitle: Text(
                     '${finansesVM.monthlyBudgetLimit.toStringAsFixed(0)} PLN'),
                 leading: const Icon(Icons.savings_outlined),
+                trailing: const Icon(Icons.edit),
                 onTap: () => _showBudgetEditDialog(context, finansesVM),
               );
             },
           ),
           const Divider(),
+          _buildSectionHeader(context, l10n.manageCategories),
           ListTile(
             title: Text(l10n.manageCategories),
             leading: const Icon(Icons.category_outlined),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => context.push('/settings/categories'),
           ),
-          const Divider(),
           ListTile(
             title: Text(l10n.manageStores),
             leading: const Icon(Icons.store_mall_directory_outlined),
@@ -134,51 +123,27 @@ class SettingsPage extends StatelessWidget {
             onTap: () => context.push('/settings/stores'),
           ),
           const Divider(),
-          Padding(
-            padding: const EdgeInsets.only(top: 16.0, left: 16.0, bottom: 8.0),
-            child: Text(
-              l10n.ocrSettingsTitle,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-          ),
+          _buildSectionHeader(context, l10n.ocrSettingsTitle),
           Consumer<SettingsViewModel>(
             builder: (context, vm, child) {
-              return SwitchListTile(
-                title: Text(l10n.useAzureOcr),
-                subtitle: Text(l10n.useAzureOcrSubtitle,
-                    style: const TextStyle(fontSize: 12)),
-                secondary: Icon(
-                  Icons.cloud_done_outlined,
-                  color: vm.useAzureOcr ? Colors.blue : null,
-                ),
-                value: vm.useAzureOcr,
-                onChanged: (value) => vm.toggleAzureOcr(value),
+              return ListTile(
+                title: Text(l10n.ocrSettingsTitle),
+                subtitle:
+                    Text(_getOcrEngineName(context, vm.selectedOcrEngine)),
+                leading: const Icon(Icons.document_scanner_outlined),
+                trailing: const Icon(Icons.arrow_drop_down),
+                onTap: () => _showOcrSelectionDialog(context, vm),
               );
             },
           ),
           const Divider(),
-          ListTile(
-            leading: CircleAvatar(
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              child: Text(
-                authVM.userName?.isNotEmpty == true
-                    ? authVM.userName![0].toUpperCase()
-                    : 'U',
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-              ),
-            ),
-            title: Text(authVM.userName ?? l10n.user),
-            subtitle: Text(l10n.accountManagement),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => context.push('/settings/account'),
-          ),
-          const Divider(),
+          const SizedBox(height: 16),
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: ElevatedButton.icon(
               onPressed: () {
                 context.read<AuthViewModel>().logout();
+                context.go('/login');
               },
               icon: const Icon(Icons.logout),
               label: Text(l10n.logout),
@@ -189,8 +154,73 @@ class SettingsPage extends StatelessWidget {
               ),
             ),
           ),
+          const SizedBox(height: 32),
         ],
       ),
+    );
+  }
+
+  Widget _buildSectionHeader(BuildContext context, String title) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 16.0),
+      child: Text(
+        title,
+        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              color: Theme.of(context).colorScheme.primary,
+              fontWeight: FontWeight.bold,
+            ),
+      ),
+    );
+  }
+
+  String _getOcrEngineName(BuildContext context, OcrEngineType type) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (type) {
+      case OcrEngineType.tesseractOCR:
+        return l10n.ocrEngineTesseract;
+      case OcrEngineType.azureAIVision:
+        return l10n.ocrEngineAzure;
+      case OcrEngineType.paddleOCR:
+        return l10n.ocrEnginePaddle;
+      case OcrEngineType.googleGeminiAI:
+        return l10n.ocrEngineGoogleGemini;
+    }
+  }
+
+  void _showOcrSelectionDialog(BuildContext context, SettingsViewModel vm) {
+    final l10n = AppLocalizations.of(context)!;
+
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          title: Text(l10n.ocrSettingsTitle),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: OcrEngineType.values.map((engine) {
+                return RadioListTile<OcrEngineType>(
+                  title: Text(_getOcrEngineName(context, engine)),
+                  value: engine,
+                  groupValue: vm.selectedOcrEngine,
+                  onChanged: (value) {
+                    if (value != null) {
+                      vm.setOcrEngine(value);
+                      Navigator.pop(ctx);
+                    }
+                  },
+                );
+              }).toList(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(l10n.cancel),
+            ),
+          ],
+        );
+      },
     );
   }
 
