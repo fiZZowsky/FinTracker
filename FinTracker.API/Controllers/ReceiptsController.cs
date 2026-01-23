@@ -11,10 +11,12 @@ namespace FinTracker.API.Controllers
     public class ReceiptsController : ControllerBase
     {
         private readonly IReceiptService _receiptService;
+        private readonly IFileValidationService _fileValidator;
 
-        public ReceiptsController(IReceiptService receiptService)
+        public ReceiptsController(IReceiptService receiptService, IFileValidationService fileValidator)
         {
             _receiptService = receiptService;
+            _fileValidator = fileValidator;
         }
 
         [HttpGet]
@@ -59,6 +61,12 @@ namespace FinTracker.API.Controllers
         [HttpPost("Upload")]
         public async Task<IActionResult> UploadReceipt(IFormFile file, [FromQuery] OcrEngineType ocrEngine = OcrEngineType.TesseractOCR, [FromForm] string? extractedText = null)
         {
+            var validationResult = _fileValidator.ValidateImage(file);
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(validationResult.ErrorMessage);
+            }
+
             if (file == null || file.Length == 0) return BadRequest("Nie przesłano pliku.");
 
             using var stream = file.OpenReadStream();

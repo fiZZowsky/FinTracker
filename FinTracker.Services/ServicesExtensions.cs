@@ -15,6 +15,7 @@ namespace FinTracker.Services
             services.AddScoped<AzureVisionOcrService>();
             services.AddScoped<GoogleGeminiOcrService>();
             services.AddScoped<IOcrServiceFactory, OcrServiceFactory>();
+            services.AddScoped<IFileValidationService, FileValidationService>();
         }
     }
 }
