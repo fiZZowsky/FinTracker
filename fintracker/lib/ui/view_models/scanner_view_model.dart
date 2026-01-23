@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_doc_scanner/flutter_doc_scanner.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
@@ -32,7 +31,6 @@ Future<String> _processImageInIsolate(String path) async {
 
     return tempPath;
   } catch (e) {
-    debugPrint("Błąd przetwarzania obrazu: $e");
     return path;
   }
 }
@@ -100,13 +98,7 @@ class ScannerViewModel extends ChangeNotifier {
       String finalPath = file.path;
 
       if (engine == OcrEngineType.googleMlKit) {
-        debugPrint("Uruchamiam przetwarzanie obrazu (Grayscale)...");
-
         finalPath = await compute(_processImageInIsolate, file.path);
-
-        debugPrint("Obraz przetworzony. Ścieżka: $finalPath");
-        debugPrint("Uruchamiam lokalny Google ML Kit...");
-
         final inputImage = InputImage.fromFilePath(finalPath);
         final textRecognizer =
             TextRecognizer(script: TextRecognitionScript.latin);
@@ -115,17 +107,12 @@ class ScannerViewModel extends ChangeNotifier {
           final RecognizedText result =
               await textRecognizer.processImage(inputImage);
           recognizedText = result.text;
-          debugPrint(
-              "ML Kit zakończył. Rozpoznano znaków: ${recognizedText.length}");
         } catch (mlError) {
           debugPrint("Błąd ML Kit: $mlError");
         } finally {
           textRecognizer.close();
         }
-      } else {
-        debugPrint(
-            "Wybrano silnik backendowy: $engine. Wysyłam surowe zdjęcie.");
-      }
+      } else {}
 
       parsedReceipt = await _receiptService.uploadReceipt(XFile(finalPath),
           extractedText: recognizedText);
@@ -136,7 +123,6 @@ class ScannerViewModel extends ChangeNotifier {
 
       return parsedReceipt;
     } catch (e) {
-      debugPrint('Błąd procesu uploadu/OCR: $e');
       getIt<NotificationService>().showNotification(
         'scannerUploadError',
         type: NotificationType.error,
