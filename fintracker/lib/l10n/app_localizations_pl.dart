@@ -381,7 +381,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get ocrEngineAzure => 'Azure AI Vision';
 
   @override
-  String get ocrEnginePaddle => 'Paddle';
+  String get ocrEngineGoogleMlKit => 'Google ML Kit';
 
   @override
   String get ocrEngineGoogleGemini => 'Google Gemini AI';

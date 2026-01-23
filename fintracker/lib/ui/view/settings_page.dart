@@ -180,8 +180,8 @@ class SettingsPage extends StatelessWidget {
         return l10n.ocrEngineTesseract;
       case OcrEngineType.azureAIVision:
         return l10n.ocrEngineAzure;
-      case OcrEngineType.paddleOCR:
-        return l10n.ocrEnginePaddle;
+      case OcrEngineType.googleMlKit:
+        return l10n.ocrEngineGoogleMlKit;
       case OcrEngineType.googleGeminiAI:
         return l10n.ocrEngineGoogleGemini;
     }

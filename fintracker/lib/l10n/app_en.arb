@@ -123,7 +123,7 @@
     "loading": "Loading",
     "ocrEngineTesseract": "Tesseract",
     "ocrEngineAzure": "Azure AI Vision",
-    "ocrEnginePaddle": "Paddle",
+    "ocrEngineGoogleMlKit": "Google ML Kit",
     "ocrEngineGoogleGemini": "Google Gemini AI",
     "ocrSubtitle": "Choose image processing engine",
     "appearance": "Appearance"

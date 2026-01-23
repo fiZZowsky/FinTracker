@@ -13,7 +13,6 @@ namespace FinTracker.Services
             services.AddScoped<IReceiptParserService, ReceiptParserService>();
             services.AddScoped<TesseractOcrService>();
             services.AddScoped<AzureVisionOcrService>();
-            services.AddScoped<PaddleOcrService>();
             services.AddScoped<GoogleGeminiOcrService>();
             services.AddScoped<IOcrServiceFactory, OcrServiceFactory>();
         }

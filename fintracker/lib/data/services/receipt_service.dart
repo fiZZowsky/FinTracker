@@ -66,12 +66,20 @@ class ReceiptService {
     }
   }
 
-  Future<ReceiptModel?> uploadReceipt(XFile file) async {
+  Future<ReceiptModel?> uploadReceipt(XFile file,
+      {String? extractedText}) async {
     try {
       String fileName = file.path.split('/').last;
-      FormData formData = FormData.fromMap({
+
+      final Map<String, dynamic> map = {
         "file": await MultipartFile.fromFile(file.path, filename: fileName),
-      });
+      };
+
+      if (extractedText != null) {
+        map['extractedText'] = extractedText;
+      }
+
+      FormData formData = FormData.fromMap(map);
 
       OcrEngineType engine = await _prefs.getOcrEngine();
 
@@ -81,7 +89,7 @@ class ReceiptService {
       if (data is Map<String, dynamic>) {
         return ReceiptModel.fromJson(data);
       } else {
-        throw Exception('Invalid data format received from parser.');
+        throw Exception('Invalid data format.');
       }
     } catch (e) {
       debugPrint('ReceiptService upload error: $e');

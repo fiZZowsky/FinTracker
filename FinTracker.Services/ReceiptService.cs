@@ -28,12 +28,11 @@ namespace FinTracker.Services
             _ocrFactory = ocrFactory;
         }
 
-        public async Task<ReceiptDTO> CreateReceiptFromImageAsync(Stream imageStream, OcrEngineType ocrEngine)
+        public async Task<ReceiptDTO> CreateReceiptFromImageAsync(OcrEngineType ocrEngine, Stream imageStream, string? extractedText)
         {
-            var ocrService = _ocrFactory.GetOcrService(ocrEngine);
-            var text = await ocrService.RecognizeTextAsync(imageStream);
+            extractedText ??= await _ocrFactory.GetOcrService(ocrEngine).RecognizeTextAsync(imageStream);
 
-            return await _receiptParserService.ParseReceiptTextAsync(text);
+            return await _receiptParserService.ParseReceiptTextAsync(extractedText);
         }
 
         public override async Task<ReceiptDTO> GetByIdAsync(int id)

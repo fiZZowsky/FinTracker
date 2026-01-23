@@ -836,11 +836,11 @@ abstract class AppLocalizations {
   /// **'Azure AI Vision'**
   String get ocrEngineAzure;
 
-  /// No description provided for @ocrEnginePaddle.
+  /// No description provided for @ocrEngineGoogleMlKit.
   ///
   /// In en, this message translates to:
-  /// **'Paddle'**
-  String get ocrEnginePaddle;
+  /// **'Google ML Kit'**
+  String get ocrEngineGoogleMlKit;
 
   /// No description provided for @ocrEngineGoogleGemini.
   ///

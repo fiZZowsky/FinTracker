@@ -1,1 +1,1 @@
-enum OcrEngineType { tesseractOCR, azureAIVision, paddleOCR, googleGeminiAI }
+enum OcrEngineType { tesseractOCR, azureAIVision, googleMlKit, googleGeminiAI }

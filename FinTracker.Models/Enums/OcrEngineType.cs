@@ -4,6 +4,6 @@ public enum OcrEngineType
 {
     TesseractOCR,
     AzureAIVision,
-    PaddleOCR,
+    GoogleMlKit,
     GoogleGeminiAI
 }

@@ -126,7 +126,7 @@
     "loading": "Ładowanie",
     "ocrEngineTesseract": "Tesseract",
     "ocrEngineAzure": "Azure AI Vision",
-    "ocrEnginePaddle": "Paddle",
+    "ocrEngineGoogleMlKit": "Google ML Kit",
     "ocrEngineGoogleGemini": "Google Gemini AI",
     "ocrSubtitle": "Wybierz silnik przetwarzania obrazu",
     "appearance": "Wygląd"

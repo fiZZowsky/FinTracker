@@ -18,7 +18,6 @@ namespace FinTracker.Services
             {
                 OcrEngineType.TesseractOCR => _serviceProvider.GetRequiredService<TesseractOcrService>(),
                 OcrEngineType.AzureAIVision => _serviceProvider.GetRequiredService<AzureVisionOcrService>(),
-                OcrEngineType.PaddleOCR => _serviceProvider.GetRequiredService<PaddleOcrService>(),
                 OcrEngineType.GoogleGeminiAI => _serviceProvider.GetRequiredService<GoogleGeminiOcrService>(),
                 _ => throw new ArgumentException("Nieznany silnik OCR", nameof(type))
             };
