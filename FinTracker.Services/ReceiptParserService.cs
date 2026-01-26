@@ -22,7 +22,7 @@ namespace FinTracker.Services
 
             string storeName = await _ParseStoreName(ocrText);
 
-            string amountPattern = @"(SUMA|S[U0O]M[A4]|RAZEM|KWOTA|DO\s*ZAP[LŁ1I]ATY|WARTOŚĆ)\s*[\s:.;]*\s*(PLN|Z[LŁ1I]|P1N)?\s*([0-9OoSsDd]{1,}[\s.,]+[0-9OoSs]{2})\b";
+            string amountPattern = @"(SUMA|S[U0O]M[A4]|RAZEM|KWOTA|DO\s*ZAP[LŁ1I]ATY|WARTO[SŚ][CĆ]|BRUTTO)\s*[\s:.;]*\s*(PLN|Z[LŁ1I]|P1N)?\s*([0-9OoSsDdBQ]+(?:[\s][0-9OoSsDdBQ]+)*[.,][0-9OoSs]{2})\b";
             var matches = Regex.Matches(ocrText, amountPattern, RegexOptions.IgnoreCase | RegexOptions.Multiline);
 
             if (matches.Count > 0)
@@ -76,22 +76,34 @@ namespace FinTracker.Services
         {
             var stores = await _storeRepository.GetAllStoresName();
             string normalizedOcrText = _RemoveDiacritics(ocrText.ToUpper()).Replace(" ", "");
-            const int maxDistanceThreshold = 1;
+
+            const int maxDistanceThreshold = 2;
 
             foreach (var store in stores)
             {
                 string normalizedStore = _RemoveDiacritics(store.ToUpper());
                 int storeLen = normalizedStore.Length;
 
-                if (storeLen < 4) continue;
+                if (storeLen > normalizedOcrText.Length + maxDistanceThreshold) continue;
+                if (storeLen < 3) continue;
 
-                for (int i = 0; i <= normalizedOcrText.Length - storeLen; i++)
+                int minLen = Math.Max(1, storeLen - 1);
+                int maxLen = storeLen + 1;
+
+                for (int currLen = minLen; currLen <= maxLen; currLen++)
                 {
-                    string ocrSubstring = normalizedOcrText.Substring(i, storeLen);
-                    int distance = _LevenshteinDistance(ocrSubstring, normalizedStore);
-                    if (distance <= maxDistanceThreshold)
+                    if (currLen > normalizedOcrText.Length) break;
+
+                    for (int i = 0; i <= normalizedOcrText.Length - currLen; i++)
                     {
-                        return store;
+                        string ocrSubstring = normalizedOcrText.Substring(i, currLen);
+                        int distance = _LevenshteinDistance(ocrSubstring, normalizedStore);
+                        int dynamicThreshold = storeLen <= 4 ? 1 : maxDistanceThreshold;
+
+                        if (distance <= dynamicThreshold)
+                        {
+                            return store;
+                        }
                     }
                 }
             }

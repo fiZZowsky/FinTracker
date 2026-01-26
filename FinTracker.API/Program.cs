@@ -16,17 +16,6 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
     serverOptions.AddServerHeader = false;
 });
 
-//builder.Services.AddCors(options =>
-//{
-//    options.AddPolicy("AllowMyApp",
-//        policy =>
-//        {
-//            policy.WithOrigins("https://mojadomena.azurewebsites.net") 
-//                  .AllowAnyHeader()
-//                  .AllowAnyMethod();
-//        });
-//});
-
 // Add services to the container.
 builder.Services.AddRepositories();
 builder.Services.AddServices();
@@ -114,7 +103,6 @@ app.UseMiddleware<ExceptionMiddleware>();
 app.UseHttpsRedirection();
 app.UseRateLimiter();
 
-//app.UseCors("AllowMyApp");
 app.UseAuthentication();
 app.UseAuthorization();
 
