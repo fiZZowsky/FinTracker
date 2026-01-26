@@ -9,17 +9,12 @@ class ApiClient {
   final Dio _dio;
   bool _isRefreshing = false;
 
-  static String get _baseUrl {
-    if (Platform.isAndroid) {
-      return 'https://10.0.2.2:7297';
-    } else {
-      return 'https://localhost:7297';
-    }
-  }
+  static const String baseUrl =
+      'https://fintracker-api-a7ecfxaneehfb4hq.westeurope-01.azurewebsites.net';
 
   ApiClient()
       : _dio = Dio(BaseOptions(
-          baseUrl: _baseUrl,
+          baseUrl: baseUrl,
           connectTimeout: const Duration(seconds: 30),
           receiveTimeout: const Duration(seconds: 30),
         )) {
@@ -48,7 +43,7 @@ class ApiClient {
             final oldRefreshToken = await prefs.getRefreshToken();
 
             if (oldAccessToken != null && oldRefreshToken != null) {
-              final refreshDio = Dio(BaseOptions(baseUrl: _baseUrl));
+              final refreshDio = Dio(BaseOptions(baseUrl: baseUrl));
 
               (refreshDio.httpClientAdapter as IOHttpClientAdapter)
                   .createHttpClient = () {

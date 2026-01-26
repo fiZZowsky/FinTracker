@@ -1,23 +1,10 @@
 {
-    "version": "0.2.0",
+    "version": "1.0.0",
     "configurations": [
         {
             "name": "fintracker (Android)",
             "request": "launch",
-            "type": "dart",
-            "deviceId": "emulator-5554"
-        },
-        {
-            "name": "fintracker (Web - Chrome)",
-            "request": "launch",
-            "type": "dart",
-            "deviceId": "chrome"
-        },
-        {
-            "name": "fintracker (Windows)",
-            "request": "launch",
-            "type": "dart",
-            "deviceId": "windows"
+            "type": "dart"
         }
     ]
 }
