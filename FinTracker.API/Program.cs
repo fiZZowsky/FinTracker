@@ -109,3 +109,5 @@ app.UseAuthorization();
 app.MapControllers().RequireRateLimiting("fixed");
 
 app.Run();
+
+public partial class Program { }
