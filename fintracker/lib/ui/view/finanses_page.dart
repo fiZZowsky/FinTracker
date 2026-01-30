@@ -393,6 +393,7 @@ class _ChartsCarouselState extends State<_ChartsCarousel> {
     int colorIndex = 0;
 
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Expanded(
           flex: 2,
@@ -413,6 +414,7 @@ class _ChartsCarouselState extends State<_ChartsCarousel> {
             ),
           ),
         ),
+        const SizedBox(width: 24),
         Expanded(
           flex: 3,
           child: ListView(
@@ -440,6 +442,7 @@ class _ChartsCarouselState extends State<_ChartsCarousel> {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
+                    const SizedBox(width: 8),
                     Text(
                       NumberFormat.simpleCurrency(
                               locale: 'pl_PL', decimalDigits: 0)
