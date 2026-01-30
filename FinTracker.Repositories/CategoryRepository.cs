@@ -18,7 +18,7 @@ namespace FinTracker.Repositories
             var userId = _userContext.GetUserId();
             return await _dbSet
                 .AsNoTracking()
-                .Where(c => c.IsDefault || (userId != null && c.UserId == userId))
+                .Where(c => c.IsDefault || (c.UserId == userId))
                 .OrderBy(c => c.Name)
                 .ToListAsync();
         }

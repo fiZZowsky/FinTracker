@@ -355,9 +355,17 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
 
     if (storeName != null) {
       final store = vm.findByName(storeName);
-      if (store?.logo != null) {
-        content = Image.memory(store!.logo!,
-            width: 40, height: 40, fit: BoxFit.contain);
+
+      if (store?.logo != null && store!.logo!.isNotEmpty) {
+        content = Image.memory(
+          store.logo!,
+          width: 40,
+          height: 40,
+          fit: BoxFit.contain,
+          errorBuilder: (context, error, stackTrace) {
+            return const Icon(Icons.store, size: 30, color: Colors.grey);
+          },
+        );
       }
     }
 

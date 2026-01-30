@@ -18,7 +18,7 @@ namespace FinTracker.Repositories
             var userId = _userContext.GetUserId();
             return await _dbSet
                 .AsNoTracking()
-                .Where(s => s.IsDefault || (userId != null && s.UserId == userId))
+                .Where(s => s.IsDefault || s.UserId == userId)
                 .OrderBy(s => s.Name)
                 .ToListAsync();
         }
@@ -26,7 +26,7 @@ namespace FinTracker.Repositories
         public override async Task<Store?> GetByIdAsync(int id)
         {
             var userId = _userContext.GetUserId();
-            return await _dbSet.FirstOrDefaultAsync(s => s.Id == id && (s.IsDefault || (userId != null && s.UserId == userId)));
+            return await _dbSet.FirstOrDefaultAsync(s => s.Id == id);
         }
 
         public async Task<IEnumerable<string>> GetAllStoresName()
