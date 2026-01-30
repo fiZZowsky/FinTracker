@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
+import 'package:fintracker/data/services/retry_interceptor.dart';
 import 'package:flutter/foundation.dart';
 import '../../helpers/service_locator.dart';
 import 'preferences_service.dart';
@@ -15,9 +16,11 @@ class ApiClient {
   ApiClient()
       : _dio = Dio(BaseOptions(
           baseUrl: baseUrl,
-          connectTimeout: const Duration(seconds: 30),
-          receiveTimeout: const Duration(seconds: 30),
+          connectTimeout: const Duration(seconds: 40),
+          receiveTimeout: const Duration(seconds: 40),
+          sendTimeout: const Duration(seconds: 40),
         )) {
+    _dio.interceptors.add(RetryInterceptor(dio: _dio));
     (_dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
       final client = HttpClient();
       client.badCertificateCallback =
