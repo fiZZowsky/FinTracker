@@ -1,12 +1,20 @@
 import 'package:fintracker/data/models/ocr_engine_type.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class PreferencesService {
   static const String _budgetKey = 'monthly_budget_limit';
   static const String _ocrEngineKey = 'ocr_engine_type';
-  static const String _tokenKey = 'auth_token';
   static const String _userNameKey = 'user_name';
+
+  static const String _tokenKey = 'auth_token';
   static const String _refreshTokenKey = 'refresh_token';
+
+  final _secureStorage = const FlutterSecureStorage();
+
+  AndroidOptions _getAndroidOptions() => const AndroidOptions(
+        resetOnError: true,
+      );
 
   Future<void> setBudgetLimit(double amount) async {
     final prefs = await SharedPreferences.getInstance();
@@ -32,16 +40,6 @@ class PreferencesService {
     );
   }
 
-  Future<void> setAuthToken(String token) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_tokenKey, token);
-  }
-
-  Future<String?> getAuthToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_tokenKey);
-  }
-
   Future<void> setUserName(String name) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_userNameKey, name);
@@ -52,20 +50,47 @@ class PreferencesService {
     return prefs.getString(_userNameKey);
   }
 
+  Future<void> setAuthToken(String token) async {
+    await _secureStorage.write(
+      key: _tokenKey,
+      value: token,
+      aOptions: _getAndroidOptions(),
+    );
+  }
+
+  Future<String?> getAuthToken() async {
+    return await _secureStorage.read(
+      key: _tokenKey,
+      aOptions: _getAndroidOptions(),
+    );
+  }
+
   Future<void> setRefreshToken(String token) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_refreshTokenKey, token);
+    await _secureStorage.write(
+      key: _refreshTokenKey,
+      value: token,
+      aOptions: _getAndroidOptions(),
+    );
   }
 
   Future<String?> getRefreshToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_refreshTokenKey);
+    return await _secureStorage.read(
+      key: _refreshTokenKey,
+      aOptions: _getAndroidOptions(),
+    );
   }
 
   Future<void> clearAuthData() async {
+    await _secureStorage.delete(
+      key: _tokenKey,
+      aOptions: _getAndroidOptions(),
+    );
+    await _secureStorage.delete(
+      key: _refreshTokenKey,
+      aOptions: _getAndroidOptions(),
+    );
+
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_tokenKey);
-    await prefs.remove(_refreshTokenKey);
     await prefs.remove(_userNameKey);
   }
 }
