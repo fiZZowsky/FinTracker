@@ -5,6 +5,7 @@ import 'package:fintracker/data/services/retry_interceptor.dart';
 import 'package:flutter/foundation.dart';
 import '../../helpers/service_locator.dart';
 import 'preferences_service.dart';
+import 'auth_interceptor.dart';
 
 class ApiClient {
   final Dio _dio;
@@ -21,6 +22,7 @@ class ApiClient {
           sendTimeout: const Duration(seconds: 40),
         )) {
     _dio.interceptors.add(RetryInterceptor(dio: _dio));
+    _dio.interceptors.add(AuthInterceptor());
     (_dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
       final client = HttpClient();
       client.badCertificateCallback =
