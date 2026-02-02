@@ -136,36 +136,40 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
 
     final success = await viewModel.saveReceipt(updatedReceipt);
 
-    if (mounted) {
-      if (success) {
-        guard.setEditing(false);
-        final messageKey = widget.receipt.id > 0
-            ? l10n.receiptUpdateSuccess
-            : l10n.receiptSaveSuccess;
-        notificationService.showNotification(messageKey,
-            type: NotificationType.success);
+    if (!mounted) return;
 
-        await context.read<FinansesViewModel>().fetchData();
+    if (success) {
+      guard.setEditing(false);
+      final messageKey = widget.receipt.id > 0
+          ? l10n.receiptUpdateSuccess
+          : l10n.receiptSaveSuccess;
+      notificationService.showNotification(messageKey,
+          type: NotificationType.success);
 
-        if (widget.receipt.id > 0) {
-          await context
-              .read<ReceiptDetailsViewModel>()
-              .fetchReceiptDetails(widget.receipt.id);
-          context.pop();
-        } else {
-          context.go('/finanses');
-        }
+      await context.read<FinansesViewModel>().fetchData();
+
+      if (!mounted) return;
+
+      if (widget.receipt.id > 0) {
+        await context
+            .read<ReceiptDetailsViewModel>()
+            .fetchReceiptDetails(widget.receipt.id);
+
+        if (!mounted) return;
+        context.pop();
       } else {
-        final messageKey = widget.receipt.id > 0
-            ? l10n.receiptUpdateError
-            : l10n.receiptSaveError;
-        notificationService.showNotification(messageKey,
-            type: NotificationType.error);
+        context.go('/finanses');
       }
+    } else {
+      final messageKey = widget.receipt.id > 0
+          ? l10n.receiptUpdateError
+          : l10n.receiptSaveError;
+      notificationService.showNotification(messageKey,
+          type: NotificationType.error);
     }
   }
 
-  Future<void> _onWillPop(bool didPop) async {
+  Future<void> _onWillPop(bool didPop, dynamic result) async {
     if (didPop) {
       return;
     }
@@ -173,7 +177,7 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
     final guard = context.read<NavigationGuardViewModel>();
     final bool canPop = await guard.canNavigate(context);
 
-    if (canPop && context.mounted) {
+    if (canPop && mounted) {
       context.pop();
     }
   }
@@ -189,7 +193,7 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
 
     return PopScope(
       canPop: false,
-      onPopInvoked: _onWillPop,
+      onPopInvokedWithResult: _onWillPop,
       child: Scaffold(
         appBar: AppBar(
           title: Text(widget.receipt.id > 0
@@ -217,7 +221,8 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
                           const SizedBox(width: 16),
                           Expanded(
                             child: DropdownButtonFormField<String>(
-                              value: _isValidStore(
+                              key: ValueKey(_selectedStoreName),
+                              initialValue: _isValidStore(
                                       storesVM.stores, _selectedStoreName)
                                   ? _selectedStoreName
                                   : null,
@@ -268,7 +273,8 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
                       )
                     else
                       DropdownButtonFormField<int>(
-                        value: _selectedCategoryId,
+                        key: ValueKey(_selectedCategoryId),
+                        initialValue: _selectedCategoryId,
                         decoration: InputDecoration(
                           labelText: l10n.receiptCategory,
                           hintText: l10n.selectCategory,

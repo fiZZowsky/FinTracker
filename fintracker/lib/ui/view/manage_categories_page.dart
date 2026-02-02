@@ -35,7 +35,7 @@ class _ManageCategoriesPageState extends State<ManageCategoriesPage> {
           controller: controller,
           decoration: InputDecoration(
             labelText: l10n.receiptCategory,
-            border: OutlineInputBorder(),
+            border: const OutlineInputBorder(),
           ),
           textCapitalization: TextCapitalization.sentences,
           autofocus: true,
@@ -57,14 +57,13 @@ class _ManageCategoriesPageState extends State<ManageCategoriesPage> {
               } else {
                 success = await vm.addCategory(name);
               }
-
               if (ctx.mounted) {
                 Navigator.pop(ctx);
-                if (!success) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l10n.operationError)),
-                  );
-                }
+              }
+              if (!success && mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(l10n.operationError)),
+                );
               }
             },
             child: Text(l10n.save),

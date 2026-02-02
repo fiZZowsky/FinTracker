@@ -29,7 +29,7 @@ class FinansesViewModel extends ChangeNotifier {
   List<SummaryData> _summaryData = [];
   List<SummaryData> get summaryData => _summaryData;
 
-  Map<String, double> _categoryStats = {};
+  final Map<String, double> _categoryStats = {};
   Map<String, double> get categoryStats => _categoryStats;
 
   double get totalSpent =>

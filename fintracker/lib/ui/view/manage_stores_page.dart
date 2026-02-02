@@ -56,14 +56,13 @@ class _ManageStoresPageState extends State<ManageStoresPage> {
               } else {
                 success = await vm.addStore(name);
               }
-
               if (ctx.mounted) {
                 Navigator.pop(ctx);
-                if (!success) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l10n.operationError)),
-                  );
-                }
+              }
+              if (!success && mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(l10n.operationError)),
+                );
               }
             },
             child: Text(l10n.save),

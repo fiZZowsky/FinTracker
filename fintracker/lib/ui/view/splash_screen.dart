@@ -103,8 +103,7 @@ class _SplashScreenState extends State<SplashScreen>
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        l10n.loading +
-                            "... ${(_progressAnimation.value * 100).toInt()}%",
+                        "${l10n.loading}... ${(_progressAnimation.value * 100).toInt()}%",
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: Colors.grey,
                         ),

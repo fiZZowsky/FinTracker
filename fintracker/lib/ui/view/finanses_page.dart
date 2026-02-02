@@ -172,9 +172,7 @@ class FinansesPage extends StatelessWidget {
     if (checkDate == today) return l10n.today;
     if (checkDate == yesterday) return l10n.yesterday;
 
-    return DateFormat.EEEE(Intl.getCurrentLocale()).format(date) +
-        ', ' +
-        DateFormat.MMMd(Intl.getCurrentLocale()).format(date);
+    return "${DateFormat.EEEE(Intl.getCurrentLocale()).format(date)}, ${DateFormat.MMMd(Intl.getCurrentLocale()).format(date)}";
   }
 }
 
