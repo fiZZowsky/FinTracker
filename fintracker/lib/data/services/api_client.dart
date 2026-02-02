@@ -1,6 +1,4 @@
-import 'dart:io';
 import 'package:dio/dio.dart';
-import 'package:dio/io.dart';
 import 'package:fintracker/data/services/retry_interceptor.dart';
 import 'package:flutter/foundation.dart';
 import '../../helpers/service_locator.dart';
@@ -23,12 +21,6 @@ class ApiClient {
         )) {
     _dio.interceptors.add(RetryInterceptor(dio: _dio));
     _dio.interceptors.add(AuthInterceptor());
-    (_dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
-      final client = HttpClient();
-      client.badCertificateCallback =
-          (X509Certificate cert, String host, int port) => true;
-      return client;
-    };
 
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
@@ -49,13 +41,6 @@ class ApiClient {
 
             if (oldAccessToken != null && oldRefreshToken != null) {
               final refreshDio = Dio(BaseOptions(baseUrl: baseUrl));
-
-              (refreshDio.httpClientAdapter as IOHttpClientAdapter)
-                  .createHttpClient = () {
-                final client = HttpClient();
-                client.badCertificateCallback = (cert, host, port) => true;
-                return client;
-              };
 
               final response =
                   await refreshDio.post('/api/Auth/refresh-token', data: {
