@@ -12,7 +12,7 @@ class ApiClient {
   Completer<bool>? _refreshCompleter;
 
   static const String baseUrl =
-      'https://fintracker-api-a7ecfxaneehfb4hq.westeurope-01.azurewebsites.net';
+      'https://fintracker-api-apckguhneed3cdhq.polandcentral-01.azurewebsites.net';
 
   ApiClient()
       : _dio = Dio(BaseOptions(
