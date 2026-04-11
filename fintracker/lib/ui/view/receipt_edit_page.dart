@@ -57,8 +57,8 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<StoresViewModel>().fetchStores();
-      context.read<CategoriesViewModel>().fetchCategories();
+      context.read<StoresViewModel>().fetchStores(forceRefresh: true);
+      context.read<CategoriesViewModel>().fetchCategories(forceRefresh: true);
     });
   }
 

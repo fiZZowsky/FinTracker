@@ -12,8 +12,8 @@ class CategoriesViewModel extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
-  Future<void> fetchCategories() async {
-    if (_categories.isNotEmpty) return;
+  Future<void> fetchCategories({bool forceRefresh = false}) async {
+    if (_categories.isNotEmpty && !forceRefresh) return;
 
     _isLoading = true;
     notifyListeners();

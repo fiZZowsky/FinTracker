@@ -12,8 +12,8 @@ class StoresViewModel extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
-  Future<void> fetchStores() async {
-    if (_stores.isNotEmpty) return;
+  Future<void> fetchStores({bool forceRefresh = false}) async {
+    if (_stores.isNotEmpty && !forceRefresh) return;
 
     _isLoading = true;
     notifyListeners();
