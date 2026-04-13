@@ -1,6 +1,7 @@
 import 'package:fintracker/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 import 'helpers/app_router.dart';
 import 'helpers/notification_service.dart';
 import 'helpers/service_locator.dart';
@@ -24,16 +25,27 @@ void main() {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final themeViewModel = Provider.of<ThemeViewModel>(context);
-    final localeViewModel = context.watch<LocaleViewModel>();
-    final authViewModel = context.watch<AuthViewModel>();
+  State<MyApp> createState() => _MyAppState();
+}
 
-    final router = AppRouter.createRouter(authViewModel);
+class _MyAppState extends State<MyApp> {
+  late final GoRouter _router;
+
+  @override
+  void initState() {
+    super.initState();
+    final authViewModel = context.read<AuthViewModel>();
+    _router = AppRouter.createRouter(authViewModel);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final themeViewModel = context.watch<ThemeViewModel>();
+    final localeViewModel = context.watch<LocaleViewModel>();
 
     return MaterialApp.router(
       title: 'FinTracker',
@@ -43,7 +55,7 @@ class MyApp extends StatelessWidget {
       darkTheme: AppTheme.darkTheme,
       themeMode: themeViewModel.themeMode,
       locale: localeViewModel.locale,
-      routerConfig: router,
+      routerConfig: _router,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       builder: (context, routerChild) {

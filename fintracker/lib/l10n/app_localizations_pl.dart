@@ -276,7 +276,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get delete => 'Usuń';
 
   @override
-  String get passwordsDoNotMatch => 'Hasła nie pasują do siebie';
+  String get passwordsDoNotMatch => 'Hasła nie są identyczne';
 
   @override
   String get exportData => 'Eksportuj dane';
