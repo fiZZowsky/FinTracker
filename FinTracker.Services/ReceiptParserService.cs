@@ -9,10 +9,14 @@ namespace FinTracker.Services
     public class ReceiptParserService : IReceiptParserService
     {
         private readonly IStoreRepository _storeRepository;
+        private readonly IUserContextRepository _userContextRepository;
+        private readonly IReceiptRepository _receiptRepository;
 
-        public ReceiptParserService(IStoreRepository storeRepository)
+        public ReceiptParserService(IStoreRepository storeRepository, IUserContextRepository userContextRepository, IReceiptRepository receiptRepository)
         {
             _storeRepository = storeRepository;
+            _userContextRepository = userContextRepository;
+            _receiptRepository = receiptRepository;
         }
 
         public async Task<ReceiptDTO> ParseReceiptTextAsync(string ocrText)
@@ -21,6 +25,8 @@ namespace FinTracker.Services
             DateTime dateShopping = DateTime.UtcNow;
 
             string storeName = await _ParseStoreName(ocrText);
+
+            var categoryId = await PredictCategoryAsync(storeName);
 
             string amountPattern = @"(SUMA|S[U0O]M[A4]|RAZEM|KWOTA|DO\s*ZAP[LŁ1I]ATY|WARTO[SŚ][CĆ]|BRUTTO)\s*[\s:.;]*\s*(PLN|Z[LŁ1I]|P1N)?\s*([0-9OoSsDdBQ]+(?:[\s][0-9OoSsDdBQ]+)*[.,][0-9OoSs]{2})\b";
             var matches = Regex.Matches(ocrText, amountPattern, RegexOptions.IgnoreCase | RegexOptions.Multiline);
@@ -51,7 +57,8 @@ namespace FinTracker.Services
             {
                 StoreName = storeName,
                 TotalAmount = totalAmount,
-                DateShopping = dateShopping
+                DateShopping = dateShopping,
+                CategoryId = categoryId
             };
         }
 
@@ -108,6 +115,55 @@ namespace FinTracker.Services
                 }
             }
             return "Nieznany Sklep";
+        }
+
+        public async Task<int?> PredictCategoryAsync(string rawStoreName)
+        {
+            var normalizedStoreName = NormalizeStoreName(rawStoreName);
+
+            if (string.IsNullOrWhiteSpace(normalizedStoreName) || normalizedStoreName.Length < 3)
+            {
+                return null;
+            }
+
+            var userId = _userContextRepository.GetUserId();
+            if (userId == null) throw new UnauthorizedAccessException("Brak użytkownika.");
+
+            var userTask = _receiptRepository.GetUserCategoryStatsAsync(normalizedStoreName, userId);
+            var globalTask = _receiptRepository.GetGlobalCategoryStatsAsync(normalizedStoreName, userId);
+
+            await Task.WhenAll(userTask, globalTask);
+
+            var userResult = userTask.Result;
+            var globalResult = globalTask.Result;
+
+            if (userResult != null && globalResult == null) return userResult.Value.CategoryId;
+            if (userResult == null && globalResult != null) return globalResult.Value.CategoryId;
+            if (userResult == null && globalResult == null) return null;
+
+            const int UserWeightMultiplier = 15;
+
+            int userScore = userResult.Value.Count * UserWeightMultiplier;
+            int globalScore = globalResult.Value.Count;
+
+            if (userScore >= globalScore)
+            {
+                return userResult.Value.CategoryId;
+            }
+            else
+            {
+                return globalResult.Value.CategoryId;
+            }
+        }
+
+        private string NormalizeStoreName(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input)) return string.Empty;
+            var normalized = input.ToLower();
+            string[] suffixesToRemove = { "sp. z o.o.", "sp. z oo", "sp.j.", "s.a.", "sp. k." };
+            foreach (var suffix in suffixesToRemove) normalized = normalized.Replace(suffix, "");
+            normalized = Regex.Replace(normalized, @"[^a-zżółćęśąźń\s]", "");
+            return Regex.Replace(normalized, @"\s+", " ").Trim();
         }
 
         private int _LevenshteinDistance(string s, string t)

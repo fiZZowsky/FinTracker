@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FinTracker.Models;
 using FinTracker.Repositories;
+using System.Text.RegularExpressions;
 
 namespace FinTracker.Services
 {
@@ -77,9 +78,9 @@ namespace FinTracker.Services
             return await _receiptRepository.GetSummaryAsync(query);
         }
 
-        public async Task<int?> GetSuggestedCategoryForStoreAsync(string storeName)
+        public async Task<int?> PredictCategoryAsync(string rawStoreName)
         {
-            return await _receiptRepository.GetMostFrequentCategoryIdAsync(storeName);
+            return await _receiptParserService.PredictCategoryAsync(rawStoreName);
         }
 
         private async Task<byte[]?> _GetLogoBytesForStore(string storeName)

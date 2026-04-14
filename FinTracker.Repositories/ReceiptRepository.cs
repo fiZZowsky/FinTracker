@@ -104,18 +104,36 @@ namespace FinTracker.Repositories
             }
         }
 
-        public async Task<int?> GetMostFrequentCategoryIdAsync(string storeName)
+        public async Task<(int CategoryId, int Count)?> GetUserCategoryStatsAsync(string normalizedStoreName, Guid? userId)
         {
-            if (string.IsNullOrWhiteSpace(storeName)) return null;
-            var normalized = storeName.ToLower();
+            var result = await _context.Receipts
+                    .AsNoTracking()
+                    .Where(r => r.UserId == userId
+                             && r.CategoryId != null
+                             && r.StoreName.ToLower().Contains(normalizedStoreName))
+                    .GroupBy(r => r.CategoryId)
+                    .Select(g => new { CategoryId = g.Key.Value, Count = g.Count() })
+                    .OrderByDescending(x => x.Count)
+                    .FirstOrDefaultAsync();
 
-            return await GetUserReceipts()
+            if (result == null) return null;
+            return (result.CategoryId, result.Count);
+        }
+
+        public async Task<(int CategoryId, int Count)?> GetGlobalCategoryStatsAsync(string normalizedStoreName, Guid? userId)
+        {
+            var result = await _context.Receipts
                 .AsNoTracking()
-                .Where(r => r.StoreName.ToLower() == normalized && r.CategoryId != null)
+                .Where(r => r.UserId != userId
+                         && r.CategoryId != null
+                         && r.StoreName.ToLower().Contains(normalizedStoreName))
                 .GroupBy(r => r.CategoryId)
-                .OrderByDescending(g => g.Count())
-                .Select(g => g.Key)
+                .Select(g => new { CategoryId = g.Key.Value, Count = g.Count() })
+                .OrderByDescending(x => x.Count)
                 .FirstOrDefaultAsync();
+
+            if (result == null) return null;
+            return (result.CategoryId, result.Count);
         }
     }
 }

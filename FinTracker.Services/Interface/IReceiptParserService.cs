@@ -5,5 +5,6 @@ namespace FinTracker.Services
     public interface IReceiptParserService
     {
         Task<ReceiptDTO> ParseReceiptTextAsync(string ocrText);
+        Task<int?> PredictCategoryAsync(string rawStoreName);
     }
 }

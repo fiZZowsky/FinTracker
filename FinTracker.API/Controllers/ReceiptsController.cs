@@ -44,7 +44,7 @@ namespace FinTracker.API.Controllers
         [HttpGet("suggest-category")]
         public async Task<IActionResult> GetSuggestedCategory([FromQuery] string storeName)
         {
-            var categoryId = await _receiptService.GetSuggestedCategoryForStoreAsync(storeName);
+            var categoryId = await _receiptService.PredictCategoryAsync(storeName);
             if (categoryId == null) return NoContent();
             return Ok(categoryId);
         }

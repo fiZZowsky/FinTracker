@@ -8,6 +8,6 @@ namespace FinTracker.Services
         Task<ReceiptDTO> CreateReceiptFromImageAsync(OcrEngineType ocrEngine, Stream imageStream, string? extractedText);
         Task<IEnumerable<ReceiptDTO>> GetPagedAsync(ReceiptQueryParameters query);
         Task<IEnumerable<SummaryDataDTO>> GetSummaryAsync(ReceiptQueryParameters query);
-        Task<int?> GetSuggestedCategoryForStoreAsync(string storeName);
+        Task<int?> PredictCategoryAsync(string rawStoreName);
     }
 }
