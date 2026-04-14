@@ -73,8 +73,8 @@ class FinansesPage extends StatelessWidget {
   }
 
   Widget _buildDateHeader(BuildContext context, FinansesViewModel vm) {
-    final dateStr =
-        DateFormat.yMMMM(Intl.getCurrentLocale()).format(vm.currentDate);
+    final l10n = AppLocalizations.of(context)!;
+    final dateStr = DateFormat.yMMMM(l10n.localeName).format(vm.currentDate);
     final capitalizedDate = dateStr[0].toUpperCase() + dateStr.substring(1);
 
     return Row(
@@ -172,7 +172,7 @@ class FinansesPage extends StatelessWidget {
     if (checkDate == today) return l10n.today;
     if (checkDate == yesterday) return l10n.yesterday;
 
-    return "${DateFormat.EEEE(Intl.getCurrentLocale()).format(date)}, ${DateFormat.MMMd(Intl.getCurrentLocale()).format(date)}";
+    return "${DateFormat.EEEE(l10n.localeName).format(date)}, ${DateFormat.MMMd(l10n.localeName).format(date)}";
   }
 }
 

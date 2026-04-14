@@ -95,8 +95,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildWelcomeSection(ThemeData theme, AppLocalizations l10n) {
     final now = DateTime.now();
-    final dateString =
-        DateFormat.yMMMMEEEEd(Intl.getCurrentLocale()).format(now);
+    final dateString = DateFormat.yMMMMEEEEd(l10n.localeName).format(now);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -216,6 +215,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildRecentList(
       BuildContext context, List<ReceiptModel> receipts, ThemeData theme) {
+    final l10n = AppLocalizations.of(context)!;
     return ListView.separated(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -247,8 +247,7 @@ class _HomePageState extends State<HomePage> {
             style: const TextStyle(fontWeight: FontWeight.w600),
           ),
           subtitle: Text(
-            DateFormat.MMMd(Intl.getCurrentLocale())
-                .format(receipt.dateShopping),
+            DateFormat.MMMd(l10n.localeName).format(receipt.dateShopping),
             style: TextStyle(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
           ),
