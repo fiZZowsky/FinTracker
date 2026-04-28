@@ -1,5 +1,4 @@
-﻿using FinTracker.Models;
-using FinTracker.Repositories;
+﻿using FinTracker.Repositories;
 using FinTracker.Services;
 using FluentAssertions;
 using Moq;
@@ -10,10 +9,15 @@ namespace FinTracker.Tests.Services
     {
         private readonly ReceiptParserService _parser;
         private readonly Mock<IStoreRepository> _storeRepoMock;
+        private readonly Mock<IUserContextRepository> _userContextRepoMock;
+        private readonly Mock<IReceiptRepository> _receiptRepoMock;
 
         public ReceiptParserServiceTests()
         {
             _storeRepoMock = new Mock<IStoreRepository>();
+            _userContextRepoMock = new Mock<IUserContextRepository>();
+            _receiptRepoMock = new Mock<IReceiptRepository>();
+
             _storeRepoMock.Setup(x => x.GetAllStoresName())
             .ReturnsAsync(new List<string>
              {
@@ -25,7 +29,12 @@ namespace FinTracker.Tests.Services
                     "Pepco"
              });
 
-            _parser = new ReceiptParserService(_storeRepoMock.Object);
+            _userContextRepoMock.Setup(x => x.GetUserId()).Returns(Guid.NewGuid());
+
+            _parser = new ReceiptParserService(
+                            _storeRepoMock.Object,
+                            _userContextRepoMock.Object,
+                            _receiptRepoMock.Object);
         }
 
         [Theory]
