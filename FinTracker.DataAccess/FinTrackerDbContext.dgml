@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<DirectedGraph GraphDirection="LeftToRight" xmlns="http://schemas.microsoft.com/vs/2009/dgml">
+<DirectedGraph GraphDirection="LeftToRight" ZoomLevel="-1" xmlns="http://schemas.microsoft.com/vs/2009/dgml">
   <Nodes>
     <Node Id="Category" Category="EntityType" Annotations="Relational:TableName: Categories RelationshipDiscoveryConvention:NavigationCandidates: System.Collections.Immutable.ImmutableSortedDictionary`2[System.Reflection.PropertyInfo,System.ValueTuple`2[System.Type,System.Nullable`1[System.Boolean]]]" BaseClass="" Bounds="142.740200805664,295.191779399893,113.15,138.874689746094" ChangeTrackingStrategy="ChangeTrackingStrategy.Snapshot" Group="Expanded" IsAbstract="False" Label="Category" LayoutSettings="List" Name="Category" UseManualLocation="True" />
     <Node Id="Category.Id" Category="Property Primary" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="SqlServer:ValueGenerationStrategy: IdentityColumn" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="151.744538879395,321.191872573297,54.55,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="False" IsIndexed="False" IsPrimaryKey="True" IsRequired="True" IsShadow="False" IsUnicode="True" Label="Id (int)" MaxLength="None" Name="Id" PropertyAccessMode="PropertyAccessMode.Default" Type="int" UseManualLocation="True" ValueGenerated="ValueGenerated.OnAdd" />
@@ -33,25 +33,25 @@
     <Link Source="Category" Target="Category.IsDefault" Category="Contains" />
     <Link Source="Category" Target="Category.Name" Category="Contains" />
     <Link Source="Category" Target="Category.UserId" Category="Contains" />
-    <Link Source="Category" Target="User" Category="Foreign Key" Annotations="" Bounds="255.890200805664,370.267077700822,64.9789609001135,6.47544596282796" From="Category.UserId" IsUnique="False" Label="1:*" LabelBounds="281.541341232284,353.544751854866,14.0733333333333,15.96" Name="Category -&gt; User" To="User.Id" />
+    <Link Source="Category" Target="User" Category="Foreign Key" Annotations="" Bounds="255.890200805664,370.267077700822,64.9789609001139,6.47544596282785" From="Category.UserId" IsUnique="False" Label="1:*" LabelBounds="281.541341232284,353.544751854866,14.0733333333333,15.96" Name="Category -&gt; User" To="User.Id" />
     <Link Source="IModel" Target="Category" Category="Contains" />
     <Link Source="IModel" Target="Receipt" Category="Contains" />
     <Link Source="IModel" Target="Store" Category="Contains" />
     <Link Source="IModel" Target="User" Category="Contains" />
-    <Link Source="Receipt" Target="Category" Category="Foreign Key" Annotations="" Bounds="237.380828583143,212.311101359644,36.7330326664903,74.8021806561701" From="Receipt.CategoryId" IsUnique="False" Label="1:*" LabelBounds="257.542566557295,250.593769398439,14.0733333333332,15.9600000000001" Name="Receipt -&gt; Category" To="Category.Id" />
+    <Link Source="Receipt" Target="Category" Category="Foreign Key" Annotations="" Bounds="237.380828583143,212.311101359643,36.7330326664904,74.8021806561706" From="Receipt.CategoryId" IsUnique="False" Label="1:*" LabelBounds="257.542566557295,250.593769398439,14.0733333333332,15.9600000000001" Name="Receipt -&gt; Category" To="Category.Id" />
     <Link Source="Receipt" Target="Receipt.CategoryId" Category="Contains" />
     <Link Source="Receipt" Target="Receipt.DateShopping" Category="Contains" />
     <Link Source="Receipt" Target="Receipt.Id" Category="Contains" />
     <Link Source="Receipt" Target="Receipt.StoreName" Category="Contains" />
     <Link Source="Receipt" Target="Receipt.TotalAmount" Category="Contains" />
     <Link Source="Receipt" Target="Receipt.UserId" Category="Contains" />
-    <Link Source="Receipt" Target="User" Category="Foreign Key" Annotations="" Bounds="363.607002638524,212.311101359644,31.3903748654726,71.7540235780316" From="Receipt.UserId" IsUnique="False" Label="1:*" LabelBounds="381.13452359309,231.426518572346,14.0733333333334,15.96" Name="Receipt -&gt; User" To="User.Id" />
+    <Link Source="Receipt" Target="User" Category="Foreign Key" Annotations="" Bounds="363.607002638523,212.311101359643,31.3903748654727,71.7540235780315" From="Receipt.UserId" IsUnique="False" Label="1:*" LabelBounds="381.13452359309,231.426518572346,14.0733333333334,15.96" Name="Receipt -&gt; User" To="User.Id" />
     <Link Source="Store" Target="Store.Id" Category="Contains" />
     <Link Source="Store" Target="Store.IsDefault" Category="Contains" />
     <Link Source="Store" Target="Store.LogoUrl" Category="Contains" />
     <Link Source="Store" Target="Store.Name" Category="Contains" />
     <Link Source="Store" Target="Store.UserId" Category="Contains" />
-    <Link Source="Store" Target="User" Category="Foreign Key" Annotations="" Bounds="438.03793537649,494.07006445643,0.919197306572244,53.4824786969183" From="Store.UserId" IsUnique="False" Label="1:*" LabelBounds="420.424200652828,512.796935107005,14.0733333333334,15.96" Name="Store -&gt; User" To="User.Id" />
+    <Link Source="Store" Target="User" Category="Foreign Key" Annotations="" Bounds="438.03793537649,494.070064456429,0.919197306572244,53.4824786969187" From="Store.UserId" IsUnique="False" Label="1:*" LabelBounds="420.424200652828,512.796935107004,14.0733333333334,15.96" Name="Store -&gt; User" To="User.Id" />
     <Link Source="User" Target="User.Email" Category="Contains" />
     <Link Source="User" Target="User.Id" Category="Contains" />
     <Link Source="User" Target="User.Name" Category="Contains" />
@@ -112,6 +112,7 @@
     <Property Id="Value" DataType="System.String" />
     <Property Id="ValueGenerated" Group="Property Flags" DataType="System.String" />
     <Property Id="ValueLabel" DataType="System.String" />
+    <Property Id="ZoomLevel" DataType="System.String" />
   </Properties>
   <Styles>
     <Style TargetType="Node" GroupLabel="EntityType" ValueLabel="True">
