@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
 import 'package:fintracker/data/services/retry_interceptor.dart';
 import 'package:flutter/foundation.dart';
 import '../../helpers/service_locator.dart';
@@ -11,8 +13,8 @@ class ApiClient {
   late final Dio _tokenDio;
   Completer<bool>? _refreshCompleter;
 
-  static const String baseUrl =
-      'https://fintracker-api-apckguhneed3cdhq.polandcentral-01.azurewebsites.net';
+  static const String baseUrl = 'https://10.0.2.2:7297/';
+      // 'https://fintracker-api-apckguhneed3cdhq.polandcentral-01.azurewebsites.net';
 
   ApiClient()
       : _dio = Dio(BaseOptions(
@@ -26,6 +28,24 @@ class ApiClient {
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 10),
     ));
+
+_dio.httpClientAdapter = IOHttpClientAdapter(
+      createHttpClient: () {
+        final client = HttpClient();
+        client.badCertificateCallback =
+            (X509Certificate cert, String host, int port) => true;
+        return client;
+      },
+    );
+
+    _tokenDio.httpClientAdapter = IOHttpClientAdapter(
+      createHttpClient: () {
+        final client = HttpClient();
+        client.badCertificateCallback =
+            (X509Certificate cert, String host, int port) => true;
+        return client;
+      },
+    );
 
     _setupInterceptors();
   }
