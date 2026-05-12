@@ -7,14 +7,16 @@ import 'package:flutter/foundation.dart';
 import '../../helpers/service_locator.dart';
 import 'preferences_service.dart';
 import 'auth_interceptor.dart';
+import 'package:dio/io.dart';
 
 class ApiClient {
   final Dio _dio;
   late final Dio _tokenDio;
   Completer<bool>? _refreshCompleter;
 
-  static const String baseUrl = 'https://10.0.2.2:7297/';
-      // 'https://fintracker-api-apckguhneed3cdhq.polandcentral-01.azurewebsites.net';
+  // static const String baseUrl = 'https://10.0.2.2:7297';
+  static const String baseUrl =
+      'https://fintracker-api-a7ecfxaneehfb4hq.westeurope-01.azurewebsites.net';
 
   ApiClient()
       : _dio = Dio(BaseOptions(
@@ -29,7 +31,7 @@ class ApiClient {
       receiveTimeout: const Duration(seconds: 10),
     ));
 
-_dio.httpClientAdapter = IOHttpClientAdapter(
+    _dio.httpClientAdapter = IOHttpClientAdapter(
       createHttpClient: () {
         final client = HttpClient();
         client.badCertificateCallback =

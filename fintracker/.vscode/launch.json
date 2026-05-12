@@ -4,7 +4,8 @@
         {
             "name": "fintracker (Android)",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "deviceId": "emulator-5554"
         }
     ]
 }
