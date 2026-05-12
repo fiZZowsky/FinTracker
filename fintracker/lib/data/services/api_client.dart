@@ -7,7 +7,6 @@ import 'package:flutter/foundation.dart';
 import '../../helpers/service_locator.dart';
 import 'preferences_service.dart';
 import 'auth_interceptor.dart';
-import 'package:dio/io.dart';
 
 class ApiClient {
   final Dio _dio;
@@ -16,7 +15,7 @@ class ApiClient {
 
   // static const String baseUrl = 'https://10.0.2.2:7297';
   static const String baseUrl =
-      'https://fintracker-api-a7ecfxaneehfb4hq.westeurope-01.azurewebsites.net';
+      'https://fintracker-api-apckguhneed3cdhq.polandcentral-01.azurewebsites.net';
 
   ApiClient()
       : _dio = Dio(BaseOptions(

@@ -82,9 +82,12 @@ namespace FinTracker.Services
         private async Task<string> _ParseStoreName(string ocrText)
         {
             var stores = await _storeRepository.GetAllStoresName();
-            string normalizedOcrText = _RemoveDiacritics(ocrText.ToUpper()).Replace(" ", "");
+            string normalizedOcrText = Regex.Replace(_RemoveDiacritics(ocrText.ToUpper()), @"\s+", "");
 
             const int maxDistanceThreshold = 2;
+            string bestStore = "Nieznany Sklep";
+            int bestDistance = int.MaxValue;
+            int bestMatchIndex = int.MaxValue;
 
             foreach (var store in stores)
             {
@@ -109,12 +112,18 @@ namespace FinTracker.Services
 
                         if (distance <= dynamicThreshold)
                         {
-                            return store;
+                            if (distance < bestDistance || (distance == bestDistance && i < bestMatchIndex))
+                            {
+                                bestDistance = distance;
+                                bestMatchIndex = i;
+                                bestStore = store;
+                            }
                         }
                     }
                 }
             }
-            return "Nieznany Sklep";
+
+            return bestStore;
         }
 
         public async Task<int?> PredictCategoryAsync(string rawStoreName)
@@ -129,13 +138,8 @@ namespace FinTracker.Services
             var userId = _userContextRepository.GetUserId();
             if (userId == null) throw new UnauthorizedAccessException("Brak użytkownika.");
 
-            var userTask = _receiptRepository.GetUserCategoryStatsAsync(normalizedStoreName, userId);
-            var globalTask = _receiptRepository.GetGlobalCategoryStatsAsync(normalizedStoreName, userId);
-
-            await Task.WhenAll(userTask, globalTask);
-
-            var userResult = userTask.Result;
-            var globalResult = globalTask.Result;
+            var userResult = await _receiptRepository.GetUserCategoryStatsAsync(normalizedStoreName, userId);
+            var globalResult = await _receiptRepository.GetGlobalCategoryStatsAsync(normalizedStoreName, userId);
 
             if (userResult != null && globalResult == null) return userResult.Value.CategoryId;
             if (userResult == null && globalResult != null) return globalResult.Value.CategoryId;

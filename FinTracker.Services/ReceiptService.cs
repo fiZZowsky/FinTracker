@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using FinTracker.Models;
 using FinTracker.Repositories;
-using System.Text.RegularExpressions;
+using Microsoft.Extensions.Logging;
 
 namespace FinTracker.Services
 {
@@ -12,6 +12,7 @@ namespace FinTracker.Services
         private readonly IUserContextRepository _userContextRepository;
         private readonly IReceiptParserService _receiptParserService;
         private readonly IOcrServiceFactory _ocrFactory;
+        private readonly ILogger<ReceiptService> _logger;
 
         public ReceiptService(
             IReceiptRepository repository,
@@ -19,7 +20,8 @@ namespace FinTracker.Services
             IUserContextRepository userContextRepository,
             IReceiptParserService receiptParserService,
             IOcrServiceFactory ocrFactory,
-            IMapper mapper)
+            IMapper mapper,
+            ILogger<ReceiptService> logger)
             : base(repository, mapper)
         {
             _receiptRepository = repository;
@@ -27,11 +29,14 @@ namespace FinTracker.Services
             _userContextRepository = userContextRepository;
             _receiptParserService = receiptParserService;
             _ocrFactory = ocrFactory;
+            _logger = logger;
         }
 
         public async Task<ReceiptDTO> CreateReceiptFromImageAsync(OcrEngineType ocrEngine, Stream imageStream, string? extractedText)
         {
+            _logger.LogInformation("Rozpoczynanie ekstrakcji danych przy użyciu modelu: {EngineType}", ocrEngine.ToString());
             extractedText ??= await _ocrFactory.GetOcrService(ocrEngine).RecognizeTextAsync(imageStream);
+            _logger.LogInformation("OCR Raw Response: {rawText}", extractedText);
 
             return await _receiptParserService.ParseReceiptTextAsync(extractedText);
         }
