@@ -16,6 +16,7 @@ namespace FinTracker.Services
             services.AddScoped<GoogleGeminiOcrService>();
             services.AddScoped<IOcrServiceFactory, OcrServiceFactory>();
             services.AddScoped<IFileValidationService, FileValidationService>();
+            services.AddHttpClient<IExchangeRateService, ExchangeRateService>();
         }
     }
 }

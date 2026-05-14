@@ -6,6 +6,7 @@ class ReceiptModel {
   final int id;
   final String storeName;
   final double totalAmount;
+  final String currencyCode;
   final DateTime dateShopping;
   final Uint8List? storeLogo;
   final int? categoryId;
@@ -15,6 +16,7 @@ class ReceiptModel {
     required this.id,
     required this.storeName,
     required this.totalAmount,
+    this.currencyCode = 'PLN',
     required this.dateShopping,
     required this.storeLogo,
     this.categoryId,
@@ -27,6 +29,7 @@ class ReceiptModel {
         id: json['id'] as int,
         storeName: json['storeName'] as String,
         totalAmount: (json['totalAmount'] as num).toDouble(),
+        currencyCode: json['currencyCode'] as String? ?? 'PLN',
         dateShopping: DateTime.parse(json['dateShopping'] as String),
         storeLogo: json['storeLogo'] != null
             ? base64Decode(json['storeLogo'] as String)
@@ -45,6 +48,7 @@ class ReceiptModel {
       'id': id,
       'storeName': storeName,
       'totalAmount': totalAmount,
+      'currencyCode': currencyCode,
       'dateShopping': dateShopping.toIso8601String(),
       'categoryId': categoryId,
     };

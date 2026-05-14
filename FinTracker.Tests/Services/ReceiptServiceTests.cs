@@ -3,6 +3,7 @@ using FinTracker.Models;
 using FinTracker.Repositories;
 using FinTracker.Services;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace FinTracker.Tests.Services
@@ -15,6 +16,7 @@ namespace FinTracker.Tests.Services
         private readonly Mock<IReceiptParserService> _parserMock;
         private readonly Mock<IOcrServiceFactory> _ocrFactoryMock;
         private readonly Mock<IMapper> _mapperMock;
+        private readonly Mock<ILogger<ReceiptService>> _loggerMock;
 
         private readonly ReceiptService _service;
 
@@ -26,6 +28,7 @@ namespace FinTracker.Tests.Services
             _parserMock = new Mock<IReceiptParserService>();
             _ocrFactoryMock = new Mock<IOcrServiceFactory>();
             _mapperMock = new Mock<IMapper>();
+            _loggerMock = new Mock<ILogger<ReceiptService>>();
 
             _service = new ReceiptService(
                 _receiptRepoMock.Object,
@@ -33,7 +36,8 @@ namespace FinTracker.Tests.Services
                 _userContextMock.Object,
                 _parserMock.Object,
                 _ocrFactoryMock.Object,
-                _mapperMock.Object
+                _mapperMock.Object,
+                _loggerMock.Object
             );
         }
 

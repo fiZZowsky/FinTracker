@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:fintracker/l10n/app_localizations.dart';
 import '../../data/models/receipt_model.dart';
 import '../../data/models/store_model.dart';
+import '../../data/models/currency_code.dart';
 import '../../data/models/category_model.dart';
 import '../view_models/receipt_edit_view_model.dart';
 import '../view_models/finanses_view_model.dart';
@@ -32,6 +33,7 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
   int? _selectedCategoryId;
   late final TextEditingController _totalAmountController;
   late DateTime _dateShopping;
+  late CurrencyCode _selectedCurrency;
 
   late NavigationGuardViewModel _navGuard;
   bool _isNavGuardInitialized = false;
@@ -45,6 +47,7 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
     }
 
     _selectedCategoryId = widget.receipt.categoryId;
+    _selectedCurrency = CurrencyCodeExtension.fromCode(widget.receipt.currencyCode);
 
     _totalAmountController = TextEditingController(
         text: widget.receipt.totalAmount.toStringAsFixed(2));
@@ -128,6 +131,7 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
       id: widget.receipt.id,
       storeName: _selectedStoreName!,
       totalAmount: totalAmount,
+      currencyCode: _selectedCurrency.code,
       dateShopping: _dateShopping,
       storeLogo: null,
       categoryId: _selectedCategoryId,
@@ -294,25 +298,58 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
                         },
                       ),
                     const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _totalAmountController,
-                      decoration: InputDecoration(
-                        labelText: l10n.receiptTotalAmount,
-                        suffixText: 'PLN',
-                        border: const OutlineInputBorder(),
-                      ),
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return l10n.fieldRequired;
-                        }
-                        if (double.tryParse(value.replaceAll(',', '.')) ==
-                            null) {
-                          return l10n.invalidValue;
-                        }
-                        return null;
-                      },
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          flex: 2,
+                          child: TextFormField(
+                            controller: _totalAmountController,
+                            decoration: InputDecoration(
+                              labelText: l10n.receiptTotalAmount,
+                              border: const OutlineInputBorder(),
+                            ),
+                            keyboardType: const TextInputType.numberWithOptions(
+                                decimal: true),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return l10n.fieldRequired;
+                              }
+                              if (double.tryParse(
+                                      value.replaceAll(',', '.')) ==
+                                  null) {
+                                return l10n.invalidValue;
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          flex: 1,
+                          child: DropdownButtonFormField<CurrencyCode>(
+                            value: _selectedCurrency,
+                            decoration: const InputDecoration(
+                              labelText: 'Waluta', // Opcjonalnie: przenieś do l10n
+                              border: OutlineInputBorder(),
+                            ),
+                            items: CurrencyCode.values
+                                .map((CurrencyCode currency) {
+                              return DropdownMenuItem<CurrencyCode>(
+                                value: currency,
+                                child: Text(currency.code),
+                              );
+                            }).toList(),
+                            onChanged: (CurrencyCode? newValue) {
+                              if (newValue != null) {
+                                setState(() {
+                                  _selectedCurrency = newValue;
+                                });
+                              }
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 16),
                     ListTile(
