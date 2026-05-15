@@ -1,3 +1,4 @@
+import 'package:fintracker/data/services/preferences_service.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -47,7 +48,20 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
     }
 
     _selectedCategoryId = widget.receipt.categoryId;
-    _selectedCurrency = CurrencyCodeExtension.fromCode(widget.receipt.currencyCode);
+
+    if (widget.receipt.id > 0) {
+      _selectedCurrency =
+          CurrencyCodeExtension.fromCode(widget.receipt.currencyCode);
+    } else {
+      _selectedCurrency = CurrencyCode.pln;
+      getIt<PreferencesService>().getDefaultCurrency().then((currencyStr) {
+        if (mounted) {
+          setState(() {
+            _selectedCurrency = CurrencyCodeExtension.fromCode(currencyStr);
+          });
+        }
+      });
+    }
 
     _totalAmountController = TextEditingController(
         text: widget.receipt.totalAmount.toStringAsFixed(2));
@@ -315,8 +329,7 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
                               if (value == null || value.isEmpty) {
                                 return l10n.fieldRequired;
                               }
-                              if (double.tryParse(
-                                      value.replaceAll(',', '.')) ==
+                              if (double.tryParse(value.replaceAll(',', '.')) ==
                                   null) {
                                 return l10n.invalidValue;
                               }
@@ -329,8 +342,8 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
                           flex: 1,
                           child: DropdownButtonFormField<CurrencyCode>(
                             value: _selectedCurrency,
-                            decoration: const InputDecoration(
-                              labelText: 'Waluta', // Opcjonalnie: przenieś do l10n
+                            decoration: InputDecoration(
+                              labelText: l10n.currency,
                               border: OutlineInputBorder(),
                             ),
                             items: CurrencyCode.values

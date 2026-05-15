@@ -391,4 +391,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get appearance => 'Appearance';
+
+  @override
+  String get defaultCurrency => 'Default Currency';
+
+  @override
+  String get currency => 'Currency';
 }

@@ -6,6 +6,7 @@ class PreferencesService {
   static const String _budgetKey = 'monthly_budget_limit';
   static const String _ocrEngineKey = 'ocr_engine_type';
   static const String _userNameKey = 'user_name';
+  static const String _defaultCurrencyKey = 'default_currency';
 
   static const String _tokenKey = 'auth_token';
   static const String _refreshTokenKey = 'refresh_token';
@@ -92,5 +93,15 @@ class PreferencesService {
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_userNameKey);
+  }
+
+  Future<String> getDefaultCurrency() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_defaultCurrencyKey) ?? 'PLN';
+  }
+
+  Future<void> setDefaultCurrency(String currencyCode) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_defaultCurrencyKey, currencyCode);
   }
 }

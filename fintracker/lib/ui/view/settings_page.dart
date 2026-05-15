@@ -11,6 +11,7 @@ import '../view_models/auth_view_model.dart';
 import '../../helpers/notification_service.dart';
 import '../../helpers/service_locator.dart';
 import '../../data/models/ocr_engine_type.dart';
+import '../../data/models/currency_code.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -96,6 +97,29 @@ class SettingsPage extends StatelessWidget {
           ),
           const Divider(),
           _buildSectionHeader(context, l10n.settingsFinanceSection),
+          Consumer<SettingsViewModel>(
+            builder: (context, settingsVM, child) {
+              return ListTile(
+                leading: const Icon(Icons.payments_outlined),
+                title: Text(l10n.defaultCurrency),
+                trailing: DropdownButton<CurrencyCode>(
+                  value: settingsVM.defaultCurrency,
+                  underline: const SizedBox(),
+                  items: CurrencyCode.values.map((CurrencyCode currency) {
+                    return DropdownMenuItem<CurrencyCode>(
+                      value: currency,
+                      child: Text(currency.code),
+                    );
+                  }).toList(),
+                  onChanged: (CurrencyCode? newValue) {
+                    if (newValue != null) {
+                      settingsVM.updateDefaultCurrency(newValue);
+                    }
+                  },
+                ),
+              );
+            },
+          ),
           Consumer<FinansesViewModel>(
             builder: (context, finansesVM, child) {
               return ListTile(

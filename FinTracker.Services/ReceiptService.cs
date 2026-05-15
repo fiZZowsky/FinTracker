@@ -12,6 +12,7 @@ namespace FinTracker.Services
         private readonly IUserContextRepository _userContextRepository;
         private readonly IReceiptParserService _receiptParserService;
         private readonly IOcrServiceFactory _ocrFactory;
+        private readonly IExchangeRateService _exchangeRateService;
         private readonly ILogger<ReceiptService> _logger;
 
         public ReceiptService(
@@ -21,6 +22,7 @@ namespace FinTracker.Services
             IReceiptParserService receiptParserService,
             IOcrServiceFactory ocrFactory,
             IMapper mapper,
+            IExchangeRateService exchangeRateService,
             ILogger<ReceiptService> logger)
             : base(repository, mapper)
         {
@@ -29,6 +31,7 @@ namespace FinTracker.Services
             _userContextRepository = userContextRepository;
             _receiptParserService = receiptParserService;
             _ocrFactory = ocrFactory;
+            _exchangeRateService = exchangeRateService;
             _logger = logger;
         }
 
@@ -57,6 +60,9 @@ namespace FinTracker.Services
 
             var entity = _mapper.Map<Receipt>(dto);
             entity.UserId = userId.Value;
+
+            var exchangeRate = await _exchangeRateService.GetRateAsync(entity.CurrencyCode);
+            entity.ExchangeRate = exchangeRate;
 
             var createdEntity = await _receiptRepository.CreateAsync(entity);
             return _mapper.Map<ReceiptDTO>(createdEntity);

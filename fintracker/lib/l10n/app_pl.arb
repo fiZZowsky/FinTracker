@@ -126,5 +126,7 @@
     "ocrEngineGoogleMlKit": "Google ML Kit",
     "ocrEngineGoogleGemini": "Google Gemini AI",
     "ocrSubtitle": "Wybierz silnik przetwarzania obrazu",
-    "appearance": "Wygląd"
+    "appearance": "Wygląd",
+    "defaultCurrency": "Domyślna waluta",
+    "currency": "Waluta"
 }

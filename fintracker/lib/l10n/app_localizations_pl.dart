@@ -391,4 +391,10 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get appearance => 'Wygląd';
+
+  @override
+  String get defaultCurrency => 'Domyślna waluta';
+
+  @override
+  String get currency => 'Waluta';
 }

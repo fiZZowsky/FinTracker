@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage; // Ważny using
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -21,15 +21,12 @@ namespace FinTracker.IntegrationTests
         public Mock<IOcrServiceFactory> OcrFactoryMock { get; } = new();
         public Mock<IOcrService> OcrServiceMock { get; } = new();
 
-        // "Kotwica" trzymająca bazę w pamięci
         private readonly InMemoryDatabaseRoot _databaseRoot = new InMemoryDatabaseRoot();
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             builder.ConfigureTestServices(services =>
             {
-                // 1. ROBUST CLEANUP: Usuwamy WSZYSTKIE rejestracje związane z bazą
-                // (Zarówno DbContextOptions jak i sam FinTrackerDbContext)
                 var dbContextDescriptors = services.Where(d =>
                     d.ServiceType == typeof(DbContextOptions<FinTrackerDbContext>) ||
                     d.ServiceType == typeof(FinTrackerDbContext)).ToList();
@@ -39,17 +36,14 @@ namespace FinTracker.IntegrationTests
                     services.Remove(descriptor);
                 }
 
-                // 2. Dodajemy bazę In-Memory z zakotwiczeniem (_databaseRoot)
                 services.AddDbContext<FinTrackerDbContext>(options =>
                 {
                     options.UseInMemoryDatabase("InMemoryDbForIntegrationTesting", _databaseRoot);
-                    options.EnableSensitiveDataLogging(); // Pomoże w debugowaniu błędów EF
+                    options.EnableSensitiveDataLogging();
                 });
 
-                // 3. HttpContextAccessor (niezbędny dla UserContextService)
                 services.AddHttpContextAccessor();
 
-                // 4. Mockowanie OCR
                 var ocrFactoryDescriptor = services.SingleOrDefault(d => d.ServiceType == typeof(IOcrServiceFactory));
                 if (ocrFactoryDescriptor != null) services.Remove(ocrFactoryDescriptor);
 
@@ -58,7 +52,6 @@ namespace FinTracker.IntegrationTests
 
                 services.AddSingleton(OcrFactoryMock.Object);
 
-                // 5. Autoryzacja testowa
                 services.AddAuthentication("Test")
                         .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => { });
             });
@@ -78,7 +71,6 @@ namespace FinTracker.IntegrationTests
             var claims = new[]
             {
                 new Claim(ClaimTypes.Name, "TestUser"),
-                // ID musi być zgodne z tym w teście
                 new Claim(ClaimTypes.NameIdentifier, "11111111-1111-1111-1111-111111111111")
             };
             var identity = new ClaimsIdentity(claims, "Test");

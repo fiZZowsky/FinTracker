@@ -16,6 +16,7 @@ namespace FinTracker.Tests.Services
         private readonly Mock<IReceiptParserService> _parserMock;
         private readonly Mock<IOcrServiceFactory> _ocrFactoryMock;
         private readonly Mock<IMapper> _mapperMock;
+        private readonly Mock<IExchangeRateService> _exchangeRateMock;
         private readonly Mock<ILogger<ReceiptService>> _loggerMock;
 
         private readonly ReceiptService _service;
@@ -28,6 +29,7 @@ namespace FinTracker.Tests.Services
             _parserMock = new Mock<IReceiptParserService>();
             _ocrFactoryMock = new Mock<IOcrServiceFactory>();
             _mapperMock = new Mock<IMapper>();
+            _exchangeRateMock = new Mock<IExchangeRateService>();
             _loggerMock = new Mock<ILogger<ReceiptService>>();
 
             _service = new ReceiptService(
@@ -37,6 +39,7 @@ namespace FinTracker.Tests.Services
                 _parserMock.Object,
                 _ocrFactoryMock.Object,
                 _mapperMock.Object,
+                _exchangeRateMock.Object,
                 _loggerMock.Object
             );
         }

@@ -11,12 +11,14 @@ namespace FinTracker.Services
         private readonly IStoreRepository _storeRepository;
         private readonly IUserContextRepository _userContextRepository;
         private readonly IReceiptRepository _receiptRepository;
+        private readonly IExchangeRateService _exchangeRateService;
 
-        public ReceiptParserService(IStoreRepository storeRepository, IUserContextRepository userContextRepository, IReceiptRepository receiptRepository)
+        public ReceiptParserService(IStoreRepository storeRepository, IUserContextRepository userContextRepository, IReceiptRepository receiptRepository, IExchangeRateService exchangeRateService)
         {
             _storeRepository = storeRepository;
             _userContextRepository = userContextRepository;
             _receiptRepository = receiptRepository;
+            _exchangeRateService = exchangeRateService;
         }
 
         public async Task<ReceiptDTO> ParseReceiptTextAsync(string ocrText)
@@ -46,6 +48,8 @@ namespace FinTracker.Services
                 currencyCode = MapCurrencyToIsoCode(currencyMatch);
             }
 
+            var exchangeRate = await _exchangeRateService.GetRateAsync(currencyCode);
+
             var dateMatch = Regex.Match(ocrText, @"(\d{4}-\d{2}-\d{2})|(\d{2}[.-]\d{2}[.-]\d{4})");
             if (dateMatch.Success)
             {
@@ -66,7 +70,8 @@ namespace FinTracker.Services
                 TotalAmount = totalAmount,
                 DateShopping = dateShopping,
                 CategoryId = categoryId,
-                CurrencyCode = currencyCode
+                CurrencyCode = currencyCode,
+                ExchangeRate = exchangeRate
             };
         }
 

@@ -859,6 +859,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Appearance'**
   String get appearance;
+
+  /// No description provided for @defaultCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Default Currency'**
+  String get defaultCurrency;
+
+  /// No description provided for @currency.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency'**
+  String get currency;
 }
 
 class _AppLocalizationsDelegate

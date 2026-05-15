@@ -10,6 +10,7 @@ namespace FinTracker.Models
         [Range(0.01, double.MaxValue, ErrorMessage = "Kwota musi być większa od zera.")]
         public decimal TotalAmount { get; set; }
         public string CurrencyCode { get; set; } = "PLN";
+        public decimal ExchangeRate { get; set; } = 1;
         public DateTime DateShopping { get; set; }
         public int? CategoryId { get; set; }
         public string? CategoryName { get; set; }

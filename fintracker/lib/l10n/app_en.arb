@@ -126,5 +126,7 @@
     "ocrEngineGoogleMlKit": "Google ML Kit",
     "ocrEngineGoogleGemini": "Google Gemini AI",
     "ocrSubtitle": "Choose image processing engine",
-    "appearance": "Appearance"
+    "appearance": "Appearance",
+    "defaultCurrency": "Default Currency",
+    "currency": "Currency"
 }
