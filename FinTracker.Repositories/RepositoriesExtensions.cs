@@ -11,6 +11,7 @@ namespace FinTracker.Repositories
             services.AddScoped<IStoreRepository, StoreRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IUserContextRepository, UserContextRepository>();
+            services.AddScoped<IExchangeRateRepository, ExchangeRateRepository>();
         }
     }
 }

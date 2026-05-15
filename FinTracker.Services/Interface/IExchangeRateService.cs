@@ -2,6 +2,6 @@
 {
     public interface IExchangeRateService
     {
-        Task<decimal> GetRateAsync(string currencyCode);
+        Task<decimal> GetRateAsync(string currencyCode, DateTime? date = null);
     }
 }

@@ -11,12 +11,14 @@ namespace FinTracker.Tests.Services
         private readonly Mock<IStoreRepository> _storeRepoMock;
         private readonly Mock<IUserContextRepository> _userContextRepoMock;
         private readonly Mock<IReceiptRepository> _receiptRepoMock;
+        private readonly Mock<IExchangeRateService> _exchangeRateServiceMock;
 
         public ReceiptParserServiceTests()
         {
             _storeRepoMock = new Mock<IStoreRepository>();
             _userContextRepoMock = new Mock<IUserContextRepository>();
             _receiptRepoMock = new Mock<IReceiptRepository>();
+            _exchangeRateServiceMock = new Mock<IExchangeRateService>();
 
             _storeRepoMock.Setup(x => x.GetAllStoresName())
             .ReturnsAsync(new List<string>
@@ -34,7 +36,8 @@ namespace FinTracker.Tests.Services
             _parser = new ReceiptParserService(
                             _storeRepoMock.Object,
                             _userContextRepoMock.Object,
-                            _receiptRepoMock.Object);
+                            _receiptRepoMock.Object,
+                            _exchangeRateServiceMock.Object);
         }
 
         [Theory]

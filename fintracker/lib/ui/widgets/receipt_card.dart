@@ -93,8 +93,7 @@ class ReceiptCard extends StatelessWidget {
                 ),
               ),
               Text(
-                NumberFormat.simpleCurrency(locale: 'pl_PL')
-                    .format(receipt.totalAmount),
+                '${NumberFormat.currency(symbol: '', decimalDigits: 2).format(receipt.totalAmount).trim()} ${receipt.currencyCode}',
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: theme.colorScheme.onSurface,

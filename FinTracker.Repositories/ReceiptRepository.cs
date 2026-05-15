@@ -64,7 +64,7 @@ namespace FinTracker.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<SummaryDataDTO>> GetSummaryAsync(ReceiptQueryParameters queryParams)
+        public async Task<IEnumerable<Receipt>> GetReceiptsByQueryAsync(ReceiptQueryParameters queryParams)
         {
             var query = GetUserReceipts().AsNoTracking();
 
@@ -73,35 +73,7 @@ namespace FinTracker.Repositories
             if (queryParams.EndDate.HasValue)
                 query = query.Where(r => r.DateShopping.Date <= queryParams.EndDate.Value.Date);
 
-            var filterType = queryParams.FilterType?.ToLower() ?? "month";
-            if (string.IsNullOrEmpty(queryParams.FilterType) && (queryParams.StartDate.HasValue || queryParams.EndDate.HasValue))
-                filterType = "month";
-
-            switch (filterType)
-            {
-                case "week":
-                    var receiptsWeek = await query.ToListAsync();
-                    return receiptsWeek
-                        .GroupBy(r => r.DateShopping.DayOfWeek)
-                        .Select(g => new SummaryDataDTO { Label = (g.Key == DayOfWeek.Sunday ? 7 : (int)g.Key).ToString(), Total = g.Sum(r => r.TotalAmount) })
-                        .OrderBy(x => int.Parse(x.Label)).ToList();
-                case "sixmonths":
-                case "year":
-                    return (await query
-                        .GroupBy(r => new { r.DateShopping.Year, r.DateShopping.Month })
-                        .Select(g => new { g.Key.Year, g.Key.Month, Total = g.Sum(r => r.TotalAmount) })
-                        .OrderBy(s => s.Year).ThenBy(s => s.Month)
-                        .ToListAsync())
-                        .Select(x => new SummaryDataDTO { Label = $"{x.Year}-{x.Month:D2}", Total = x.Total }).ToList();
-                case "all":
-                case "month":
-                default:
-                    return await query
-                        .GroupBy(r => r.DateShopping.Day)
-                        .OrderBy(g => g.Key)
-                        .Select(g => new SummaryDataDTO { Label = g.Key.ToString(), Total = g.Sum(r => r.TotalAmount) })
-                        .ToListAsync();
-            }
+            return await query.ToListAsync();
         }
 
         public async Task<(int CategoryId, int Count)?> GetUserCategoryStatsAsync(string normalizedStoreName, Guid? userId)

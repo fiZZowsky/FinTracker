@@ -17,6 +17,9 @@ class FinansesViewModel extends ChangeNotifier {
   bool _hasError = false;
   bool get hasError => _hasError;
 
+  String _currentCurrency = 'PLN';
+  String get currentCurrency => _currentCurrency;
+
   DateTime _currentDate = DateTime.now();
   DateTime get currentDate => _currentDate;
 
@@ -45,6 +48,7 @@ class FinansesViewModel extends ChangeNotifier {
 
   Future<void> _loadBudget() async {
     _monthlyBudgetLimit = await _prefsService.getBudgetLimit();
+    _currentCurrency = await _prefsService.getDefaultCurrency();
     notifyListeners();
   }
 
@@ -69,17 +73,21 @@ class FinansesViewModel extends ChangeNotifier {
       final startDate = DateTime(_currentDate.year, _currentDate.month, 1);
       final endDate = DateTime(_currentDate.year, _currentDate.month + 1, 0);
 
+      _currentCurrency = await _prefsService.getDefaultCurrency();
+
       _receipts = await _receiptService.getReceipts(
         page: 1,
         pageSize: 1000,
         startDate: startDate,
         endDate: endDate,
+        currencyCode: _currentCurrency,
       );
 
       _summaryData = await _receiptService.getSummary(
         startDate: startDate,
         endDate: endDate,
         filterType: 'month',
+        currencyCode: _currentCurrency,
       );
 
       _calculateCategoryStats();
@@ -99,6 +107,7 @@ class FinansesViewModel extends ChangeNotifier {
         pageSize: 5,
         startDate: null,
         endDate: null,
+        currencyCode: _currentCurrency,
       );
       notifyListeners();
     } catch (e) {

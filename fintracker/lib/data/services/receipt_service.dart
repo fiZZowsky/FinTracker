@@ -19,6 +19,7 @@ class ReceiptService {
     int pageSize = 100,
     DateTime? startDate,
     DateTime? endDate,
+    String? currencyCode,
   }) async {
     final Map<String, dynamic> queryParameters = {
       'page': page,
@@ -30,6 +31,9 @@ class ReceiptService {
     }
     if (endDate != null) {
       queryParameters['endDate'] = endDate.toIso8601String();
+    }
+    if (currencyCode != null) {
+      queryParameters['currencyCode'] = currencyCode;
     }
 
     final dynamic data =
@@ -43,7 +47,10 @@ class ReceiptService {
   }
 
   Future<List<SummaryData>> getSummary(
-      {DateTime? startDate, DateTime? endDate, String? filterType}) async {
+      {DateTime? startDate,
+      DateTime? endDate,
+      String? filterType,
+      String? currencyCode}) async {
     final Map<String, dynamic> queryParameters = {};
 
     if (startDate != null) {
@@ -54,6 +61,9 @@ class ReceiptService {
     }
     if (filterType != null) {
       queryParameters['filterType'] = filterType;
+    }
+    if (currencyCode != null) {
+      queryParameters['currencyCode'] = currencyCode;
     }
 
     final dynamic data = await _apiClient.get('/api/Receipts/summary',
@@ -110,9 +120,15 @@ class ReceiptService {
     }
   }
 
-  Future<ReceiptModel?> getReceiptById(int id) async {
+  Future<ReceiptModel?> getReceiptById(int id, {String? currencyCode}) async {
     try {
-      final dynamic data = await _apiClient.get('/api/Receipts/$id');
+      final Map<String, dynamic> queryParameters = {};
+      if (currencyCode != null) {
+        queryParameters['currencyCode'] = currencyCode;
+      }
+
+      final dynamic data = await _apiClient.get('/api/Receipts/$id',
+          queryParameters: queryParameters);
       if (data is Map<String, dynamic>) {
         return ReceiptModel.fromJson(data);
       } else {

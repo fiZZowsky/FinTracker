@@ -5,11 +5,13 @@ import 'package:fintracker/l10n/app_localizations.dart';
 class BudgetBar extends StatelessWidget {
   final double spent;
   final double limit;
+  final String currencyCode;
 
   const BudgetBar({
     super.key,
     required this.spent,
     required this.limit,
+    required this.currencyCode,
   });
 
   @override
@@ -23,6 +25,11 @@ class BudgetBar extends StatelessWidget {
     Color progressColor = theme.colorScheme.primary;
     if (percentage > 0.75) progressColor = Colors.orange;
     if (percentage >= 1.0) progressColor = theme.colorScheme.error;
+
+    final formattedRemaining =
+        '${NumberFormat.currency(symbol: '', decimalDigits: 2).format(remaining).trim()} $currencyCode';
+    final formattedLimit =
+        '${NumberFormat.compact().format(limit)} $currencyCode';
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -51,8 +58,7 @@ class BudgetBar extends StatelessWidget {
                         ?.copyWith(color: Colors.grey),
                   ),
                   Text(
-                    NumberFormat.simpleCurrency(locale: 'pl_PL')
-                        .format(remaining),
+                    formattedRemaining,
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: remaining < 0
@@ -73,7 +79,7 @@ class BudgetBar extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    '${l10n.budgetLimit}: ${NumberFormat.compactSimpleCurrency(locale: 'pl_PL').format(limit)}',
+                    '${l10n.budgetLimit}: $formattedLimit',
                     style: theme.textTheme.labelSmall
                         ?.copyWith(color: Colors.grey),
                   ),

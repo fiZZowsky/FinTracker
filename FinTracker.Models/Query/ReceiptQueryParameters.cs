@@ -5,5 +5,6 @@
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public string? FilterType { get; set; }
+        public string? CurrencyCode { get; set; }
     }
 }

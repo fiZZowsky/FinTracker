@@ -13,6 +13,7 @@ namespace FinTracker.DataAccess
         public DbSet<Store> Stores { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<ExchangeRateCache> ExchangeRatesCache { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -30,6 +31,14 @@ namespace FinTracker.DataAccess
             modelBuilder.Entity<Receipt>()
                 .Property(r => r.ExchangeRate)
                 .HasColumnType("decimal(18,4)");
+
+            modelBuilder.Entity<ExchangeRateCache>()
+                .Property(e => e.Rate)
+                .HasColumnType("decimal(18,4)");
+
+            modelBuilder.Entity<ExchangeRateCache>()
+                .HasIndex(e => new { e.CurrencyCode, e.Date })
+                .IsUnique();
 
             modelBuilder.Entity<Category>()
                 .HasOne<User>()

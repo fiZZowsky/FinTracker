@@ -60,7 +60,8 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   _buildWelcomeSection(theme, l10n),
                   const SizedBox(height: 20),
-                  _buildSummaryCard(theme, currentTotal, l10n),
+                  _buildSummaryCard(
+                      theme, currentTotal, l10n, viewModel.currentCurrency),
                   const SizedBox(height: 24),
                   _buildQuickActions(context, l10n),
                   const SizedBox(height: 24),
@@ -118,8 +119,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildSummaryCard(
-      ThemeData theme, double total, AppLocalizations l10n) {
+  Widget _buildSummaryCard(ThemeData theme, double total, AppLocalizations l10n,
+      String currencyCode) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24.0),
@@ -154,7 +155,7 @@ class _HomePageState extends State<HomePage> {
           ),
           const SizedBox(height: 8),
           Text(
-            NumberFormat.simpleCurrency(locale: 'pl_PL').format(total),
+            '${NumberFormat.currency(symbol: '', decimalDigits: 2).format(total).trim()} $currencyCode',
             style: const TextStyle(
               color: Colors.white,
               fontSize: 32,
@@ -252,8 +253,7 @@ class _HomePageState extends State<HomePage> {
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
           ),
           trailing: Text(
-            NumberFormat.simpleCurrency(locale: 'pl_PL')
-                .format(receipt.totalAmount),
+            '${NumberFormat.currency(symbol: '', decimalDigits: 2).format(receipt.totalAmount).trim()} ${receipt.currencyCode}',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               color: theme.colorScheme.primary,

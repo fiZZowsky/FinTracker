@@ -135,8 +135,9 @@ class _ReceiptDetailsPageState extends State<ReceiptDetailsPage> {
           theme,
           iconWidget: Icon(Icons.paid, size: 28, color: iconColor),
           label: l10n.receiptTotalAmount,
-          value: NumberFormat.simpleCurrency(name: receipt.currencyCode)
-              .format(receipt.totalAmount),
+          // POPRAWIONE FORMATOWANIE WALUTY
+          value:
+              '${NumberFormat.currency(symbol: '', decimalDigits: 2).format(receipt.totalAmount).trim()} ${receipt.currencyCode}',
           valueStyle: theme.textTheme.titleLarge?.copyWith(
             color: theme.colorScheme.primary,
             fontWeight: FontWeight.bold,

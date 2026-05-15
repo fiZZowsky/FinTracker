@@ -50,6 +50,7 @@ class FinansesPage extends StatelessWidget {
                     child: BudgetBar(
                       spent: viewModel.totalSpent,
                       limit: viewModel.monthlyBudgetLimit,
+                      currencyCode: viewModel.currentCurrency,
                     ),
                   ),
                 ),
@@ -442,9 +443,7 @@ class _ChartsCarouselState extends State<_ChartsCarousel> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      NumberFormat.simpleCurrency(
-                              locale: 'pl_PL', decimalDigits: 0)
-                          .format(mapEntry.value),
+                      '${NumberFormat.currency(symbol: '', decimalDigits: 0).format(mapEntry.value).trim()} ${widget.viewModel.currentCurrency}',
                       style: const TextStyle(
                           fontSize: 12, fontWeight: FontWeight.bold),
                     ),

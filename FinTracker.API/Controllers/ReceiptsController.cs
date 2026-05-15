@@ -27,9 +27,9 @@ namespace FinTracker.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetReceiptById(int id)
+        public async Task<IActionResult> GetReceiptById(int id, [FromQuery] string? currencyCode)
         {
-            var receipt = await _receiptService.GetByIdAsync(id);
+            var receipt = await _receiptService.GetByIdAsync(id, currencyCode);
             if (receipt == null) return NotFound();
             return Ok(receipt);
         }

@@ -44,12 +44,29 @@ namespace FinTracker.Services
             return await _receiptParserService.ParseReceiptTextAsync(extractedText);
         }
 
-        public override async Task<ReceiptDTO> GetByIdAsync(int id)
+        public async Task<ReceiptDTO> GetByIdAsync(int id, string? targetCurrency = null)
         {
             var receiptDto = await base.GetByIdAsync(id);
             if (receiptDto == null) return null;
 
             receiptDto.StoreLogo = await _GetLogoBytesForStore(receiptDto.StoreName);
+
+            var currency = targetCurrency?.ToUpper() ?? "PLN";
+            if (currency != "PLN")
+            {
+                var rateCache = new Dictionary<string, decimal>();
+
+                string cacheKey = $"{targetCurrency}_{receiptDto.DateShopping:yyyy-MM-dd}";
+                if (!rateCache.ContainsKey(cacheKey))
+                {
+                    rateCache[cacheKey] = await _exchangeRateService.GetRateAsync(targetCurrency, receiptDto.DateShopping);
+                }
+                var targetRate = rateCache[cacheKey];
+
+                    receiptDto.TotalAmount = (receiptDto.TotalAmount * receiptDto.ExchangeRate) / targetRate;
+                receiptDto.CurrencyCode = currency;
+            }
+
             return receiptDto;
         }
 
@@ -61,8 +78,15 @@ namespace FinTracker.Services
             var entity = _mapper.Map<Receipt>(dto);
             entity.UserId = userId.Value;
 
-            var exchangeRate = await _exchangeRateService.GetRateAsync(entity.CurrencyCode);
-            entity.ExchangeRate = exchangeRate;
+            var rateCache = new Dictionary<string, decimal>();
+
+            string cacheKey = $"{entity.CurrencyCode}_{entity.DateShopping:yyyy-MM-dd}";
+            if (!rateCache.ContainsKey(cacheKey))
+            {
+                rateCache[cacheKey] = await _exchangeRateService.GetRateAsync(entity.CurrencyCode, entity.DateShopping);
+            }
+            var targetRate = rateCache[cacheKey];
+            entity.ExchangeRate = targetRate;
 
             var createdEntity = await _receiptRepository.CreateAsync(entity);
             return _mapper.Map<ReceiptDTO>(createdEntity);
@@ -73,7 +97,19 @@ namespace FinTracker.Services
             var existingEntity = await _receiptRepository.GetByIdAsync(id);
             if (existingEntity == null) return false;
 
+            bool currencyChanged = existingEntity.CurrencyCode != dto.CurrencyCode;
+            bool dateChanged = existingEntity.DateShopping.Date != dto.DateShopping.Date;
+
             _mapper.Map(dto, existingEntity);
+
+            if (currencyChanged || dateChanged)
+            {
+                existingEntity.ExchangeRate = await _exchangeRateService.GetRateAsync(
+                    existingEntity.CurrencyCode,
+                    existingEntity.DateShopping
+                );
+            }
+
             await _receiptRepository.UpdateAsync(existingEntity);
             return true;
         }
@@ -81,12 +117,82 @@ namespace FinTracker.Services
         public async Task<IEnumerable<ReceiptDTO>> GetPagedAsync(ReceiptQueryParameters query)
         {
             var entities = await _receiptRepository.GetPagedAsync(query);
-            return _mapper.Map<IEnumerable<ReceiptDTO>>(entities);
+            var dtos = _mapper.Map<IEnumerable<ReceiptDTO>>(entities);
+            var targetCurrency = query.CurrencyCode?.ToUpper() ?? "PLN";
+
+            if (targetCurrency != "PLN")
+            {
+                var rateCache = new Dictionary<string, decimal>();
+                foreach (var dto in dtos)
+                {
+                    string cacheKey = $"{targetCurrency}_{dto.DateShopping:yyyy-MM-dd}";
+                    if (!rateCache.ContainsKey(cacheKey))
+                    {
+                        rateCache[cacheKey] = await _exchangeRateService.GetRateAsync(targetCurrency, dto.DateShopping);
+                    }
+                    var targetRate = rateCache[cacheKey];
+
+                    dto.TotalAmount = (dto.TotalAmount * dto.ExchangeRate) / targetRate;
+                    dto.CurrencyCode = targetCurrency;
+                }
+            }
+            return dtos;
         }
 
         public async Task<IEnumerable<SummaryDataDTO>> GetSummaryAsync(ReceiptQueryParameters query)
         {
-            return await _receiptRepository.GetSummaryAsync(query);
+            var receipts = await _receiptRepository.GetReceiptsByQueryAsync(query);
+            var targetCurrency = query.CurrencyCode?.ToUpper() ?? "PLN";
+            var processedReceipts = new List<Receipt>();
+            var rateCache = new Dictionary<string, decimal>();
+            foreach (var r in receipts)
+            {
+                decimal targetRate = 1.0m;
+                if (targetCurrency != "PLN")
+                {
+                    string cacheKey = $"{targetCurrency}_{r.DateShopping:yyyy-MM-dd}";
+                    if (!rateCache.ContainsKey(cacheKey))
+                    {
+                        rateCache[cacheKey] = await _exchangeRateService.GetRateAsync(targetCurrency, r.DateShopping);
+                    }
+                    targetRate = rateCache[cacheKey];
+                }
+
+                decimal valueInTargetCurrency = (r.TotalAmount * r.ExchangeRate) / targetRate;
+
+                processedReceipts.Add(new Receipt
+                {
+                    DateShopping = r.DateShopping,
+                    TotalAmount = valueInTargetCurrency
+                });
+            }
+
+            var filterType = query.FilterType?.ToLower() ?? "month";
+            if (string.IsNullOrEmpty(query.FilterType) && (query.StartDate.HasValue || query.EndDate.HasValue))
+                filterType = "month";
+
+            switch (filterType)
+            {
+                case "week":
+                    return processedReceipts
+                        .GroupBy(r => r.DateShopping.DayOfWeek)
+                        .Select(g => new SummaryDataDTO { Label = (g.Key == DayOfWeek.Sunday ? 7 : (int)g.Key).ToString(), Total = g.Sum(r => r.TotalAmount) })
+                        .OrderBy(x => int.Parse(x.Label)).ToList();
+                case "sixmonths":
+                case "year":
+                    return processedReceipts
+                        .GroupBy(r => new { r.DateShopping.Year, r.DateShopping.Month })
+                        .Select(g => new SummaryDataDTO { Label = $"{g.Key.Year}-{g.Key.Month:D2}", Total = g.Sum(r => r.TotalAmount) })
+                        .OrderBy(s => s.Label).ToList();
+                case "all":
+                case "month":
+                default:
+                    return processedReceipts
+                        .GroupBy(r => r.DateShopping.Day)
+                        .OrderBy(g => g.Key)
+                        .Select(g => new SummaryDataDTO { Label = g.Key.ToString(), Total = g.Sum(r => r.TotalAmount) })
+                        .ToList();
+            }
         }
 
         public async Task<int?> PredictCategoryAsync(string rawStoreName)

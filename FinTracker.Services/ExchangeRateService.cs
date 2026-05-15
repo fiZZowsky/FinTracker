@@ -1,39 +1,51 @@
-﻿using System.Text.Json;
+﻿using FinTracker.Models;
+using FinTracker.Repositories;
+using System.Text.Json;
 
 namespace FinTracker.Services
 {
     public class ExchangeRateService : IExchangeRateService
     {
         private readonly HttpClient _httpClient;
+        private readonly IExchangeRateRepository _exchangeRateRepository;
 
-        public ExchangeRateService(HttpClient httpClient)
+        public ExchangeRateService(HttpClient httpClient, IExchangeRateRepository exchangeRateRepository)
         {
             _httpClient = httpClient;
+            _exchangeRateRepository = exchangeRateRepository;
         }
 
-        public async Task<decimal> GetRateAsync(string currencyCode)
+        public async Task<decimal> GetRateAsync(string currencyCode, DateTime? date = null)
         {
             var code = currencyCode.ToUpper();
             if (code == "PLN") return 1.0m;
 
-            try
-            {
-                var response = await _httpClient.GetAsync($"http://api.nbp.pl/api/exchangerates/rates/A/{code}/?format=json");
+            DateTime targetDate = (date ?? DateTime.Now).Date;
 
-                if (response.IsSuccessStatusCode)
+            var cachedRate = await _exchangeRateRepository.GetRateAsync(currencyCode, targetDate);
+
+            if (cachedRate != null)
+                return cachedRate.Value;
+
+            decimal fetchedRate = 1.0m;
+            string dateStr = targetDate.AddDays(-i).ToString("yyyy-MM-dd");
+            var response = await _httpClient.GetAsync($"http://api.nbp.pl/api/exchangerates/rates/A/{code}/{dateStr}/?format=json");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                using var doc = JsonDocument.Parse(content);
+                fetchedRate = doc.RootElement.GetProperty("rates")[0].GetProperty("mid").GetDecimal();
+
+                await _exchangeRateRepository.CreateAsync(new ExchangeRateCache
                 {
-                    var content = await response.Content.ReadAsStringAsync();
-                    using var doc = JsonDocument.Parse(content);
-                    var rate = doc.RootElement.GetProperty("rates")[0].GetProperty("mid").GetDecimal();
-                    return rate;
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Błąd pobierania kursu walut: {ex.Message}");
+                    CurrencyCode = code,
+                    Date = targetDate,
+                    Rate = fetchedRate
+                });
             }
 
-            return 1.0m;
+            return fetchedRate;
         }
     }
 }

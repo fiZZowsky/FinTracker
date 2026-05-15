@@ -48,8 +48,6 @@ namespace FinTracker.Services
                 currencyCode = MapCurrencyToIsoCode(currencyMatch);
             }
 
-            var exchangeRate = await _exchangeRateService.GetRateAsync(currencyCode);
-
             var dateMatch = Regex.Match(ocrText, @"(\d{4}-\d{2}-\d{2})|(\d{2}[.-]\d{2}[.-]\d{4})");
             if (dateMatch.Success)
             {
@@ -63,6 +61,8 @@ namespace FinTracker.Services
                     dateShopping = parsedDate;
                 }
             }
+
+            var exchangeRate = await _exchangeRateService.GetRateAsync(currencyCode, dateShopping);
 
             return new ReceiptDTO
             {
