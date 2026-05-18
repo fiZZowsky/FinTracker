@@ -101,7 +101,12 @@ class FinansesViewModel extends ChangeNotifier {
   }
 
   Future<void> fetchRecentReceipts() async {
+    _isLoading = true;
+    notifyListeners();
+
     try {
+      _currentCurrency = await _prefsService.getDefaultCurrency();
+
       _recentReceipts = await _receiptService.getReceipts(
         page: 1,
         pageSize: 5,
@@ -109,9 +114,13 @@ class FinansesViewModel extends ChangeNotifier {
         endDate: null,
         currencyCode: _currentCurrency,
       );
-      notifyListeners();
+      _hasError = false;
     } catch (e) {
       debugPrint('Error fetching recent receipts: $e');
+      _hasError = true;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 
@@ -125,15 +134,18 @@ class FinansesViewModel extends ChangeNotifier {
         pageSize: 10000,
         startDate: start,
         endDate: end,
+        currencyCode: _currentCurrency,
       );
 
       if (allReceipts.isEmpty) {
         debugPrint("Brak danych do eksportu");
       } else {
         if (isPdf) {
-          await _exportService.exportToPdf(allReceipts, start, end);
+          await _exportService.exportToPdf(
+              allReceipts, start, end, currentCurrency);
         } else {
-          await _exportService.exportToCsv(allReceipts, start, end);
+          await _exportService.exportToCsv(
+              allReceipts, start, end, currentCurrency);
         }
       }
     } catch (e) {

@@ -443,7 +443,7 @@ class _ChartsCarouselState extends State<_ChartsCarousel> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      '${NumberFormat.currency(symbol: '', decimalDigits: 0).format(mapEntry.value).trim()} ${widget.viewModel.currentCurrency}',
+                      '${NumberFormat.currency(symbol: '', decimalDigits: 2).format(mapEntry.value).trim()} ${widget.viewModel.currentCurrency}',
                       style: const TextStyle(
                           fontSize: 12, fontWeight: FontWeight.bold),
                     ),

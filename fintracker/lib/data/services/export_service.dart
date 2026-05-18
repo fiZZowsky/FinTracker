@@ -10,16 +10,21 @@ import '../models/receipt_model.dart';
 
 class ExportService {
   final DateFormat _dateFormat = DateFormat('yyyy-MM-dd');
-  final NumberFormat _currencyFormat =
-      NumberFormat.simpleCurrency(locale: 'pl_PL');
 
-  Future<void> exportToCsv(
-      List<ReceiptModel> receipts, DateTime start, DateTime end) async {
+  String _formatCurrency(double amount, String currencyCode) {
+    return '${NumberFormat.currency(symbol: '', decimalDigits: 2).format(amount).trim()} $currencyCode';
+  }
+
+  Future<void> exportToCsv(List<ReceiptModel> receipts, DateTime start,
+      DateTime end, String targetCurrency) async {
     List<List<dynamic>> rows = [];
 
-    rows.add(["Data zakupu", "Sklep", "Kategoria", "Kwota (PLN)"]);
+    rows.add(["Data zakupu", "Sklep", "Kategoria", "Kwota ($targetCurrency)"]);
+
+    double totalSum = 0.0;
 
     for (var receipt in receipts) {
+      totalSum += receipt.totalAmount;
       rows.add([
         _dateFormat.format(receipt.dateShopping),
         receipt.storeName,
@@ -27,6 +32,14 @@ class ExportService {
         receipt.totalAmount.toStringAsFixed(2).replaceAll('.', ',')
       ]);
     }
+
+    rows.add([]);
+    rows.add([
+      "Suma całkowita",
+      "",
+      "",
+      totalSum.toStringAsFixed(2).replaceAll('.', ',')
+    ]);
 
     String csvData =
         const ListToCsvConverter(fieldDelimiter: ';').convert(rows);
@@ -40,11 +53,12 @@ class ExportService {
     final file = File(path);
     await file.writeAsString(csvContent);
 
-    await Share.shareXFiles([XFile(path)], text: 'Raport wydatków (CSV)');
+    await Share.shareXFiles([XFile(path)],
+        text: 'Raport wydatków (CSV) w walucie $targetCurrency');
   }
 
-  Future<void> exportToPdf(
-      List<ReceiptModel> receipts, DateTime start, DateTime end) async {
+  Future<void> exportToPdf(List<ReceiptModel> receipts, DateTime start,
+      DateTime end, String targetCurrency) async {
     final doc = pw.Document();
     final font = await PdfGoogleFonts.robotoRegular();
     final fontBold = await PdfGoogleFonts.robotoBold();
@@ -57,16 +71,17 @@ class ExportService {
           theme: pw.ThemeData.withFont(base: font, bold: fontBold),
           margin: const pw.EdgeInsets.all(20),
         ),
-        header: (context) => _buildPdfHeader(start, end, fontBold),
+        header: (context) =>
+            _buildPdfHeader(start, end, fontBold, targetCurrency),
         footer: (context) => _buildPdfFooter(context, font),
         build: (context) => [
           pw.SizedBox(height: 20),
-          _buildPdfTable(receipts, font, fontBold),
+          _buildPdfTable(receipts, font, fontBold, targetCurrency),
           pw.SizedBox(height: 20),
           pw.Align(
             alignment: pw.Alignment.centerRight,
             child: pw.Text(
-              "Suma całkowita: ${_currencyFormat.format(totalSum)}",
+              "Suma całkowita: ${_formatCurrency(totalSum, targetCurrency)}",
               style: pw.TextStyle(font: fontBold, fontSize: 14),
             ),
           ),
@@ -74,18 +89,18 @@ class ExportService {
       ),
     );
 
-    // Udostępnienie pliku PDF
     await Printing.sharePdf(
         bytes: await doc.save(),
         filename:
             'raport_${_dateFormat.format(start)}_${_dateFormat.format(end)}.pdf');
   }
 
-  pw.Widget _buildPdfHeader(DateTime start, DateTime end, pw.Font fontBold) {
+  pw.Widget _buildPdfHeader(
+      DateTime start, DateTime end, pw.Font fontBold, String targetCurrency) {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
-        pw.Text("FinTracker - Raport Wydatków",
+        pw.Text("FinTracker - Raport Wydatków ($targetCurrency)",
             style: pw.TextStyle(font: fontBold, fontSize: 18)),
         pw.Text(
             "Okres: ${_dateFormat.format(start)} - ${_dateFormat.format(end)}"),
@@ -105,8 +120,8 @@ class ExportService {
     );
   }
 
-  pw.Widget _buildPdfTable(
-      List<ReceiptModel> receipts, pw.Font font, pw.Font fontBold) {
+  pw.Widget _buildPdfTable(List<ReceiptModel> receipts, pw.Font font,
+      pw.Font fontBold, String targetCurrency) {
     return pw.TableHelper.fromTextArray(
       headers: ['Data', 'Sklep', 'Kategoria', 'Kwota'],
       data: receipts
@@ -114,7 +129,7 @@ class ExportService {
                 _dateFormat.format(r.dateShopping),
                 r.storeName,
                 r.categoryName ?? "-",
-                _currencyFormat.format(r.totalAmount),
+                _formatCurrency(r.totalAmount, targetCurrency),
               ])
           .toList(),
       headerStyle: pw.TextStyle(font: fontBold, color: PdfColors.white),
