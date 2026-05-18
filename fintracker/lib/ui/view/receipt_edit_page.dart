@@ -367,7 +367,8 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
                     const SizedBox(height: 16),
                     ListTile(
                       title: Text(l10n.receiptDate),
-                      subtitle: Text(DateFormat.yMd().format(_dateShopping)),
+                      subtitle:
+                          Text(DateFormat('dd.MM.yyyy').format(_dateShopping)),
                       trailing: const Icon(Icons.calendar_today),
                       onTap: () => _pickDate(context),
                       shape: RoundedRectangleBorder(
