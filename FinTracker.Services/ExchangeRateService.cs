@@ -28,21 +28,35 @@ namespace FinTracker.Services
                 return cachedRate.Value;
 
             decimal fetchedRate = 1.0m;
-            string dateStr = targetDate.AddDays(-i).ToString("yyyy-MM-dd");
-            var response = await _httpClient.GetAsync($"http://api.nbp.pl/api/exchangerates/rates/A/{code}/{dateStr}/?format=json");
 
-            if (response.IsSuccessStatusCode)
+            for (int i = 0; i < 5; i++)
             {
-                var content = await response.Content.ReadAsStringAsync();
-                using var doc = JsonDocument.Parse(content);
-                fetchedRate = doc.RootElement.GetProperty("rates")[0].GetProperty("mid").GetDecimal();
+                string dateStr = targetDate.AddDays(-i).ToString("yyyy-MM-dd");
+                var response = await _httpClient.GetAsync($"http://api.nbp.pl/api/exchangerates/rates/A/{code}/{dateStr}/?format=json");
 
-                await _exchangeRateRepository.CreateAsync(new ExchangeRateCache
+                if (response.IsSuccessStatusCode)
                 {
-                    CurrencyCode = code,
-                    Date = targetDate,
-                    Rate = fetchedRate
-                });
+                    var content = await response.Content.ReadAsStringAsync();
+                    using var doc = JsonDocument.Parse(content);
+                    fetchedRate = doc.RootElement.GetProperty("rates")[0].GetProperty("mid").GetDecimal();
+                    break;
+                }
+            }
+
+            if (fetchedRate != 1.0m)
+            {
+                try
+                {
+                    await _exchangeRateRepository.CreateAsync(new ExchangeRateCache
+                    {
+                        CurrencyCode = code,
+                        Date = targetDate,
+                        Rate = fetchedRate
+                    });
+                }
+                catch (Exception)
+                {
+                }
             }
 
             return fetchedRate;

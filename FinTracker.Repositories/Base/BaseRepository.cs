@@ -17,7 +17,17 @@ namespace FinTracker.Repositories
         public virtual async Task<TEntity> CreateAsync(TEntity entity)
         {
             await _dbSet.AddAsync(entity);
-            await _context.SaveChangesAsync();
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch
+            {
+                _context.Entry(entity).State = EntityState.Detached;
+                throw;
+            }
+
             return entity;
         }
 

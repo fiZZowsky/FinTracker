@@ -54,16 +54,8 @@ namespace FinTracker.Services
             var currency = targetCurrency?.ToUpper() ?? "PLN";
             if (currency != "PLN")
             {
-                var rateCache = new Dictionary<string, decimal>();
-
-                string cacheKey = $"{targetCurrency}_{receiptDto.DateShopping:yyyy-MM-dd}";
-                if (!rateCache.ContainsKey(cacheKey))
-                {
-                    rateCache[cacheKey] = await _exchangeRateService.GetRateAsync(targetCurrency, receiptDto.DateShopping);
-                }
-                var targetRate = rateCache[cacheKey];
-
-                    receiptDto.TotalAmount = (receiptDto.TotalAmount * receiptDto.ExchangeRate) / targetRate;
+                var targetRate = await _exchangeRateService.GetRateAsync(currency, receiptDto.DateShopping);
+                receiptDto.TotalAmount = (receiptDto.TotalAmount * receiptDto.ExchangeRate) / targetRate;
                 receiptDto.CurrencyCode = currency;
             }
 
@@ -77,16 +69,7 @@ namespace FinTracker.Services
 
             var entity = _mapper.Map<Receipt>(dto);
             entity.UserId = userId.Value;
-
-            var rateCache = new Dictionary<string, decimal>();
-
-            string cacheKey = $"{entity.CurrencyCode}_{entity.DateShopping:yyyy-MM-dd}";
-            if (!rateCache.ContainsKey(cacheKey))
-            {
-                rateCache[cacheKey] = await _exchangeRateService.GetRateAsync(entity.CurrencyCode, entity.DateShopping);
-            }
-            var targetRate = rateCache[cacheKey];
-            entity.ExchangeRate = targetRate;
+            entity.ExchangeRate = await _exchangeRateService.GetRateAsync(entity.CurrencyCode, entity.DateShopping);
 
             var createdEntity = await _receiptRepository.CreateAsync(entity);
             return _mapper.Map<ReceiptDTO>(createdEntity);
@@ -122,16 +105,9 @@ namespace FinTracker.Services
 
             if (targetCurrency != "PLN")
             {
-                var rateCache = new Dictionary<string, decimal>();
                 foreach (var dto in dtos)
                 {
-                    string cacheKey = $"{targetCurrency}_{dto.DateShopping:yyyy-MM-dd}";
-                    if (!rateCache.ContainsKey(cacheKey))
-                    {
-                        rateCache[cacheKey] = await _exchangeRateService.GetRateAsync(targetCurrency, dto.DateShopping);
-                    }
-                    var targetRate = rateCache[cacheKey];
-
+                    var targetRate = await _exchangeRateService.GetRateAsync(targetCurrency, dto.DateShopping);
                     dto.TotalAmount = (dto.TotalAmount * dto.ExchangeRate) / targetRate;
                     dto.CurrencyCode = targetCurrency;
                 }
@@ -144,18 +120,19 @@ namespace FinTracker.Services
             var receipts = await _receiptRepository.GetReceiptsByQueryAsync(query);
             var targetCurrency = query.CurrencyCode?.ToUpper() ?? "PLN";
             var processedReceipts = new List<Receipt>();
-            var rateCache = new Dictionary<string, decimal>();
+            var localRequestCache = new Dictionary<string, decimal>();
+
             foreach (var r in receipts)
             {
                 decimal targetRate = 1.0m;
                 if (targetCurrency != "PLN")
                 {
                     string cacheKey = $"{targetCurrency}_{r.DateShopping:yyyy-MM-dd}";
-                    if (!rateCache.ContainsKey(cacheKey))
+                    if (!localRequestCache.ContainsKey(cacheKey))
                     {
-                        rateCache[cacheKey] = await _exchangeRateService.GetRateAsync(targetCurrency, r.DateShopping);
+                        localRequestCache[cacheKey] = await _exchangeRateService.GetRateAsync(targetCurrency, r.DateShopping);
                     }
-                    targetRate = rateCache[cacheKey];
+                    targetRate = localRequestCache[cacheKey];
                 }
 
                 decimal valueInTargetCurrency = (r.TotalAmount * r.ExchangeRate) / targetRate;

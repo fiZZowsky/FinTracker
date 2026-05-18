@@ -120,15 +120,17 @@ class SettingsPage extends StatelessWidget {
               );
             },
           ),
-          Consumer<FinansesViewModel>(
-            builder: (context, finansesVM, child) {
+          Consumer2<FinansesViewModel, SettingsViewModel>(
+            builder: (context, finansesVM, settingsVM, child) {
+              final currencyCode = settingsVM.defaultCurrency.code;
               return ListTile(
                 title: Text(l10n.budgetLimitSetting),
                 subtitle: Text(
-                    '${finansesVM.monthlyBudgetLimit.toStringAsFixed(0)} PLN'),
+                    '${finansesVM.monthlyBudgetLimit.toStringAsFixed(0)} $currencyCode'),
                 leading: const Icon(Icons.savings_outlined),
                 trailing: const Icon(Icons.edit),
-                onTap: () => _showBudgetEditDialog(context, finansesVM),
+                onTap: () =>
+                    _showBudgetEditDialog(context, finansesVM, currencyCode),
               );
             },
           ),
@@ -248,7 +250,8 @@ class SettingsPage extends StatelessWidget {
     );
   }
 
-  void _showBudgetEditDialog(BuildContext context, FinansesViewModel vm) {
+  void _showBudgetEditDialog(
+      BuildContext context, FinansesViewModel vm, String currencyCode) {
     final l10n = AppLocalizations.of(context)!;
     final controller =
         TextEditingController(text: vm.monthlyBudgetLimit.toStringAsFixed(0));
@@ -264,7 +267,7 @@ class SettingsPage extends StatelessWidget {
           decoration: InputDecoration(
             labelText: l10n.amountLabel,
             border: const OutlineInputBorder(),
-            suffixText: 'PLN',
+            suffixText: currencyCode,
           ),
         ),
         actions: [
