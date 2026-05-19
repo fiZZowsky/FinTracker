@@ -42,9 +42,7 @@ class _HomePageState extends State<HomePage> {
             return const Center(child: CustomLoader(size: 80));
           }
 
-          final double currentTotal =
-              viewModel.summaryData.fold(0, (sum, item) => sum + item.total);
-
+          final double currentTotal = viewModel.currentMonthTotal;
           final recentReceipts = viewModel.recentReceipts;
 
           return RefreshIndicator(

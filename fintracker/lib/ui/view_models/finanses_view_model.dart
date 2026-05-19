@@ -26,6 +26,9 @@ class FinansesViewModel extends ChangeNotifier {
   double _monthlyBudgetLimit = 3000.0;
   double get monthlyBudgetLimit => _monthlyBudgetLimit;
 
+  double _currentMonthTotal = 0.0;
+  double get currentMonthTotal => _currentMonthTotal;
+
   List<ReceiptModel> _receipts = [];
   List<ReceiptModel> get receipts => _receipts;
 
@@ -64,6 +67,31 @@ class FinansesViewModel extends ChangeNotifier {
     await fetchData();
   }
 
+Future<void> _fetchCurrentMonthTotal() async {
+    final now = DateTime.now();
+    
+    if (_currentDate.year == now.year && _currentDate.month == now.month) {
+      _currentMonthTotal = _summaryData.fold(0, (sum, item) => sum + item.total);
+      return;
+    }
+
+    try {
+      final startDate = DateTime(now.year, now.month, 1);
+      final endDate = DateTime(now.year, now.month + 1, 0);
+
+      final summary = await _receiptService.getSummary(
+        startDate: startDate,
+        endDate: endDate,
+        filterType: 'month',
+        currencyCode: _currentCurrency,
+      );
+
+      _currentMonthTotal = summary.fold(0, (sum, item) => sum + item.total);
+    } catch (e) {
+      debugPrint('Error fetching current month total: $e');
+    }
+  }
+
   Future<void> fetchData() async {
     _isLoading = true;
     _hasError = false;
@@ -91,6 +119,7 @@ class FinansesViewModel extends ChangeNotifier {
       );
 
       _calculateCategoryStats();
+      await _fetchCurrentMonthTotal();
     } catch (e) {
       debugPrint('Error fetching finanses data: $e');
       _hasError = true;
