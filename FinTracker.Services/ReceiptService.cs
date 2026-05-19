@@ -52,9 +52,14 @@ namespace FinTracker.Services
             receiptDto.StoreLogo = await _GetLogoBytesForStore(receiptDto.StoreName);
 
             var currency = targetCurrency?.ToUpper() ?? "PLN";
-            if (currency != "PLN")
+            if (receiptDto.CurrencyCode.ToUpper() != currency)
             {
-                var targetRate = await _exchangeRateService.GetRateAsync(currency, receiptDto.DateShopping);
+                decimal targetRate = 1.0m;
+                if (currency != "PLN")
+                {
+                    targetRate = await _exchangeRateService.GetRateAsync(currency, receiptDto.DateShopping);
+                }
+
                 receiptDto.TotalAmount = (receiptDto.TotalAmount * receiptDto.ExchangeRate) / targetRate;
                 receiptDto.CurrencyCode = currency;
             }
@@ -103,15 +108,13 @@ namespace FinTracker.Services
             var dtos = _mapper.Map<IEnumerable<ReceiptDTO>>(entities);
             var targetCurrency = query.CurrencyCode?.ToUpper() ?? "PLN";
 
-            if (targetCurrency != "PLN")
+            foreach (var dto in dtos)
             {
-                foreach (var dto in dtos)
-                {
-                    var targetRate = await _exchangeRateService.GetRateAsync(targetCurrency, dto.DateShopping);
-                    dto.TotalAmount = (dto.TotalAmount * dto.ExchangeRate) / targetRate;
-                    dto.CurrencyCode = targetCurrency;
-                }
+                var targetRate = await _exchangeRateService.GetRateAsync(targetCurrency, dto.DateShopping);
+                dto.TotalAmount = (dto.TotalAmount * dto.ExchangeRate) / targetRate;
+                dto.CurrencyCode = targetCurrency;
             }
+
             return dtos;
         }
 
