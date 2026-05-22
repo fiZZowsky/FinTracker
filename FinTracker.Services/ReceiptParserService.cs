@@ -31,7 +31,7 @@ namespace FinTracker.Services
 
             var categoryId = await PredictCategoryAsync(storeName);
 
-            string amountPattern = @"(SUMA|S[U0O]M[A4]|RAZEM|KWOTA|DO\s*ZAP[LŁ1I]ATY|WARTO[SŚ][CĆ]|BRUTTO)\s*[\s:.;]*\s*(PLN|Z[LŁ1I]|P1N|EUR|USD|€|\$)?\s*([0-9OoSsDdBQ]+(?:[\s][0-9OoSsDdBQ]+)*[.,][0-9OoSs]{2})\s*(PLN|Z[LŁ1I]|P1N|EUR|USD|€|\$)?\b";
+            string amountPattern = @"(SUMA|S[U0O]M[A4]|RAZEM|KWOTA|DO\s*ZAP[LŁ1I]ATY|WARTO[SŚ][CĆ]|BRUTTO|TOTAL|T[O0]TAL|AMOUNT|AM[O0]UNT|AMOUNT\s*DUE|BALANCE|DUE)\s*[\s:.;]*\s*(PLN|Z[LŁ1I]|P1N|EUR|USD|€|\$)?\s*([0-9OoSsDdBQ]+(?:[\s][0-9OoSsDdBQ]+)*[.,][0-9OoSs]{2})\s*(PLN|Z[LŁ1I]|P1N|EUR|USD|€|\$)?\b";
             var matches = Regex.Matches(ocrText, amountPattern, RegexOptions.IgnoreCase | RegexOptions.Multiline);
 
             if (matches.Count > 0)
