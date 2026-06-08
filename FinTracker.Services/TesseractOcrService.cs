@@ -49,24 +49,20 @@ namespace FinTracker.Services
                         using (Mat grayImage = new Mat())
                         using (Mat blurredImage = new Mat())
                         using (Mat sharpenedImage = new Mat())
-                        using (Mat processedImage = new Mat())
                         {
                             Cv2.CvtColor(workingImage, grayImage, ColorConversionCodes.BGR2GRAY);
+
                             Cv2.MedianBlur(grayImage, blurredImage, 3);
 
                             using (Mat gaussianBlur = new Mat())
                             {
-                                double alpha = 2.2;
-                                double beta = -1.2;
+                                double alpha = 1.5;
+                                double beta = -0.5;
                                 Cv2.GaussianBlur(blurredImage, gaussianBlur, new Size(0, 0), 3);
                                 Cv2.AddWeighted(blurredImage, alpha, gaussianBlur, beta, 0, sharpenedImage);
                             }
 
-                            Cv2.AdaptiveThreshold(blurredImage, processedImage, 255,
-                                AdaptiveThresholdTypes.GaussianC,
-                                ThresholdTypes.Binary, 31, 15);
-
-                            using (var pngStream = processedImage.ToMemoryStream(".png"))
+                            using (var pngStream = sharpenedImage.ToMemoryStream(".png"))
                             {
                                 pngStream.Position = 0;
 
