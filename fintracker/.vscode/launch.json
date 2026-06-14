@@ -6,6 +6,12 @@
             "request": "launch",
             "type": "dart",
             "deviceId": "emulator-5554"
+        },
+        {
+            "name": "Testy",
+            "request": "launch",
+            "type": "dart",
+            "program": "${workspaceFolder}/test/"
         }
     ]
 }

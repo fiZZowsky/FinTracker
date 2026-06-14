@@ -1,5 +1,6 @@
 import 'package:fintracker/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'helpers/app_router.dart';
@@ -15,14 +16,21 @@ import 'ui/widgets/global_loader_overlay.dart';
 import 'ui/view/no_internet_page.dart';
 
 void main() {
-  setupLocator();
+  WidgetsFlutterBinding.ensureInitialized();
 
-  runApp(
-    MultiProvider(
-      providers: getGlobalProviders(),
-      child: const MyApp(),
-    ),
-  );
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]).then((_) {
+    setupLocator();
+
+    runApp(
+      MultiProvider(
+        providers: getGlobalProviders(),
+        child: const MyApp(),
+      ),
+    );
+  });
 }
 
 class MyApp extends StatefulWidget {
