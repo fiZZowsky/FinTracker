@@ -146,6 +146,8 @@ class _ReceiptEditPageState extends State<ReceiptEditPage> {
       storeName: _selectedStoreName!,
       totalAmount: totalAmount,
       currencyCode: _selectedCurrency.code,
+      originalAmount: widget.receipt.originalAmount,
+      originalCurrencyCode: widget.receipt.originalCurrencyCode,
       dateShopping: _dateShopping,
       storeLogo: null,
       categoryId: _selectedCategoryId,

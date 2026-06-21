@@ -93,6 +93,7 @@ class ScannerViewModel extends ChangeNotifier {
 
     try {
       final engine = await _prefs.getOcrEngine();
+      final targetCurrency = await _prefs.getDefaultCurrency();
       String? recognizedText;
 
       String finalPath = file.path;
@@ -114,8 +115,11 @@ class ScannerViewModel extends ChangeNotifier {
         }
       } else {}
 
-      parsedReceipt = await _receiptService.uploadReceipt(XFile(finalPath),
-          extractedText: recognizedText);
+      parsedReceipt = await _receiptService.uploadReceipt(
+        XFile(finalPath),
+        extractedText: recognizedText,
+        targetCurrency: targetCurrency, 
+      );
 
       if (parsedReceipt == null) {
         throw Exception('Serwer zwrócił pusty wynik lub błąd parsowania');

@@ -76,8 +76,7 @@ class ReceiptService {
     }
   }
 
-  Future<ReceiptModel?> uploadReceipt(XFile file,
-      {String? extractedText}) async {
+Future<ReceiptModel?> uploadReceipt(XFile file, {String? extractedText, String? targetCurrency}) async {
     try {
       String fileName = file.path.split('/').last;
 
@@ -93,8 +92,12 @@ class ReceiptService {
 
       OcrEngineType engine = await _prefs.getOcrEngine();
 
-      final dynamic data = await _apiClient.postFormData(
-          '/api/Receipts/Upload?ocrEngine=${engine.index}', formData);
+String url = '/api/Receipts/Upload?ocrEngine=${engine.index}';
+      if (targetCurrency != null && targetCurrency.isNotEmpty) {
+        url += '&targetCurrency=$targetCurrency';
+      }
+
+      final dynamic data = await _apiClient.postFormData(url, formData);
 
       if (data is Map<String, dynamic>) {
         return ReceiptModel.fromJson(data);

@@ -59,7 +59,7 @@ namespace FinTracker.API.Controllers
         }
 
         [HttpPost("Upload")]
-        public async Task<IActionResult> UploadReceipt(IFormFile file, [FromQuery] OcrEngineType ocrEngine = OcrEngineType.TesseractOCR, [FromForm] string? extractedText = null)
+        public async Task<IActionResult> UploadReceipt(IFormFile file, [FromQuery] string? targetCurrency = null, [FromQuery] OcrEngineType ocrEngine = OcrEngineType.TesseractOCR, [FromForm] string? extractedText = null)
         {
             var validationResult = _fileValidator.ValidateImage(file);
             if (!validationResult.IsValid)
@@ -70,7 +70,7 @@ namespace FinTracker.API.Controllers
             if (file == null || file.Length == 0) return BadRequest("Nie przesłano pliku.");
 
             using var stream = file.OpenReadStream();
-            var createdReceipt = await _receiptService.CreateReceiptFromImageAsync(ocrEngine, stream, extractedText);
+            var createdReceipt = await _receiptService.CreateReceiptFromImageAsync(ocrEngine, stream, extractedText, targetCurrency);
             return Ok(createdReceipt);
         }
 

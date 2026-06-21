@@ -35,13 +35,31 @@ namespace FinTracker.Services
             _logger = logger;
         }
 
-        public async Task<ReceiptDTO> CreateReceiptFromImageAsync(OcrEngineType ocrEngine, Stream imageStream, string? extractedText)
+        public async Task<ReceiptDTO> CreateReceiptFromImageAsync(OcrEngineType ocrEngine, Stream imageStream, string? extractedText, string? targetCurrency = null)
         {
             _logger.LogInformation("Rozpoczynanie ekstrakcji danych przy użyciu modelu: {EngineType}", ocrEngine.ToString());
             extractedText ??= await _ocrFactory.GetOcrService(ocrEngine).RecognizeTextAsync(imageStream);
             _logger.LogInformation("OCR Raw Response: {rawText}", extractedText);
 
-            return await _receiptParserService.ParseReceiptTextAsync(extractedText);
+            var receiptDto = await _receiptParserService.ParseReceiptTextAsync(extractedText);
+
+            receiptDto.OriginalAmount = receiptDto.TotalAmount;
+            receiptDto.OriginalCurrencyCode = receiptDto.CurrencyCode;
+
+            var currency = targetCurrency?.ToUpper() ?? "PLN";
+            if (receiptDto.CurrencyCode.ToUpper() != currency)
+            {
+                decimal targetRate = 1.0m;
+                if (currency != "PLN")
+                {
+                    targetRate = await _exchangeRateService.GetRateAsync(currency, receiptDto.DateShopping);
+                }
+
+                receiptDto.TotalAmount = (receiptDto.TotalAmount * receiptDto.ExchangeRate) / targetRate;
+                receiptDto.CurrencyCode = currency;
+            }
+
+            return receiptDto;
         }
 
         public async Task<ReceiptDTO> GetByIdAsync(int id, string? targetCurrency = null)
@@ -69,6 +87,12 @@ namespace FinTracker.Services
 
         public override async Task<ReceiptDTO> CreateAsync(ReceiptDTO dto)
         {
+            if (dto.OriginalAmount.HasValue && !string.IsNullOrWhiteSpace(dto.OriginalCurrencyCode))
+            {
+                dto.TotalAmount = dto.OriginalAmount.Value;
+                dto.CurrencyCode = dto.OriginalCurrencyCode;
+            }
+
             var userId = _userContextRepository.GetUserId();
             if (userId == null) throw new UnauthorizedAccessException("Nie można zidentyfikować użytkownika.");
 
