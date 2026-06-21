@@ -28,7 +28,7 @@ namespace FinTracker.Services
             string currencyCode = "PLN";
 
             string amountPattern = @"(SUMA|S[U0O]M[A4]|RAZEM|KWOTA|DO\s*ZAP[LŁ1I]ATY|WARTO[SŚ][CĆ]|BRUTTO|TOTAL|T[O0]TAL|AMOUNT|AM[O0]UNT|AMOUNT\s*DUE|BALANCE|DUE)"
-                + @"\s*[\s:.;]*\s*(PLN|Z[LŁ1I]|P1N|EUR|USD|€|\$)?\s*([0-9OoSsDdBQ]+(?:[\s][0-9OoSsDdBQ]+)*[.,][0-9OoSs]{2})\s*(PLN|Z[LŁ1I]|P1N|EUR|USD|€|\$)?\b";
+                    + @"\s*[\s:.;]*\s*(PLN|Z[LŁ1I]|P1N|EUR|USD|€|\$)?\s*([0-9OoSsDdBQ]+(?:[\s][0-9OoSsDdBQ]+)*[.,][0-9OoSs]{2})\s*(PLN|Z[LŁ1I]|P1N|EUR|USD|€|\$)?(?!\w)";
             var matches = Regex.Matches(ocrText, amountPattern, RegexOptions.IgnoreCase | RegexOptions.Multiline);
 
             if (matches.Count > 0)
@@ -39,10 +39,18 @@ namespace FinTracker.Services
                 string cleanAmount = CleanOcrNumber(dirtyAmount);
                 decimal.TryParse(cleanAmount, NumberStyles.Any, CultureInfo.InvariantCulture, out totalAmount);
 
-                string currencyMatch = lastMatch.Groups[2].Success ? lastMatch.Groups[2].Value :
-                                      (lastMatch.Groups[4].Success ? lastMatch.Groups[4].Value : "");
+                for (int i = matches.Count - 1; i >= 0; i--)
+                {
+                    var match = matches[i];
+                    string foundCurrency = match.Groups[2].Success ? match.Groups[2].Value :
+                                          (match.Groups[4].Success ? match.Groups[4].Value : "");
 
-                currencyCode = MapCurrencyToIsoCode(currencyMatch);
+                    if (!string.IsNullOrWhiteSpace(foundCurrency))
+                    {
+                        currencyCode = MapCurrencyToIsoCode(foundCurrency);
+                        break;
+                    }
+                }
             }
 
             var dateMatch = Regex.Match(ocrText, @"(\d{4}-\d{2}-\d{2})|(\d{2}[.-]\d{2}[.-]\d{4})");
